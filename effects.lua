@@ -34,10 +34,12 @@ chaosEffects = {
 	disabledEffects = {},
 	
 	effectTemplate = {
-		name = "Name",
+		name = "Name", -- This is what shows up on the UI.
 		effectDuration = 0, -- If more than 0 this is a timed effect and will last.
 		effectLifetime = 0, -- Keep this at 0, this is how long the effect has been running for.
 		effectVariables = {}, -- Any variables the effect has access to.
+							  -- The reason you want your variables in here rather than its parent Table is readability.
+							  -- The effect does get full access to itself so you can edit every variable in it.
 		onEffectStart = function(vars) end, -- Called when the effect is instantiated. Also called if the effect is not timed.
 		onEffectTick = function(vars) end, -- Program your effect in this function. Not called for non-timed effects.
 		onEffectEnd = function(vars) end, -- Called for timed effects on end.
