@@ -1,0 +1,4 @@
+name = Chaos Mod
+author = NLferdiNL
+description = Chaos mod based on the ones from the GTA series.
+tags = Gameplay
