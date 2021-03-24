@@ -1,9 +1,11 @@
 #include "effects.lua"
 #include "utils.lua"
 
+-- Globals
+drawCallQueue = {}
+timeScale = 1 -- This one is required to keep chaos time flowing normally.
+
 local testThisEffect = "" -- Leave empty to let RNG grab effects.
-local drawCallQueue = {}
-local timeScale = 1 -- This one is required to keep chaos time flowing normally.
 local lastEffectKey = ""
 local currentTime = 0
 local currentEffects = {}
