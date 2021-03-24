@@ -429,6 +429,31 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		laserVision = {
+			name = "Laser Vision",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				function raycast()
+					local t = GetCameraTransform()
+					local dir = TransformToParentVec(t, {0, 0, -1})
+					
+					local hit, dist, normal, shape = QueryRaycast(t.pos, dir, 1000)
+					if hit then
+						local hitPoint = VecAdd(t.pos, VecScale(dir, dist))
+						return hitPoint
+					end
+				end
+				
+				hitPoint = raycast()
+				MakeHole(hitPoint, 0.2, 0.2, 0.2)
+				SpawnParticle("smoke", hitPoint, Vec(0, 1, 0), 1, 2)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
