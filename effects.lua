@@ -352,7 +352,7 @@ chaosEffects = {
 			--credits = "GGProGaming & tezlynreardon",
 			effectDuration = 15,
 			effectLifetime = 0,
-			effectVariables = { maxShells = 50, shellNum = 1, defaultShell = { active = false, explode = false, velocity = 500 }, shells = {}, debugVar = {},},
+			effectVariables = { maxShells = 50, shellNum = 1, defaultShell = { active = false, explode = false, velocity = 500 }, shells = {},},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				function AirstrikeOperations(projectile)
@@ -363,7 +363,6 @@ chaosEffects = {
 					local hit, dist, normal, shape = QueryRaycast(projectile.pos, dir, distance)
 					if hit then
 						projectile.explode = true
-						table.insert(vars.effectVariables.debugVar, {shape, 3})
 					else
 						projectile.pos = point2
 					end
@@ -420,11 +419,6 @@ chaosEffects = {
 						AirstrikeOperations(shell)
 						SpawnParticle("smoke", shell.pos, 0.5, 0.5, 0.5)
 					end
-				end
-				
-				for key, shapePair in ipairs(vars.effectVariables.debugVar) do
-					DrawShapeOutline(shapePair[1], 1, 0, 0, 100 / 2 * shapePair[2] / 100)
-					shapePair[2] = shapePair[2] - GetTimeStep()
 				end
 			end,
 			onEffectEnd = function(vars) end,
