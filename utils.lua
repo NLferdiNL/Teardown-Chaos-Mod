@@ -70,6 +70,18 @@ function dirVec(a, b)
 	return VecNormalize(VecSub(b, a))
 end
 
+function raycast(origin, direction, maxDistance, radius, rejectTransparant)
+	maxDistance = maxDistance or 500 -- Make this arguement optional, it is usually not required to raycast further than this.
+	local hit, distance, normal, shape = QueryRaycast(origin, direction, maxDistance, radius, rejectTransparant)
+	
+	if hit then
+		local hitPoint = VecAdd(origin, VecScale(direction, distance))
+		return hit, hitPoint, distance, normal, shape
+	end
+	
+	return false, nil, nil, nil, nil
+end
+
 function deepcopy(orig)
     local orig_type = type(orig)
     local copy
