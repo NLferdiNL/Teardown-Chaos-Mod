@@ -132,6 +132,12 @@ function draw()
 	UiTranslate(0, 50)
 	
 	UiText("To backspace an input box press Ctrl.")
+	
+	UiTranslate(0, 50)
+	
+	UiText("A better options screen is being made!")
+	
+	UiTranslate(0, -50)
 		
 	UiTranslate(400, UiHeight() - 300)
 	
@@ -161,30 +167,8 @@ function draw()
 	
 	UiTranslate(0, 50)
 	
-	--[[UiPop()
-		UiButtonImageBox("ui/common/box-outline-6.png", 6, 6)
-		UiTranslate(0, 100)
-		
-		local statusText = "Disabled"
-		
-		if enableInstantDeath then
-			statusText = "Enabled"
-		end
-		
-		if UiTextButton("Toggle instant death: " .. statusText , 400, 40) then
-			enableInstantDeath = not enableInstantDeath
-			SetBool(moddataPrefix .. "InstantDeath", enableInstantDeath)
-		end
-		
-		UiTranslate(0, 70)
-		
-		UiText("Enabling this option enable the instant death effect.")
-	UiPush()]]--
-	
 	UiPop()
-		UiTranslate(0, 100)
-		
-		
+		UiTranslate(0, 150)
 		
 		if newBox01 then
 			textBox01.name = "Chaos timer"
@@ -197,7 +181,7 @@ function draw()
 		
 		textBox01.render(textBox01)
 		
-		UiTranslate(0, 50)
+		UiTranslate(0, 35)
 		
 		UiText("How long between each effect?")
 	UiPush()
@@ -218,9 +202,9 @@ function draw()
 		for key, value in ipairs(items) do
 			--DebugPrint(key .. ": " .. -xOffset + (key % rows) * 300 .. ", " .. key / col * 40)
 			
-			UiTranslate(0, (key - 1) * 40 + 5)
+			--UiTranslate(0, (key - 1) * 40 + 5)
 			
-			--UiTranslate(-xOffset + margin + (key % rows) * 300, key / col * 40)
+			UiTranslate(-xOffset + margin + (key % rows) * 300, key / col * 40)
 			
 			local effectDisabled = chaosEffects.disabledEffects[value] ~= nil
 			
@@ -238,8 +222,8 @@ function draw()
 				end
 			end
 			
-			UiTranslate(0, -((key - 1) * 40 + 5))
-			--UiTranslate(xOffset - (key % rows) * 300, -(key / col * 40))
+			--UiTranslate(0, -((key - 1) * 40 + 5))
+			UiTranslate(xOffset - (key % rows) * 300, -(key / col * 40))
 		end
 	UiPush()
 	

@@ -113,7 +113,6 @@ chaosEffects = {
 		
 		launchPlayerAnywhere = {
 			name = "Launch Player",
-			--credits = "Creation's",
 			effectDuration = 0,
 			effectLifetime = 0,
 			effectVariables = {},
@@ -349,7 +348,6 @@ chaosEffects = {
 		
 		airstrike = {
 			name = "Airstrike",
-			--credits = "GGProGaming & tezlynreardon",
 			effectDuration = 15,
 			effectLifetime = 0,
 			effectVariables = { maxShells = 50, shellNum = 1, defaultShell = { active = false, explode = false, velocity = 500 }, shells = {},},
@@ -443,6 +441,70 @@ chaosEffects = {
 				MakeHole(hitPoint, 0.2, 0.2, 0.2)
 				SpawnParticle("smoke", hitPoint, Vec(0, 1, 0), 1, 2)
 			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportToRandomLocation = {
+			name = "Teleport To A Random Location",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local playerTransform = GetPlayerTransform()
+				local playerPos = playerTransform.pos
+				
+				playerPos[2] = playerPos[2] + 50
+				
+				playerPos[1] = playerPos[1] + math.random(-50, 50)--(-50, 50)
+				playerPos[3] = playerPos[3] + math.random(-50, 50)--(-50, 50)
+				
+				local hit, hitPoint = raycast(playerPos, Vec(0, -1, 0), 1000)
+				
+				local newTransform = nil
+				
+				if hit then
+					newTransform = Transform(VecAdd(hitPoint, Vec(0, 1, 0)), playerTransform.rot)
+				else
+					RespawnPlayer() -- Pretty unlikely edge case to not hit, but in the event use this instead.
+				end
+				
+				SetPlayerTransform(newTransform)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		deleteVision = {
+			name = "Hope That Wasn't Important",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				
+				local hit, hitPoint, distance, normal, shape = raycast(cameraTransform.pos, rayDirection, 50)
+				
+				if not hit then
+					return
+				end
+				
+				local shapeBody = GetShapeBody(shape)
+				
+				if not IsBodyDynamic(shapeBody) then
+					return
+				end
+				
+				local currentVehicleHandle = GetPlayerVehicle()
+				
+				if currentVehicleHandle == GetBodyVehicle(shapeBody) then
+					SetPlayerVehicle(0)
+				end
+				
+				Delete(shapeBody)
+				
+			end,
+			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
 	},

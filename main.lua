@@ -44,10 +44,6 @@ function triggerChaos()
 	local effect = chaosEffects.activeEffects[1]
 
 	effect.onEffectStart(effect)
-
-	if effect.effectDuration <= 0 then
-		effect.onEffectStart(effect)
-	end
 end
 
 function removeChaosLogOverflow()
@@ -102,7 +98,7 @@ local currentTimePercenage = 100 / chaosTimer * currentTime / 100
 UiAlign("center middle")
 
 UiPush()
-	UiColor(0.1, 0.1, 0.1)
+	UiColor(0.1, 0.1, 0.1, 0.5)
 	UiTranslate(UiCenter(), 0)
 	
 	UiRect(UiWidth() + 10, UiHeight() * 0.05)
@@ -135,7 +131,7 @@ UiPush()
 			
 			UiAlign("center middle")
 			
-			UiColor(0.7, 0.7, 0.7, 0.2)
+			UiColor(0.7, 0.7, 0.7, 0.5)
 			
 			UiTranslate(-75 / 2 , 0)
 			

@@ -6,6 +6,7 @@ function saveFileInit()
 	chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
 	
 	if saveVersion < 1 then
+		saveVersion = 1
 		SetInt(moddataPrefix .. "Version", 1)
 		
 		chaosTimer = 10
@@ -13,6 +14,7 @@ function saveFileInit()
 	end
 	
 	if saveVersion < 2 then
+		saveVersion = 2
 		SetInt(moddataPrefix .. "Version", 2)
 		
 		chaosEffects.disabledEffects = {}
