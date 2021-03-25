@@ -437,18 +437,15 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				function raycast()
-					local t = GetCameraTransform()
-					local dir = TransformToParentVec(t, {0, 0, -1})
-					
-					local hit, dist, normal, shape = QueryRaycast(t.pos, dir, 1000)
-					if hit then
-						local hitPoint = VecAdd(t.pos, VecScale(dir, dist))
-						return hitPoint
-					end
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				
+				local hit, hitPoint = raycast(cameraTransform.pos, rayDirection, 1000)
+				
+				if hit == false then
+					return
 				end
 				
-				hitPoint = raycast()
 				MakeHole(hitPoint, 0.2, 0.2, 0.2)
 				SpawnParticle("smoke", hitPoint, Vec(0, 1, 0), 1, 2)
 			end,
