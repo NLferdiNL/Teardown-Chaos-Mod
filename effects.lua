@@ -549,6 +549,20 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+
+		rewind = {
+			name = "Let's try that again",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0))},
+			onEffectStart = function(vars) 
+				transform = GetPlayerTransform()
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				SetPlayerTransform(transform)
+			end,
+		},
 	},
 }
 
