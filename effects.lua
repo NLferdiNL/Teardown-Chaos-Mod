@@ -554,13 +554,29 @@ chaosEffects = {
 			name = "Let's try that again",
 			effectDuration = 10,
 			effectLifetime = 0,
-			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0))},
+			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), vehicle = 0, velocity = Vec(0,0,0)},
 			onEffectStart = function(vars) 
 				transform = GetPlayerTransform()
+
+				vehicle = GetPlayerVehicle()
+
+				if vehicle ~= 0 then
+					velocity = GetBodyVelocity(GetVehicleBody(vehicle))
+				else
+					velocity = GetPlayerVelocity()
+				end
 			end,
 			onEffectTick = function(vars) end,
-			onEffectEnd = function(vars) 
-				SetPlayerTransform(transform)
+			onEffectEnd = function(vars)
+				SetPlayerVehicle(vehicle)
+
+				if vehicle ~= 0 then
+					SetBodyTransform(GetVehicleBody(vehicle), transform)
+					SetBodyVelocity(GetVehicleBody(vehicle), velocity)
+				else
+					SetPlayerTransform(transform)
+					SetPlayerVelocity(velocity)
+				end
 			end,
 		},
 	},
