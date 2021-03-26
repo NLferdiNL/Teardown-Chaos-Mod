@@ -524,6 +524,31 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		explodeRandomExplosive = {
+			name = "Explode random explosive",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				explosives = {}
+				for i=1, #nearbyShapes do
+					if HasTag(nearbyShapes[i], "explosive") then
+						explosives[#explosives + 1] = nearbyShapes[i]
+					end
+				end
+
+				if(#explosives == 0) then
+					return
+				end
+
+				Explosion(GetShapeWorldTransform(shape).pos,2)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
