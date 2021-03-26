@@ -507,6 +507,23 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+
+		featherFalling = {
+			name = "Feather Falling",
+			effectDuration = 12,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local maxFallSpeed = -1
+
+				local vel = GetPlayerVelocity()
+				if(vel[2] < maxFallSpeed) then
+					SetPlayerVelocity(Vec(vel[1], maxFallSpeed, vel[3]))
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
