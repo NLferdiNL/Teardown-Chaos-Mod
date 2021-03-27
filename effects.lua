@@ -668,6 +668,44 @@ chaosEffects = {
 				end
 			end,
 		},
+
+		setPlayerIntoRandomVehicle = {
+			name = "Enter Nearby Vehicle",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				local vehicles = {}
+				for i=1, #nearbyShapes do
+					if GetBodyVehicle(GetShapeBody(nearbyShapes[i])) ~= 0 then
+						vehicles[#vehicles+1] = GetBodyVehicle(GetShapeBody(nearbyShapes[i]))
+					end
+				end
+
+				if(#vehicles == 0) then
+					return
+				end
+
+				local closestVehicle = 0
+				local closestDistance = 10000
+
+				local playerPos = GetPlayerTransform().pos
+				for i = 1, #vehicles do
+					local distance = VecLength(VecSub(GetVehicleTransform(vehicles[i]).pos, playerPos))
+
+					if distance < closestDistance then
+						closestDistance = distance
+						closestVehicle = vehicles[i]
+					end
+				end
+
+				SetPlayerVehicle(closestVehicle)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
