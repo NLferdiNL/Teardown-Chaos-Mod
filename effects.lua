@@ -732,6 +732,55 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		nothing = {
+			name = "Nothing",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		fakeDeath = {
+			name = "Fake Death",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = { deathTimer = 5, nameBackup = "" },
+			onEffectStart = function(vars)
+				if GetPlayerVehicle() ~= 0 then
+					SetPlayerVehicle(0)
+				end
+				
+				vars.effectVariables.nameBackup = vars.name -- In case I decide on a new name
+				vars.name = ""
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectLifetime >= vars.effectVariables.deathTimer then
+					vars.name = vars.effectVariables.nameBackup
+					vars.effectDuration = 0
+					vars.effectLifetime = 0
+				else
+					local playerCamera = GetPlayerCameraTransform()
+					local playerCameraPos = playerCamera.pos
+				
+					SetCameraTransform(Transform(VecAdd(playerCameraPos, Vec(0, -1, 0)), QuatEuler(-5, 0, 45)))
+					table.insert(drawCallQueue, function()
+					UiPush()
+						local currFade = 100 / 5 * vars.effectLifetime / 100
+						
+						UiColor(0, 0, 0, currFade)
+						UiAlign("center middle")
+						UiTranslate(UiCenter(), UiMiddle())
+						UiRect(UiWidth() + 10, UiHeight() + 10)
+					
+					UiPop()
+					end)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		}
 	},
 }
 
