@@ -318,7 +318,7 @@ chaosEffects = {
 			effectVariables = {fadeAlpha = 0, waking = false},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				local deltatime = GetTimeStep()
+				local deltatime = GetChaosTimeStep()
 				
 				if vars.effectVariables.waking then
 					vars.effectVariables.fadeAlpha = vars.effectVariables.fadeAlpha - deltatime
@@ -507,6 +507,83 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		portraitMode = {
+			name = "Portrait Mode",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectVariables = {currentBorderPos = 0},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if vars.effectVariables.currentBorderPos < UiWidth() / 3 then
+					vars.effectVariables.currentBorderPos = vars.effectVariables.currentBorderPos + GetChaosTimeStep() * 100
+				elseif vars.effectVariables.currentBorderPos > UiWidth() / 3 then
+					vars.effectVariables.currentBorderPos = UiWidth() / 3
+				end
+				
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiColor(0, 0, 0, 1)
+					
+					UiAlign("left middle")
+					UiTranslate(-10, UiMiddle())
+					UiRect(vars.effectVariables.currentBorderPos, UiHeight() + 10)
+				UiPop()
+				
+				UiPush()
+					UiColor(0, 0, 0, 1)
+				
+					UiAlign("right middle")
+					UiTranslate(UiWidth() + 10, UiMiddle())
+					UiRect(vars.effectVariables.currentBorderPos, UiHeight() + 10)
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		explodingStare = {
+			name = "Explosion Stare",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {currentBorderPos = 0},
+			onEffectStart = function(vars) 
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				
+				local hit, hitPoint = raycast(cameraTransform.pos, rayDirection, 50)
+				
+				if hit then
+					Explosion(hitPoint, 1)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportSomeMeters = {
+			name = "Teleport A Few Meters",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {currentBorderPos = 0},
+			onEffectStart = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				
+				local direction = rndVec(1)
+				
+				local distance = math.random(1, 5)
+				
+				local newPos = VecAdd(playerTransform.pos, VecScale(direction, distance))
+				
+				if GetPlayerVehicle() ~= 0 then
+					
+				else
+					SetPlayerTransform(Transform(newPos, playerTransform.rot))
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		}
 	},
 }
 

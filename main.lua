@@ -90,12 +90,21 @@ function debugFunc()
 	end
 end
 
+function GetChaosTimeStep()
+	if timeScale < 1 then
+		return GetTimeStep() * (timeScale + 1)
+	else
+		return GetTimeStep()
+	end
+end
+
 function tick(dt)
 	--debugFunc()
 	
 	if(timeScale < 1) then
 		dt = dt * (timeScale + 1)
 	end
+	
 	currentTime = currentTime + dt
 	
 	if timeScale ~= 1 then
