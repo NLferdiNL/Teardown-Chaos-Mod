@@ -582,7 +582,7 @@ chaosEffects = {
 		},
 
 		explodeRandomExplosive = {
-			name = "Explode random explosive",
+			name = "Explode Random Explosive",
 			effectDuration = 0,
 			effectLifetime = 0,
 			effectVariables = {},
@@ -640,7 +640,7 @@ chaosEffects = {
 		},
 
 		rewind = {
-			name = "Let's try that again",
+			name = "Let's Try That Again",
 			effectDuration = 10,
 			effectLifetime = 0,
 			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), currentVehicle = 0, velocity = Vec(0,0,0)},
@@ -704,6 +704,32 @@ chaosEffects = {
 				SetPlayerVehicle(closestVehicle)
 			end,
 			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		ejectFromVehicle = {
+			name = "Eject From Vehicle",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				SetPlayerVehicle(0)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		}, 
+		
+		cantUseVehicles = {
+			name = "Take A Walk",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				if GetPlayerVehicle() ~= 0 then
+					SetPlayerVehicle(0)
+				end
+			end,
 			onEffectEnd = function(vars) end,
 		},
 	},
