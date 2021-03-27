@@ -556,11 +556,56 @@ chaosEffects = {
 				if hit then
 					Explosion(hitPoint, 1)
 				end
-			end,
+				
+				end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
-		
+
+		featherFalling = {
+			name = "Feather Falling",
+			effectDuration = 12,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local maxFallSpeed = -1
+
+				local vel = GetPlayerVelocity()
+				if(vel[2] < maxFallSpeed) then
+					SetPlayerVelocity(Vec(vel[1], maxFallSpeed, vel[3]))
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		explodeRandomExplosive = {
+			name = "Explode random explosive",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				local explosives = {}
+				for i=1, #nearbyShapes do
+					if HasTag(nearbyShapes[i], "explosive") then
+						explosives[#explosives + 1] = nearbyShapes[i]
+					end
+				end
+
+				if(#explosives == 0) then
+					return
+				end
+				
+				local randomExplosive = explosives[math.random(1, #explosives)]
+
+				Explosion(GetShapeWorldTransform(randomExplosive).pos,2)
+				end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+
 		teleportSomeMeters = {
 			name = "Teleport A Few Meters",
 			effectDuration = 0,
@@ -583,7 +628,37 @@ chaosEffects = {
 			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
-		}
+		},
+
+		rewind = {
+			name = "Let's try that again",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), currentVehicle = 0, velocity = Vec(0,0,0)},
+			onEffectStart = function(vars) 
+				vars.effectVariables.transform = GetPlayerTransform()
+
+				vars.effectVariables.currentVehicle = GetPlayerVehicle()
+
+				if vars.effectVariables.currentVehicle ~= 0 then
+					vars.effectVariables.velocity = GetBodyVelocity(GetVehicleBody(vars.effectVariables.currentVehicle))
+				else
+					vars.effectVariables.velocity = GetPlayerVelocity()
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars)
+				SetPlayerVehicle(vars.effectVariables.currentVehicle)
+
+				if vars.effectVariables.currentVehicle ~= 0 then
+					SetBodyTransform(GetVehicleBody(vars.effectVariables.currentVehicle), vars.effectVariables.transform)
+					SetBodyVelocity(GetVehicleBody(vars.effectVariables.currentVehicle), vars.effectVariables.velocity)
+				else
+					SetPlayerTransform(vars.effectVariables.transform)
+					SetPlayerVelocity(vars.effectVariables.velocity)
+				end
+			end,
+		},
 	},
 }
 
