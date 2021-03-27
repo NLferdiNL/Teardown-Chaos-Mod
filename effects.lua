@@ -462,6 +462,8 @@ chaosEffects = {
 				
 				local newTransform = nil
 				
+				SetPlayerVehicle(0)
+				
 				if hit then
 					newTransform = Transform(VecAdd(hitPoint, Vec(0, 1, 0)), playerTransform.rot)
 				else
@@ -606,7 +608,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
-		teleportSomeMeters = {
+		teleportAFewMeters = {
 			name = "Teleport A Few Meters",
 			effectDuration = 0,
 			effectLifetime = 0,
@@ -616,12 +618,19 @@ chaosEffects = {
 				
 				local direction = rndVec(1)
 				
-				local distance = math.random(1, 5)
+				local distance = math.random(10, 20)
+				
+				direction[2] = math.abs(direction[2])
 				
 				local newPos = VecAdd(playerTransform.pos, VecScale(direction, distance))
 				
-				if GetPlayerVehicle() ~= 0 then
+				local currentVehicle = GetPlayerVehicle()
+				
+				if currentVehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(currentVehicle)
+					local vehicleTransform = GetBodyTransform(vehicleBody)
 					
+					SetBodyTransform(vehicleBody, Transform(newPos, vehicleTransform.rot))
 				else
 					SetPlayerTransform(Transform(newPos, playerTransform.rot))
 				end
