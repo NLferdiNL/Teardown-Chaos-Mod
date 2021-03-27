@@ -318,7 +318,7 @@ chaosEffects = {
 			effectVariables = {fadeAlpha = 0, waking = false},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				local deltatime = GetChaosTimeStep()
+				local deltatime = GetChaosTimeStep() / 2
 				
 				if vars.effectVariables.waking then
 					vars.effectVariables.fadeAlpha = vars.effectVariables.fadeAlpha - deltatime
