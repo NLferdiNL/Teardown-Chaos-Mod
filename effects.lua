@@ -533,7 +533,7 @@ chaosEffects = {
 			onEffectStart = function(vars)
 				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
 
-				explosives = {}
+				local explosives = {}
 				for i=1, #nearbyShapes do
 					if HasTag(nearbyShapes[i], "explosive") then
 						explosives[#explosives + 1] = nearbyShapes[i]
@@ -543,8 +543,10 @@ chaosEffects = {
 				if(#explosives == 0) then
 					return
 				end
+				
+				local randomExplosive = explosives[math.random(1, #explosives)]
 
-				Explosion(GetShapeWorldTransform(shape).pos,2)
+				Explosion(GetShapeWorldTransform(randomExplosive).pos,2)
 			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
@@ -554,28 +556,28 @@ chaosEffects = {
 			name = "Let's try that again",
 			effectDuration = 10,
 			effectLifetime = 0,
-			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), vehicle = 0, velocity = Vec(0,0,0)},
+			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), currentVehicle = 0, velocity = Vec(0,0,0)},
 			onEffectStart = function(vars) 
-				transform = GetPlayerTransform()
+				vars.effectVariables.transform = GetPlayerTransform()
 
-				vehicle = GetPlayerVehicle()
+				vars.effectVariables.currentVehicle = GetPlayerVehicle()
 
-				if vehicle ~= 0 then
-					velocity = GetBodyVelocity(GetVehicleBody(vehicle))
+				if vars.effectVariables.currentVehicle ~= 0 then
+					vars.effectVariables.velocity = GetBodyVelocity(GetVehicleBody(vars.effectVariables.currentVehicle))
 				else
-					velocity = GetPlayerVelocity()
+					vars.effectVariables.velocity = GetPlayerVelocity()
 				end
 			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars)
-				SetPlayerVehicle(vehicle)
+				SetPlayerVehicle(vars.effectVariables.currentVehicle)
 
-				if vehicle ~= 0 then
-					SetBodyTransform(GetVehicleBody(vehicle), transform)
-					SetBodyVelocity(GetVehicleBody(vehicle), velocity)
+				if vars.effectVariables.currentVehicle ~= 0 then
+					SetBodyTransform(GetVehicleBody(vars.effectVariables.currentVehicle), vars.effectVariables.transform)
+					SetBodyVelocity(GetVehicleBody(vars.effectVariables.currentVehicle), vars.effectVariables.velocity)
 				else
-					SetPlayerTransform(transform)
-					SetPlayerVelocity(velocity)
+					SetPlayerTransform(vars.effectVariables.transform)
+					SetPlayerVelocity(vars.effectVariables.velocity)
 				end
 			end,
 		},
