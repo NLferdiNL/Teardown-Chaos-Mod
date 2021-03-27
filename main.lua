@@ -38,7 +38,6 @@ function getRandomEffect()
 end
 
 function triggerChaos()
-	
 	table.insert(chaosEffects.activeEffects, 1, getRandomEffect())
 	
 	local effect = chaosEffects.activeEffects[1]
@@ -73,7 +72,27 @@ function chaosEffectTimersTick(dt)
 	end
 end
 
+function debugFunc()
+	if InputPressed("p") then
+		for i=1, 20 do
+		DebugPrint(" ")
+		end
+		
+		DebugPrint(chaosEffects.testVar == nil)
+		
+		for key, value in pairs(chaosEffects.effects["myGlasses"]) do
+			if type(value) ~= "table" and type(value) ~= "function"then
+				DebugPrint(key .. ": " .. value)
+			else
+				DebugPrint(key .. ": " .. type(value)) 
+			end
+		end
+	end
+end
+
 function tick(dt)
+	--debugFunc()
+	
 	if(timeScale < 1) then
 		dt = dt * (timeScale + 1)
 	end
@@ -161,7 +180,7 @@ function processDrawCallQueue()
 end
 
 function draw()
+	processDrawCallQueue()
 	drawTimer()
 	drawEffectLog()
-	processDrawCallQueue()
 end
