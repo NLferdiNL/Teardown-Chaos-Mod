@@ -14,6 +14,8 @@ function init()
 	saveFileInit()
 	
 	removeDisabledEffectKeys()
+	
+	chaosSFXInit()
 end
 
 function getRandomEffect()
@@ -107,10 +109,6 @@ function tick(dt)
 	
 	currentTime = currentTime + dt
 	
-	if timeScale ~= 1 then
-		SetTimeScale(timeScale)
-	end
-	
 	if currentTime > chaosTimer then
 		currentTime = 0
 		triggerChaos()
@@ -118,6 +116,11 @@ function tick(dt)
 	end
 	
 	chaosEffectTimersTick(dt)
+	
+	if timeScale ~= 1 then
+		SetTimeScale(timeScale)
+		timeScale = 1
+	end
 end
 
 function drawTimer()
