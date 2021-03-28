@@ -847,6 +847,25 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+
+		disableTools = {
+			name = "Hold On To That Tool",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = { tools = {"sledge", "spraycan", "extinguisher", "blowtorch", "shotgun", "plank", "pipebomb", "gun", "bomb", "rocket"} },
+			onEffectStart = function(vars)  
+
+				for i = 1, #vars.effectVariables.tools do
+					SetBool("game.tool."..vars.effectVariables.tools[i]..".enabled", false)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				for i = 1, #vars.effectVariables.tools do
+					SetBool("game.tool."..vars.effectVariables.tools[i]..".enabled", true)
+				end
+			end,
+		},
 	},
 }
 
