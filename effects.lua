@@ -780,7 +780,33 @@ chaosEffects = {
 				end
 			end,
 			onEffectEnd = function(vars) end,
-		}
+		},
+
+		fakeTeleport = {
+			name = "Fake Teleport",
+			effectDuration = 3,
+			effectLifetime = 0,
+			effectVariables = { deathTimer = 3, nameBackup = "", transform = 0 },
+			onEffectStart = function(vars)
+				SetPlayerVehicle(0)
+
+				vars.effectVariables.transform = GetPlayerTransform()
+				
+				RespawnPlayer()
+				
+				vars.effectVariables.nameBackup = vars.name
+				vars.name = "Teleport To Spawn"
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectLifetime >= vars.effectVariables.deathTimer then
+					vars.name = vars.effectVariables.nameBackup
+					vars.effectDuration = 0
+					vars.effectLifetime = 0
+					SetPlayerTransform(vars.effectVariables.transform)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
