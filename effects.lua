@@ -889,7 +889,7 @@ chaosEffects = {
 		},
 
 		flipVehicle = {
-			name = "Turtle Mode",
+			name = "Invert Vehicle",
 			effectDuration = 0,
 			effectLifetime = 0,
 			effectSFX = {},
