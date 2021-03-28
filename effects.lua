@@ -1063,7 +1063,7 @@ chaosEffects = {
 		},
 		
 		freeShots = {
-			name = "Free shots",
+			name = "Free Shots",
 			effectDuration = 20,
 			effectLifetime = 0,
 			effectSFX = {},
