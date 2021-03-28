@@ -866,6 +866,30 @@ chaosEffects = {
 				end
 			end,
 		},
+
+		cinematicMode = {
+			name = "Cinematic Mode",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {currentBorderPos = 0},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)				
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiColor(0, 0, 0, 1)
+
+					local middleSize = UiHeight()/2.5
+					
+					UiRect(UiWidth(),UiHeight()/2-middleSize)
+
+					UiTranslate(0, UiHeight()/2+middleSize)
+
+					UiRect(UiWidth(),UiHeight()/2-middleSize)
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
