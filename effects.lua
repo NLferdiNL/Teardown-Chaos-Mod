@@ -93,7 +93,7 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars)
 				if GetPlayerHealth() <= 0 then
-					RespawnPlayer()
+					RespawnPlayer() -- This is used on maps that don't auto respawn you.
 				end
 			end,
 		},
@@ -833,6 +833,72 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		fakeTeleport = {
+			name = "Fake Teleport",
+			effectDuration = 3,
+			effectLifetime = 0,
+			effectVariables = { deathTimer = 3, nameBackup = "", transform = 0 },
+			onEffectStart = function(vars)
+				SetPlayerVehicle(0)
+
+				vars.effectVariables.transform = GetPlayerTransform()
+				
+				RespawnPlayer()
+				
+				vars.effectVariables.nameBackup = vars.name
+				vars.name = "Teleport To Spawn"
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectLifetime >= vars.effectVariables.deathTimer then
+					vars.name = vars.effectVariables.nameBackup
+					vars.effectDuration = 0
+					vars.effectLifetime = 0
+
+					SetPlayerVehicle(0)
+					SetPlayerTransform(vars.effectVariables.transform)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		speedLimit = {
+			name = "Speed Limit",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local limit = 5
+
+				if(GetPlayerVehicle ~= 0) then
+
+					local vehicleBody = GetVehicleBody(GetPlayerVehicle())
+					local speed = VecLength(GetBodyVelocity(vehicleBody))
+					if speed > limit then
+						SetBodyVelocity(vehicleBody, VecScale(GetBodyVelocity(vehicleBody), limit/speed))
+					end
+					
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		flipVehicle = {
+			name = "Turtle Mode",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				if GetPlayerVehicle() ~= 0 then
+					local vehicleBody = GetVehicleBody(GetPlayerVehicle())
+
+					SetBodyTransform(vehicleBody, Transform(VecAdd(GetBodyTransform(vehicleBody).pos, Vec(0,3,0)), QuatRotateQuat(GetBodyTransform().rot, QuatAxisAngle(Vec(1,0,0), 180))))
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 		
 		knocking = {
 			name = "Who's there?",
@@ -857,6 +923,48 @@ chaosEffects = {
 				MakeHole(GetPlayerTransform().pos, 5, 5, 5)
 			end,
 			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+
+		disableTools = {
+			name = "Hold On To That Tool",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = { tools = {"sledge", "spraycan", "extinguisher", "blowtorch", "shotgun", "plank", "pipebomb", "gun", "bomb", "rocket"} },
+			onEffectStart = function(vars)
+				for i = 1, #vars.effectVariables.tools do
+					SetBool("game.tool."..vars.effectVariables.tools[i]..".enabled", false)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				for i = 1, #vars.effectVariables.tools do
+					SetBool("game.tool."..vars.effectVariables.tools[i]..".enabled", true)
+				end
+			end,
+		},
+
+		cinematicMode = {
+			name = "Cinematic Mode",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)				
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiColor(0, 0, 0, 1)
+
+					local middleSize = UiHeight()/2.5
+					
+					UiRect(UiWidth(),UiHeight()/2-middleSize)
+
+					UiTranslate(0, UiHeight()/2+middleSize)
+
+					UiRect(UiWidth(),UiHeight()/2-middleSize)
+				UiPop()
+				end)
+			end,
 			onEffectEnd = function(vars) end,
 		},
 		
