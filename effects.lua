@@ -1022,6 +1022,44 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		vehicleKickflip = {
+			name = "Kickflip",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local playerVehicle = GetPlayerVehicle()
+				
+				if playerVehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(playerVehicle)
+					
+					local vehicleTransform = GetVehicleTransform(playerVehicle)
+					
+					local kickflipPosition = TransformToParentPoint(vehicleTransform, Vec(1, 0.5, 0))
+					local jumpPosition = TransformToParentPoint(vehicleTransform, Vec(0, 0, 0))
+					
+					local bodyMass = GetBodyMass(vehicleBody)
+					
+					local velocityMultiplier = 1
+					
+					if bodyMass > 15000 then
+						velocityMultiplier = 1.6
+					elseif bodyMass > 10000 then
+						velocityMultiplier = 1.3
+					end
+
+					local kickflipVel = Vec(0, velocityMultiplier * (2 * bodyMass), 0)
+					local jumpVel = Vec(0, velocityMultiplier * (5.7 * bodyMass), 0)
+					
+					ApplyBodyImpulse(vehicleBody, jumpPosition, jumpVel)
+					ApplyBodyImpulse(vehicleBody, kickflipPosition, kickflipVel)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
