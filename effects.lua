@@ -871,7 +871,7 @@ chaosEffects = {
 			name = "Cinematic Mode",
 			effectDuration = 10,
 			effectLifetime = 0,
-			effectVariables = {currentBorderPos = 0},
+			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)				
 				table.insert(drawCallQueue, function()
