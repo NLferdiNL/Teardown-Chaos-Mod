@@ -802,6 +802,8 @@ chaosEffects = {
 					vars.name = vars.effectVariables.nameBackup
 					vars.effectDuration = 0
 					vars.effectLifetime = 0
+
+					SetPlayerVehicle(0)
 					SetPlayerTransform(vars.effectVariables.transform)
 				end
 			end,
