@@ -987,6 +987,7 @@ chaosEffects = {
 				local playerCameraPos = playerCamera.pos
 		
 				SetCameraTransform(Transform(playerCamera.pos, playerCamera.rot), 150)
+				SetBool("game.player.canusetool", true)
 			end,
 			onEffectEnd = function(vars) end,
 		},]]--
@@ -1058,6 +1059,31 @@ chaosEffects = {
 				end
 			end,
 			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		freeShots = {
+			name = "Free shots",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectVariables = {lastFrameTool = "", lastFrameAmmo = ""},
+			onEffectStart = function(vars) 
+				vars.effectVariables.lastFrameTool = GetString("game.player.tool")
+				vars.effectVariables.lastFrameAmmo =  GetFloat("game.tool." ..  vars.effectVariables.lastFrameTool .. ".ammo")
+			end,
+			onEffectTick = function(vars) 
+				local currentTool = GetString("game.player.tool")
+				local currentAmmo = GetFloat("game.tool." ..  currentTool .. ".ammo")
+				if currentTool == vars.effectVariables.lastFrameTool then
+					if currentAmmo < vars.effectVariables.lastFrameAmmo then
+						SetFloat("game.tool." ..  currentTool .. ".ammo", vars.effectVariables.lastFrameAmmo)
+					end
+				else
+					vars.effectVariables.lastFrameTool = GetString("game.player.tool")
+					vars.effectVariables.lastFrameAmmo =  GetFloat("game.tool." ..  vars.effectVariables.lastFrameTool .. ".ammo")
+				end
+			end,
 			onEffectEnd = function(vars) end,
 		},
 	},

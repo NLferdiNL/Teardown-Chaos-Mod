@@ -5,7 +5,7 @@
 drawCallQueue = {}
 timeScale = 1 -- This one is required to keep chaos time flowing normally.
 
-local testThisEffect = "vehicleKickflip" -- Leave empty to let RNG grab effects.
+local testThisEffect = "" -- Leave empty to let RNG grab effects.
 local lastEffectKey = ""
 local currentTime = 0
 local currentEffects = {}
@@ -200,6 +200,14 @@ function debugTableToText(inputTable)
 end
 
 function drawDebugText()
+	local effect = nil
+
+	if #chaosEffects.activeEffects <= 0 then
+		effect = chaosEffects.effects[testThisEffect]
+	else
+		effect = chaosEffects.activeEffects[1]
+	end
+	
 	UiPush()
 		UiAlign("top left")
 		UiTranslate(UiWidth() * 0.025, UiHeight() * 0.05)
@@ -209,8 +217,6 @@ function drawDebugText()
 		UiText("CHAOS MOD DEBUG MODE ACTIVE")
 		UiTranslate(0, UiHeight() * 0.025)
 		UiText("Testing effect: " .. testThisEffect)
-		
-		local effect = chaosEffects.effects[testThisEffect]
 		
 		for index, key in ipairs(chaosEffects.debugPrintOrder) do
 			local effectProperty = effect[key]
