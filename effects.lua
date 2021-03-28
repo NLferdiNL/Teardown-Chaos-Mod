@@ -890,6 +890,67 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		dvdScreensaver = {
+			name = "DVD Screensaver",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = { x = 0, y = 0, px = true, py = true},
+			onEffectStart = function(vars) 
+				vars.effectVariables.x = UiCenter()
+				vars.effectVariables.y = UiMiddle()
+			end,
+			onEffectTick = function(vars)
+
+				local speed = 5
+
+				if vars.effectVariables.px then
+					vars.effectVariables.x = vars.effectVariables.x + speed
+				else
+					vars.effectVariables.x = vars.effectVariables.x - speed
+				end
+
+				if vars.effectVariables.x >= UiWidth() or vars.effectVariables.x <= 0 then
+					vars.effectVariables.px = not vars.effectVariables.x
+				end
+
+				if vars.effectVariables.py then
+					vars.effectVariables.y = vars.effectVariables.y + speed
+				else
+					vars.effectVariables.y = vars.effectVariables.y - speed
+				end
+
+				if vars.effectVariables.y >= UiHeight() or vars.effectVariables.y <= 0 then
+					vars.effectVariables.py = not vars.effectVariables.y
+				end
+
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiTranslate(vars.effectVariables.x - UiCenter(), vars.effectVariables.y - UiMiddle())
+					UiColor(0, 0, 0, 1)
+
+					local middleSize = UiHeight()/6
+					
+					UiRect(UiWidth(),UiHeight()/2-middleSize)
+
+					UiPush()
+						UiTranslate(0, UiHeight()/2+middleSize)
+
+						UiRect(UiWidth(),UiHeight()/2-middleSize)
+					UiPop()
+
+					UiRect(UiWidth()/2-middleSize,UiHeight())
+
+					UiPush()
+						UiTranslate(UiWidth()/2+middleSize, 0)
+
+						UiRect(UiWidth()/2-middleSize,UiHeight())
+					UiPop()
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
