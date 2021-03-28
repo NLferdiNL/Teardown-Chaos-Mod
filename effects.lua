@@ -809,6 +809,28 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		speedLimit = {
+			name = "Speed Limit",
+			effectDuration = 10,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local limit = 5
+
+				if(GetPlayerVehicle ~= 0) then
+
+					local vehicleBody = GetVehicleBody(GetPlayerVehicle())
+					local speed = VecLength(GetBodyVelocity(vehicleBody))
+					if speed > limit then
+						SetBodyVelocity(vehicleBody, VecScale(GetBodyVelocity(vehicleBody), limit/speed))
+					end
+					
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
