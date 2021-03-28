@@ -54,6 +54,8 @@ chaosEffects = {
 	
 	disabledEffects = {},
 	
+	debugPrintOrder = {"name", "effectDuration", "effectLifetime", "effectSFX", "effectVariables", "onEffectStart", "onEffectTick", "onEffectEnd"},
+	
 	effectTemplate = {
 		name = "Name", -- This is what shows up on the UI.
 		effectDuration = 0, -- If more than 0 this is a timed effect and will last.
@@ -806,7 +808,7 @@ chaosEffects = {
 				end
 				
 				vars.effectVariables.nameBackup = vars.name -- In case I decide on a new name
-				vars.name = ""
+				vars.name = chaosEffects.effects["instantDeath"].name
 			end,
 			onEffectTick = function(vars) 
 				if vars.effectLifetime >= vars.effectVariables.deathTimer then
@@ -838,7 +840,8 @@ chaosEffects = {
 			name = "Fake Teleport",
 			effectDuration = 3,
 			effectLifetime = 0,
-			effectVariables = { deathTimer = 3, nameBackup = "", transform = 0 },
+			effectSFX = {},
+			effectVariables = { revealTimer = 3, nameBackup = "", transform = 0 },
 			onEffectStart = function(vars)
 				SetPlayerVehicle(0)
 
@@ -847,10 +850,10 @@ chaosEffects = {
 				RespawnPlayer()
 				
 				vars.effectVariables.nameBackup = vars.name
-				vars.name = "Teleport To Spawn"
+				vars.name = chaosEffects.effects["teleportToSpawn"].name
 			end,
 			onEffectTick = function(vars) 
-				if vars.effectLifetime >= vars.effectVariables.deathTimer then
+				if vars.effectLifetime >= vars.effectVariables.revealTimer then
 					vars.name = vars.effectVariables.nameBackup
 					vars.effectDuration = 0
 					vars.effectLifetime = 0
@@ -866,6 +869,7 @@ chaosEffects = {
 			name = "Speed Limit",
 			effectDuration = 10,
 			effectLifetime = 0,
+			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars) 
@@ -888,6 +892,7 @@ chaosEffects = {
 			name = "Turtle Mode",
 			effectDuration = 0,
 			effectLifetime = 0,
+			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
 				if GetPlayerVehicle() ~= 0 then
@@ -930,6 +935,7 @@ chaosEffects = {
 			name = "Hold On To That Tool",
 			effectDuration = 10,
 			effectLifetime = 0,
+			effectSFX = {},
 			effectVariables = { tools = {"sledge", "spraycan", "extinguisher", "blowtorch", "shotgun", "plank", "pipebomb", "gun", "bomb", "rocket"} },
 			onEffectStart = function(vars)
 				for i = 1, #vars.effectVariables.tools do
@@ -948,6 +954,7 @@ chaosEffects = {
 			name = "Cinematic Mode",
 			effectDuration = 10,
 			effectLifetime = 0,
+			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)				

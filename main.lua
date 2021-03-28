@@ -5,7 +5,7 @@
 drawCallQueue = {}
 timeScale = 1 -- This one is required to keep chaos time flowing normally.
 
-local testThisEffect = "" -- Leave empty to let RNG grab effects.
+local testThisEffect = "vehicleKickflip" -- Leave empty to let RNG grab effects.
 local lastEffectKey = ""
 local currentTime = 0
 local currentEffects = {}
@@ -183,6 +183,50 @@ UiPop()
 
 end
 
+function debugTableToText(inputTable)
+	local returnString = "{ "
+	for key, value in pairs(inputTable) do
+		if type(value) == "string" or type(value) == "number" then
+			returnString = returnString .. key .." = " .. value .. ", "
+		elseif type(value) == "table" then
+			returnString = returnString .. key .. " = " .. debugTableToText(value) .. ", "
+		else
+			returnString = returnString .. key .. " = " .. type(value) .. ", "
+		end
+	end
+	returnString = returnString .. "}"
+	
+	return returnString
+end
+
+function drawDebugText()
+	UiPush()
+		UiAlign("top left")
+		UiTranslate(UiWidth() * 0.025, UiHeight() * 0.05)
+		UiTextShadow(0, 0, 0, 0.5, 2.0)
+		UiFont("bold.ttf", 26)
+		UiColor(1, 0.25, 0.25, 1)
+		UiText("CHAOS MOD DEBUG MODE ACTIVE")
+		UiTranslate(0, UiHeight() * 0.025)
+		UiText("Testing effect: " .. testThisEffect)
+		
+		local effect = chaosEffects.effects[testThisEffect]
+		
+		for index, key in ipairs(chaosEffects.debugPrintOrder) do
+			local effectProperty = effect[key]
+		
+			UiTranslate(0, UiHeight() * 0.025)
+			if type(effectProperty) == "string" or type(effectProperty) == "number" then
+				UiText(key .." = " .. effectProperty)
+			elseif type(effectProperty) == "table" then
+				UiText(key .." = " .. debugTableToText(effectProperty))
+			else
+				UiText(key .. " = " .. type(effectProperty))
+			end
+		end
+	UiPop()
+end
+
 function processDrawCallQueue()
 	for key, value in ipairs(drawCallQueue) do
 		value()
@@ -192,6 +236,10 @@ function processDrawCallQueue()
 end
 
 function draw()
+	if testThisEffect ~= "" then
+		drawDebugText()
+	end
+	
 	processDrawCallQueue()
 	drawTimer()
 	drawEffectLog()
