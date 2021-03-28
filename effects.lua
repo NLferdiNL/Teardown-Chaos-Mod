@@ -1086,6 +1086,22 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		birdPerspective = {
+			name = "GTA 2",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if GetPlayerVehicle() ~= 0 then
+					local playerCameraPos = GetPlayerCameraTransform().pos
+					SetCameraTransform(Transform(VecAdd(playerCameraPos, Vec(0, 30, 0)), QuatEuler(-90, -90, 0)))
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
