@@ -977,8 +977,9 @@ chaosEffects = {
 
 		dvdScreensaver = {
 			name = "DVD Screensaver",
-			effectDuration = 10,
+			effectDuration = 20,
 			effectLifetime = 0,
+			effectSFX = {},
 			effectVariables = { x = 0, y = 0, px = true, py = true},
 			onEffectStart = function(vars) 
 				vars.effectVariables.x = UiCenter()
@@ -987,6 +988,8 @@ chaosEffects = {
 			onEffectTick = function(vars)
 
 				local speed = 5
+				local middleSize = UiHeight()/5
+				
 
 				if vars.effectVariables.px then
 					vars.effectVariables.x = vars.effectVariables.x + speed
@@ -994,8 +997,8 @@ chaosEffects = {
 					vars.effectVariables.x = vars.effectVariables.x - speed
 				end
 
-				if vars.effectVariables.x >= UiWidth() or vars.effectVariables.x <= 0 then
-					vars.effectVariables.px = not vars.effectVariables.x
+				if vars.effectVariables.x + middleSize >= UiWidth() or vars.effectVariables.x - middleSize <= 0 then
+					vars.effectVariables.px = not vars.effectVariables.px
 				end
 
 				if vars.effectVariables.py then
@@ -1004,8 +1007,8 @@ chaosEffects = {
 					vars.effectVariables.y = vars.effectVariables.y - speed
 				end
 
-				if vars.effectVariables.y >= UiHeight() or vars.effectVariables.y <= 0 then
-					vars.effectVariables.py = not vars.effectVariables.y
+				if vars.effectVariables.y + middleSize >= UiHeight() or vars.effectVariables.y - middleSize <= 0 then
+					vars.effectVariables.py = not vars.effectVariables.py
 				end
 
 				table.insert(drawCallQueue, function()
@@ -1013,22 +1016,30 @@ chaosEffects = {
 					UiTranslate(vars.effectVariables.x - UiCenter(), vars.effectVariables.y - UiMiddle())
 					UiColor(0, 0, 0, 1)
 
-					local middleSize = UiHeight()/6
-					
-					UiRect(UiWidth(),UiHeight()/2-middleSize)
-
+					--Top part
 					UiPush()
-						UiTranslate(0, UiHeight()/2+middleSize)
-
-						UiRect(UiWidth(),UiHeight()/2-middleSize)
+						UiTranslate(-UiWidth()/2, -UiHeight()/2)
+						UiRect(UiWidth()*2,UiHeight()-middleSize) 
 					UiPop()
 
-					UiRect(UiWidth()/2-middleSize,UiHeight())
+					--Bottom part
+					UiPush()
+						UiTranslate(-UiWidth()/2, UiHeight()/2+middleSize)
 
+						UiRect(UiWidth()*2,UiHeight()-middleSize) 
+					UiPop()
+
+					--Left part
+					UiPush()
+						UiTranslate(-UiWidth()/2, 0)
+						UiRect(UiWidth()-middleSize,UiHeight()) 
+					UiPop()
+
+					--Right part
 					UiPush()
 						UiTranslate(UiWidth()/2+middleSize, 0)
 
-						UiRect(UiWidth()/2-middleSize,UiHeight())
+						UiRect(UiWidth()-middleSize,UiHeight()) 
 					UiPop()
 				UiPop()
 				end)
