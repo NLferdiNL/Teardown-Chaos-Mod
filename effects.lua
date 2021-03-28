@@ -831,6 +831,22 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		flipVehicle = {
+			name = "Turtle Mode",
+			effectDuration = 0,
+			effectLifetime = 0,
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				if GetPlayerVehicle() ~= 0 then
+					local vehicleBody = GetVehicleBody(GetPlayerVehicle())
+
+					SetBodyTransform(vehicleBody, Transform(VecAdd(GetBodyTransform(vehicleBody).pos, Vec(0,3,0)), QuatRotateQuat(GetBodyTransform().rot, QuatAxisAngle(Vec(1,0,0), 180))))
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
