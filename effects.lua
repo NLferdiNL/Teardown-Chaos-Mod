@@ -1273,6 +1273,43 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+
+		fakeDeleteVehicle = {
+			name = "Fake Delete Vehicle",
+			effectDuration = 5,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {},
+			effectVariables = { revealTimer = 5, nameBackup = "", transform = 0, vehicle = 0 },
+			onEffectStart = function(vars)
+
+				local vehicle = GetPlayerVehicle()
+				if vehicle ~= 0 then
+					vars.effectVariables.vehicle = vehicle
+					vars.effectVariables.transform = GetBodyTransform(GetVehicleBody(vehicle))
+					SetPlayerVehicle(0)
+					SetBodyTransform(GetVehicleBody(vehicle), Transform(Vec(10000,10000,10000), GetBodyTransform(GetVehicleBody(vehicle)).rot))--Just get the vehicle out of there
+				end
+				
+				vars.effectVariables.nameBackup = vars.name
+				vars.name = chaosEffects.effects["removeCurrentVehicle"].name
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectLifetime >= vars.effectVariables.revealTimer or vars.effectVariables.vehicle == 0 then
+					vars.name = vars.effectVariables.nameBackup
+					vars.effectDuration = 0
+					vars.effectLifetime = 0
+
+					local vehicle = vars.effectVariables.vehicle
+					if vehicle ~= 0 then
+						SetBodyTransform(GetVehicleBody(vehicle), vars.effectVariables.transform)
+						SetBodyVelocity(GetVehicleBody(vehicle), Vec(0,0,0))
+						SetPlayerVehicle(vehicle)
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 
