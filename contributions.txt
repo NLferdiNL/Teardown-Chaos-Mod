@@ -1,4 +1,18 @@
 Superfroggman:
+Laser Vision (id: laserVision)
+Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
+Let's Try That Again (id: rewind)
+Explode Random Explosive (id: explodeRandomExplosive)
+Feather Falling (id: featherFalling)
+Who's there? (id: knocking)
+Diggy Diggy Hole (id: diggydiggyhole)
+Cinematic Mode (id: cinematicMode)
+Hold On To That Tool (id: disableTools)
+Invert Vehicle (id: flipVehicle)
+Speed Limit (id: speedLimit)
+Fake Teleport (id: fakeTeleport)
+DVD Screensaver (id: dvdScreensaver)
 
 der_baumkrieger:
-Hope That Can Fly (id: flyaway)
+Hope That Can Fly (id: objectFlyAway)
+GTA 2 (id: birdPerspective)

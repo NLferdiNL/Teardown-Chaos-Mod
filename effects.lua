@@ -60,6 +60,7 @@ chaosEffects = {
 		name = "Name", -- This is what shows up on the UI.
 		effectDuration = 0, -- If more than 0 this is a timed effect and will last.
 		effectLifetime = 0, -- Keep this at 0, this is how long the effect has been running for.
+		hideTimer = false, -- For effects that trick the player.
 		effectSFX = {}, -- Locations of SFX. Will be replaced by their handle during setup.
 		effectVariables = {}, -- Any variables the effect has access to.
 							  -- The reason you want your variables in here rather than its parent Table is readability.
@@ -73,6 +74,7 @@ chaosEffects = {
 		name = "No effects enabled!",
 		effectDuration = 10,
 		effectLifetime = 0,
+		hideTimer = false,
 		effectSFX = {},
 		effectVariables = {},
 		onEffectStart = function(vars) end,
@@ -87,6 +89,7 @@ chaosEffects = {
 			name = "Suicide",
 			effectDuration = 5,
 			effectLifetime = 0,
+			hideTimer = true,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -104,6 +107,7 @@ chaosEffects = {
 			name = "Launch Player Up",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -124,6 +128,7 @@ chaosEffects = {
 			name = "Jetpack",
 			effectDuration = 15,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -143,6 +148,7 @@ chaosEffects = {
 			name = "Launch Player",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -168,6 +174,7 @@ chaosEffects = {
 			name = "Explode Player",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -182,6 +189,7 @@ chaosEffects = {
 			name = "Set Player On Fire",
 			effectDuration = 5,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -197,6 +205,7 @@ chaosEffects = {
 			name = "Remove Current Vehicle",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -213,6 +222,7 @@ chaosEffects = {
 			name = "Hole'd up",
 			effectDuration = 3,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -228,6 +238,7 @@ chaosEffects = {
 			name = "Stop And Stare",
 			effectDuration = 5,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -242,6 +253,7 @@ chaosEffects = {
 			name = "My Glasses!",
 			effectDuration = 12,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -255,6 +267,7 @@ chaosEffects = {
 			name = "0.2x Gamespeed",
 			effectDuration = 12,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -268,6 +281,7 @@ chaosEffects = {
 			name = "0.5x Gamespeed",
 			effectDuration = 12,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -281,6 +295,7 @@ chaosEffects = {
 			name = "Smokescreen",
 			effectDuration = 12,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -297,6 +312,7 @@ chaosEffects = {
 			name = "Take A Break",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -310,6 +326,7 @@ chaosEffects = {
 			name = "Invincibility",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -323,6 +340,7 @@ chaosEffects = {
 			name = "Teleport To Spawn",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -338,6 +356,7 @@ chaosEffects = {
 			name = "One Hit KO",
 			effectDuration = 7,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -353,6 +372,7 @@ chaosEffects = {
 			name = "I'm Tired",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {fadeAlpha = 0, waking = false},
 			onEffectStart = function(vars) end,
@@ -389,6 +409,7 @@ chaosEffects = {
 			name = "Airstrike",
 			effectDuration = 15,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = { maxShells = 50, shellNum = 1, defaultShell = { active = false, explode = false, velocity = 500 }, shells = {},},
 			onEffectStart = function(vars) end,
@@ -466,6 +487,7 @@ chaosEffects = {
 			name = "Laser Vision",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -489,6 +511,7 @@ chaosEffects = {
 			name = "Teleport To A Random Location",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars)
@@ -522,6 +545,7 @@ chaosEffects = {
 			name = "Hope That Wasn't Important",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -557,6 +581,7 @@ chaosEffects = {
 			name = "Portrait Mode",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {currentBorderPos = 0},
 			onEffectStart = function(vars) end,
@@ -592,6 +617,7 @@ chaosEffects = {
 			name = "Explosion Stare",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {currentBorderPos = 0},
 			onEffectStart = function(vars) 
@@ -604,7 +630,7 @@ chaosEffects = {
 					Explosion(hitPoint, 1)
 				end
 				
-				end,
+			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
@@ -613,6 +639,7 @@ chaosEffects = {
 			name = "Feather Falling",
 			effectDuration = 12,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -631,6 +658,7 @@ chaosEffects = {
 			name = "Explode Random Explosive",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars)
@@ -659,6 +687,7 @@ chaosEffects = {
 			name = "Teleport A Few Meters",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {currentBorderPos = 0},
 			onEffectStart = function(vars) 
@@ -688,9 +717,10 @@ chaosEffects = {
 		},
 
 		rewind = {
-			name = "Let's Try That Again",
+			name = "Lets Try That Again",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {transform = Transform(Vec(0,0,0), QuatEuler(0,0,0)), currentVehicle = 0, velocity = Vec(0,0,0)},
 			onEffectStart = function(vars) 
@@ -722,6 +752,7 @@ chaosEffects = {
 			name = "Enter Nearby Vehicle",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -761,6 +792,7 @@ chaosEffects = {
 			name = "Eject From Vehicle",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -774,6 +806,7 @@ chaosEffects = {
 			name = "Take A Walk",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -789,6 +822,7 @@ chaosEffects = {
 			name = "Nothing",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -800,6 +834,7 @@ chaosEffects = {
 			name = "Fake Death",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = true,
 			effectSFX = {},
 			effectVariables = { deathTimer = 5, nameBackup = "" },
 			onEffectStart = function(vars)
@@ -816,6 +851,9 @@ chaosEffects = {
 					vars.effectDuration = 0
 					vars.effectLifetime = 0
 				else
+				
+					SetPlayerHealth(1)
+					
 					local playerCamera = GetPlayerCameraTransform()
 					local playerCameraPos = playerCamera.pos
 				
@@ -840,6 +878,7 @@ chaosEffects = {
 			name = "Fake Teleport",
 			effectDuration = 3,
 			effectLifetime = 0,
+			hideTimer = true,
 			effectSFX = {},
 			effectVariables = { revealTimer = 3, nameBackup = "", transform = 0 },
 			onEffectStart = function(vars)
@@ -869,6 +908,7 @@ chaosEffects = {
 			name = "Speed Limit",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -892,6 +932,7 @@ chaosEffects = {
 			name = "Invert Vehicle",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -909,6 +950,7 @@ chaosEffects = {
 			name = "Who's there?",
 			effectDuration = 15,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/knock.ogg"}},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -922,6 +964,7 @@ chaosEffects = {
 			name = "Diggy Diggy Hole",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -935,6 +978,7 @@ chaosEffects = {
 			name = "Hold On To That Tool",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = { tools = {"sledge", "spraycan", "extinguisher", "blowtorch", "shotgun", "plank", "pipebomb", "gun", "bomb", "rocket"} },
 			onEffectStart = function(vars)
@@ -954,6 +998,7 @@ chaosEffects = {
 			name = "Cinematic Mode",
 			effectDuration = 10,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
@@ -979,6 +1024,7 @@ chaosEffects = {
 			name = "DVD Screensaver",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = { x = 0, y = 0, px = true, py = true},
 			onEffectStart = function(vars) 
@@ -1068,6 +1114,7 @@ chaosEffects = {
 			name = "Lag",
 			effectDuration = 15,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {lastPlayerPos = nil, lastPlayerRot = nil, lastPlayerVehicle = 0},
 			onEffectStart = function(vars)
@@ -1100,6 +1147,7 @@ chaosEffects = {
 			name = "Kickflip",
 			effectDuration = 0,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
@@ -1138,6 +1186,7 @@ chaosEffects = {
 			name = "Free Shots",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = {lastFrameTool = "", lastFrameAmmo = ""},
 			onEffectStart = function(vars) 
@@ -1163,6 +1212,7 @@ chaosEffects = {
 			name = "GTA 2",
 			effectDuration = 20,
 			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectVariables = { hitPoint = Vec(0,0,0)},
 			onEffectStart = function(vars) end,
@@ -1191,6 +1241,36 @@ chaosEffects = {
 				
 				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)))
 			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		objectFlyAway = {
+			name = "Hope That Can Fly",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, Vec(0, 0, -1))
+
+				local hit, hitPoint, distance, normal, shape = raycast(cameraTransform.pos, rayDirection, 50)
+
+				if not hit then
+					return
+				end
+
+				local shapeBody = GetShapeBody(shape)
+
+				if not IsBodyDynamic(shapeBody) then
+					return
+				end
+
+				local upVel = Vec(0, 35, 0)
+				SetBodyVelocity(shapeBody, upVel)
+			end,
+			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
 	},

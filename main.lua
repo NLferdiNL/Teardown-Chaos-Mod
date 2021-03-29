@@ -153,7 +153,7 @@ UiPush()
 	for key, value in ipairs(chaosEffects.activeEffects) do
 		UiText(value.name)
 		
-		if value.effectDuration > 0 then
+		if value.effectDuration > 0 and not value.hideTimer then
 			local effectDurationPercentage = 1 - (100 / value.effectDuration * value.effectLifetime / 100)
 		
 			UiColor(0.2, 0.2, 0.2, 0.2)
