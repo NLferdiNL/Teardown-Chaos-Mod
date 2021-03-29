@@ -264,7 +264,7 @@ chaosEffects = {
 		},
 		
 		slomo25 = {
-			name = "0.2x Gamespeed",
+			name = "0.25x Gamespeed",
 			effectDuration = 12,
 			effectLifetime = 0,
 			hideTimer = false,
