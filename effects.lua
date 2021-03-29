@@ -974,6 +974,78 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+
+		dvdScreensaver = {
+			name = "DVD Screensaver",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectVariables = { x = 0, y = 0, px = true, py = true},
+			onEffectStart = function(vars) 
+				vars.effectVariables.x = UiCenter()
+				vars.effectVariables.y = UiMiddle()
+			end,
+			onEffectTick = function(vars)
+
+				local speed = 5
+				local middleSize = UiHeight()/5
+				
+
+				if vars.effectVariables.px then
+					vars.effectVariables.x = vars.effectVariables.x + speed
+				else
+					vars.effectVariables.x = vars.effectVariables.x - speed
+				end
+
+				if vars.effectVariables.x + middleSize >= UiWidth() or vars.effectVariables.x - middleSize <= 0 then
+					vars.effectVariables.px = not vars.effectVariables.px
+				end
+
+				if vars.effectVariables.py then
+					vars.effectVariables.y = vars.effectVariables.y + speed
+				else
+					vars.effectVariables.y = vars.effectVariables.y - speed
+				end
+
+				if vars.effectVariables.y + middleSize >= UiHeight() or vars.effectVariables.y - middleSize <= 0 then
+					vars.effectVariables.py = not vars.effectVariables.py
+				end
+
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiTranslate(vars.effectVariables.x - UiCenter(), vars.effectVariables.y - UiMiddle())
+					UiColor(0, 0, 0, 1)
+
+					--Top part
+					UiPush()
+						UiTranslate(-UiWidth()/2, -UiHeight()/2)
+						UiRect(UiWidth()*2,UiHeight()-middleSize) 
+					UiPop()
+
+					--Bottom part
+					UiPush()
+						UiTranslate(-UiWidth()/2, UiHeight()/2+middleSize)
+
+						UiRect(UiWidth()*2,UiHeight()-middleSize) 
+					UiPop()
+
+					--Left part
+					UiPush()
+						UiTranslate(-UiWidth()/2, 0)
+						UiRect(UiWidth()-middleSize,UiHeight()) 
+					UiPop()
+
+					--Right part
+					UiPush()
+						UiTranslate(UiWidth()/2+middleSize, 0)
+
+						UiRect(UiWidth()-middleSize,UiHeight()) 
+					UiPop()
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 		
 		--[[quakefov = { -- Disables tool functionality, unsure how to fix yet.
 			name = "Quake FOV",
@@ -1083,6 +1155,41 @@ chaosEffects = {
 					vars.effectVariables.lastFrameTool = GetString("game.player.tool")
 					vars.effectVariables.lastFrameAmmo =  GetFloat("game.tool." ..  vars.effectVariables.lastFrameTool .. ".ammo")
 				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		birdPerspective = {
+			name = "GTA 2",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectVariables = { hitPoint = Vec(0,0,0)},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerCameraPos = nil
+				
+				local playerTransform = GetPlayerTransform()
+				
+				local playerPos = playerTransform.pos
+				
+				local rayOrigin = VecAdd(playerPos, Vec(0, 1, 0))
+				local rayDir = TransformToParentVec(playerTransform, {0, 1, 0})
+				
+				local hit, hitPoint = raycast(rayOrigin, rayDir, 100)
+				
+				if hit then
+					playerCameraPos = hitPoint
+					vars.effectVariables.hitPoint = hitPoint
+				else
+					playerCameraPos = VecAdd(GetPlayerCameraTransform().pos, Vec(0, 30, 0))
+				end
+					
+				if GetPlayerVehicle() == 0 then
+					SpawnParticle("smoke", playerPos, Vec(0, 0, 0),  0.5, 0.5)
+				end
+				
+				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)))
 			end,
 			onEffectEnd = function(vars) end,
 		},
