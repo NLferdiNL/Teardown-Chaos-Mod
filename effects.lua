@@ -86,7 +86,7 @@ chaosEffects = {
 	
 	effects = {
 		instantDeath = {
-			name = "Suicide",
+			name = "Instant Death",
 			effectDuration = 5,
 			effectLifetime = 0,
 			hideTimer = true,
