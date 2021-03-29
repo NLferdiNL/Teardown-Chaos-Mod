@@ -7,6 +7,9 @@ If you want to work on your own effects, you can either make a copy of the Works
 Or if you want to be working on the latest version, make a clone of this repository.
 Make sure to clone it into your local mods folder so you can test it without any hassle.
 
+That folder can be found here: %USERPROFILE%\Documents\Teardown\mods\
+This is where the game copies mods too aswell.
+
 The documentation about this mod can be found here:
 https://github.com/NLferdiNL/Teardown-Chaos-Mod/wiki
 
