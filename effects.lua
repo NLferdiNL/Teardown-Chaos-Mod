@@ -1164,13 +1164,32 @@ chaosEffects = {
 			effectDuration = 20,
 			effectLifetime = 0,
 			effectSFX = {},
-			effectVariables = {},
+			effectVariables = { hitPoint = Vec(0,0,0)},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				if GetPlayerVehicle() ~= 0 then
-					local playerCameraPos = GetPlayerCameraTransform().pos
-					SetCameraTransform(Transform(VecAdd(playerCameraPos, Vec(0, 30, 0)), QuatEuler(-90, -90, 0)))
+				local playerCameraPos = nil
+				
+				local playerTransform = GetPlayerTransform()
+				
+				local playerPos = playerTransform.pos
+				
+				local rayOrigin = VecAdd(playerPos, Vec(0, 1, 0))
+				local rayDir = TransformToParentVec(playerTransform, {0, 1, 0})
+				
+				local hit, hitPoint = raycast(rayOrigin, rayDir, 100)
+				
+				if hit then
+					playerCameraPos = hitPoint
+					vars.effectVariables.hitPoint = hitPoint
+				else
+					playerCameraPos = VecAdd(GetPlayerCameraTransform().pos, Vec(0, 30, 0))
 				end
+					
+				if GetPlayerVehicle() == 0 then
+					SpawnParticle("smoke", playerPos, Vec(0, 0, 0),  0.5, 0.5)
+				end
+				
+				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)))
 			end,
 			onEffectEnd = function(vars) end,
 		},
