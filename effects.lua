@@ -1116,7 +1116,7 @@ chaosEffects = {
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
-			effectVariables = {lastPlayerPos = nil, lastPlayerRot = nil, lastPlayerVehicle = 0},
+			effectVariables = {lastPlayerPos = nil, lastPlayerRot = nil, lastPlayerVel = nil, lastPlayerVehicle = 0, lastPlayerVehiclePos = nil, lastPlayerVehicleRot = nil, lastPlayerVehicleVel = nil,},
 			onEffectStart = function(vars)
 				local playerTransform = GetPlayerTransform()
 			
@@ -1124,19 +1124,46 @@ chaosEffects = {
 				vars.effectVariables.lastPlayerRot = playerTransform.rot
 				
 				vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
+				
+				if vars.effectVariables.lastPlayerVehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(vars.effectVariables.lastPlayerVehicle)
+					local vehicleTransform = GetBodyTransform(vehicleBody)
+				
+					vars.effectVariables.lastPlayerVehiclePos = vehicleTransform.pos
+					vars.effectVariables.lastPlayerVehicleRot = vehicleTransform.rot
+					vars.effectVariables.lastPlayerVehicleVel = GetBodyVelocity(vehicleBody)
+				end
 			end,
 			onEffectTick = function(vars)
-				if vars.effectLifetime % 2 <= 0.2 and vars.effectLifetime > 1 then
-					SetPlayerTransform(Transform(vars.effectVariables.lastPlayerPos, vars.effectVariables.lastPlayerRot))
-					SetPlayerVehicle(vars.effectVariables.lastPlayerVehicle)
+				if vars.effectLifetime % 2 <= 0.5 and vars.effectLifetime > 1 then
+					if vars.effectVariables.lastPlayerVehicle ~= 0 then
+						local vehicleBody = GetVehicleBody(vars.effectVariables.lastPlayerVehicle)
+						local vehicleTransform = GetBodyTransform(vehicleBody)
+						
+						SetBodyTransform(vehicleBody, Transform(vars.effectVariables.lastPlayerVehiclePos, vars.effectVariables.lastPlayerVehicleRot))
+						SetBodyVelocity(vehicleBody, vars.effectVariables.lastPlayerVehicleVel)
+					else
+						SetPlayerTransform(Transform(vars.effectVariables.lastPlayerPos, vars.effectVariables.lastPlayerRot))
+						SetPlayerVehicle(vars.effectVariables.lastPlayerVehicle)
+						SetPlayerVelocity(vars.effectVariables.lastPlayerVel)
+					end
 				else
-					if vars.effectLifetime % 2 <= 1 then
+					if vars.effectLifetime % 3 <= 2.5 then
 						local playerTransform = GetPlayerTransform()
 			
 						vars.effectVariables.lastPlayerPos = playerTransform.pos
 						vars.effectVariables.lastPlayerRot = playerTransform.rot
 						
-						vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
+						if GetPlayerVehicle() == vars.effectVariables.lastPlayerVehicle then
+							local vehicleBody = GetVehicleBody(vars.effectVariables.lastPlayerVehicle)
+							local vehicleTransform = GetBodyTransform(vehicleBody)
+							
+							vars.effectVariables.lastPlayerVehiclePos = vehicleTransform.pos
+							vars.effectVariables.lastPlayerVehicleRot = vehicleTransform.rot
+							vars.effectVariables.lastPlayerVehicleVel = GetBodyVelocity(vehicleBody)
+						else
+							vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
+						end
 					end
 				end
 			end,
