@@ -12,6 +12,7 @@ Invert Vehicle (id: flipVehicle)
 Speed Limit (id: speedLimit)
 Fake Teleport (id: fakeTeleport)
 DVD Screensaver (id: dvdScreensaver)
+Fake Delete Vehicle (id: fakeDeleteVehicle)
 
 der_baumkrieger:
 Hope That Can Fly (id: objectFlyAway)
