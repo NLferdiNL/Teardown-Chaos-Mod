@@ -1282,19 +1282,20 @@ chaosEffects = {
 			effectSFX = {},
 			effectVariables = { revealTimer = 5, nameBackup = "", transform = 0, vehicle = 0 },
 			onEffectStart = function(vars)
-
 				local vehicle = GetPlayerVehicle()
 				if vehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(vehicle)
 					vars.effectVariables.vehicle = vehicle
 					vars.effectVariables.transform = GetBodyTransform(GetVehicleBody(vehicle))
 					SetPlayerVehicle(0)
-					SetBodyTransform(GetVehicleBody(vehicle), Transform(Vec(10000,10000,10000), GetBodyTransform(GetVehicleBody(vehicle)).rot))--Just get the vehicle out of there
+					SetBodyTransform(vehicleBody, Transform(Vec(0, 10000, 0), GetBodyTransform(GetVehicleBody(vehicle)).rot))--Just get the vehicle out of there
 				end
 				
 				vars.effectVariables.nameBackup = vars.name
 				vars.name = chaosEffects.effects["removeCurrentVehicle"].name
 			end,
 			onEffectTick = function(vars) 
+			
 				if vars.effectLifetime >= vars.effectVariables.revealTimer or vars.effectVariables.vehicle == 0 then
 					vars.name = vars.effectVariables.nameBackup
 					vars.effectDuration = 0
@@ -1302,9 +1303,20 @@ chaosEffects = {
 
 					local vehicle = vars.effectVariables.vehicle
 					if vehicle ~= 0 then
-						SetBodyTransform(GetVehicleBody(vehicle), vars.effectVariables.transform)
-						SetBodyVelocity(GetVehicleBody(vehicle), Vec(0,0,0))
+						local vehicleBody = GetVehicleBody(vehicle)
+					
+						SetBodyTransform(vehicleBody, vars.effectVariables.transform)
+						SetBodyVelocity(vehicleBody, Vec(0,0,0))
+						SetBodyDynamic(vehicleBody, true)
 						SetPlayerVehicle(vehicle)
+					end
+				else
+					if vars.effectVariables.vehicle ~= 0 then
+						local vehicleBody = GetVehicleBody(vehicle)
+						
+						if IsBodyDynamic(vehicleBody) then
+							SetBodyDynamic(vehicleBody, false)
+						end
 					end
 				end
 			end,
