@@ -5,7 +5,7 @@
 -- Globals
 drawCallQueue = {}
 timeScale = 1 -- This one is required to keep chaos time flowing normally.
-testThisEffect = "slomo25" -- Leave empty to let RNG grab effects.
+testThisEffect = "" -- Leave empty to let RNG grab effects.
 lastEffectKey = ""
 currentTime = 0
 timerPaused = false
