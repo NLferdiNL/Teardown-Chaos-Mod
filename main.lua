@@ -1,14 +1,15 @@
 #include "effects.lua"
 #include "utils.lua"
+#include "debug.lua"
 
 -- Globals
 drawCallQueue = {}
 timeScale = 1 -- This one is required to keep chaos time flowing normally.
-
-local testThisEffect = "" -- Leave empty to let RNG grab effects.
-local lastEffectKey = ""
-local currentTime = 0
-local currentEffects = {}
+testThisEffect = "slomo25" -- Leave empty to let RNG grab effects.
+lastEffectKey = ""
+currentTime = 0
+timerPaused = false
+chaosPaused = false
 
 function init()
 	saveFileInit()
@@ -33,6 +34,8 @@ function getRandomEffect()
 	if key == lastEffectKey and testThisEffect == "" and #chaosEffects.effectKeys > 1 then
 		return getRandomEffect()
 	end
+	
+	lastEffectKey = key
 	
 	local effectInstance = deepcopy(chaosEffects.effects[key])
 	
@@ -74,24 +77,6 @@ function chaosEffectTimersTick(dt)
 	end
 end
 
-function debugFunc()
-	if InputPressed("p") then
-		for i=1, 20 do
-		DebugPrint(" ")
-		end
-		
-		DebugPrint(chaosEffects.testVar == nil)
-		
-		for key, value in pairs(chaosEffects.effects["myGlasses"]) do
-			if type(value) ~= "table" and type(value) ~= "function"then
-				DebugPrint(key .. ": " .. value)
-			else
-				DebugPrint(key .. ": " .. type(value)) 
-			end
-		end
-	end
-end
-
 function GetChaosTimeStep()
 	if timeScale < 1 then
 		return GetTimeStep() * (timeScale + 1)
@@ -101,21 +86,25 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	--debugFunc()
+	debugTick()
 	
-	if(timeScale < 1) then
-		dt = dt * (timeScale + 1)
+	if not timerPaused then
+		if(timeScale < 1) then
+			dt = dt * (timeScale + 1)
+		end
+		
+		currentTime = currentTime + dt
+		
+		if currentTime > chaosTimer then
+			currentTime = 0
+			triggerChaos()
+			removeChaosLogOverflow()
+		end
 	end
 	
-	currentTime = currentTime + dt
-	
-	if currentTime > chaosTimer then
-		currentTime = 0
-		triggerChaos()
-		removeChaosLogOverflow()
+	if not chaosPaused then
+		chaosEffectTimersTick(dt)
 	end
-	
-	chaosEffectTimersTick(dt)
 	
 	if timeScale ~= 1 then
 		SetTimeScale(timeScale)
@@ -124,22 +113,22 @@ function tick(dt)
 end
 
 function drawTimer()
-local currentTimePercenage = 100 / chaosTimer * currentTime / 100
+	local currentTimePercenage = 100 / chaosTimer * currentTime / 100
 
-UiAlign("center middle")
+	UiAlign("center middle")
 
-UiPush()
-	UiColor(0.1, 0.1, 0.1, 0.5)
-	UiTranslate(UiCenter(), 0)
-	
-	UiRect(UiWidth() + 10, UiHeight() * 0.05)
-UiPop()
+	UiPush()
+		UiColor(0.1, 0.1, 0.1, 0.5)
+		UiTranslate(UiCenter(), 0)
+		
+		UiRect(UiWidth() + 10, UiHeight() * 0.05)
+	UiPop()
 
-UiPush()
-	UiColor(0.25, 0.25, 1)
-	UiTranslate(UiCenter() * currentTimePercenage, 0)
-	UiRect(UiWidth() * currentTimePercenage, UiHeight() * 0.05)
-UiPop()
+	UiPush()
+		UiColor(0.25, 0.25, 1)
+		UiTranslate(UiCenter() * currentTimePercenage, 0)
+		UiRect(UiWidth() * currentTimePercenage, UiHeight() * 0.05)
+	UiPop()
 end
 
 function drawEffectLog()
@@ -183,56 +172,6 @@ UiPop()
 
 end
 
-function debugTableToText(inputTable)
-	local returnString = "{ "
-	for key, value in pairs(inputTable) do
-		if type(value) == "string" or type(value) == "number" then
-			returnString = returnString .. key .." = " .. value .. ", "
-		elseif type(value) == "table" then
-			returnString = returnString .. key .. " = " .. debugTableToText(value) .. ", "
-		else
-			returnString = returnString .. key .. " = " .. type(value) .. ", "
-		end
-	end
-	returnString = returnString .. "}"
-	
-	return returnString
-end
-
-function drawDebugText()
-	local effect = nil
-
-	if #chaosEffects.activeEffects <= 0 then
-		effect = chaosEffects.effects[testThisEffect]
-	else
-		effect = chaosEffects.activeEffects[1]
-	end
-	
-	UiPush()
-		UiAlign("top left")
-		UiTranslate(UiWidth() * 0.025, UiHeight() * 0.05)
-		UiTextShadow(0, 0, 0, 0.5, 2.0)
-		UiFont("bold.ttf", 26)
-		UiColor(1, 0.25, 0.25, 1)
-		UiText("CHAOS MOD DEBUG MODE ACTIVE")
-		UiTranslate(0, UiHeight() * 0.025)
-		UiText("Testing effect: " .. testThisEffect)
-		
-		for index, key in ipairs(chaosEffects.debugPrintOrder) do
-			local effectProperty = effect[key]
-		
-			UiTranslate(0, UiHeight() * 0.025)
-			if type(effectProperty) == "string" or type(effectProperty) == "number" then
-				UiText(key .." = " .. effectProperty)
-			elseif type(effectProperty) == "table" then
-				UiText(key .." = " .. debugTableToText(effectProperty))
-			else
-				UiText(key .. " = " .. type(effectProperty))
-			end
-		end
-	UiPop()
-end
-
 function processDrawCallQueue()
 	for key, value in ipairs(drawCallQueue) do
 		value()
@@ -241,12 +180,11 @@ function processDrawCallQueue()
 	drawCallQueue = {}
 end
 
-function draw()
-	if testThisEffect ~= "" then
-		drawDebugText()
-	end
-	
+function draw()	
 	processDrawCallQueue()
+	
 	drawTimer()
 	drawEffectLog()
+	
+	debugDraw()
 end
