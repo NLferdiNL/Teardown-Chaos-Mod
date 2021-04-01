@@ -1349,6 +1349,47 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+	
+		lowgravity = { -- TODO: Check this
+			name = "Low Gravity",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerPos = GetPlayerPos()
+				local power = 2
+				local range = 50
+
+				local tempVec = GetPlayerVelocity()
+				tempVec[2] = 0.5
+				SetPlayerVelocity(tempVec)
+				
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local shapeList = QueryAabbShapes(minPos, maxPos)
+				
+				for key, value in ipairs(shapeList) do
+					local shapeBody = GetShapeBody(value)
+				
+					--[[ Always returns false, even on dynamic bodies?
+					if not IsBodyDynamic(shapeBody) then
+						return
+					end]]--
+
+					local shapeTransform = GetBodyTransform(shape)
+
+					local bodyVelocity = GetBodyVelocity(shapeBody)
+					
+					bodyVelocity[2] = 0.5
+					
+					SetBodyVelocity(shapeBody, bodyVelocity)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},
 }
 

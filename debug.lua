@@ -245,6 +245,28 @@ function drawDebugMenu()
 		
 		textBox01.render(textBox01)
 		
+		UiTranslate(0, 40)
+		
+		local textBox02, newBox02 = textboxClass.getTextBox(2)
+		
+		if newBox02 then
+			textBox02.name = "Chaos Timer"
+			textBox02.value = chaosTimer .. ""
+			textBox02.numbersOnly = true
+			textBox02.limitsActive = true
+			textBox02.numberMin = 2
+			textBox02.numberMax = 100
+			textBox02.height = 30
+		end
+		
+		if textBox02.value == "" then
+			chaosTimer = 100
+		else
+			chaosTimer = tonumber(textBox02.value)
+		end
+		
+		textBox02.render(textBox02)
+		
 		UiTranslate(-120, 30)
 		
 	UiPop()
