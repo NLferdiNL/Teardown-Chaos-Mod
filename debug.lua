@@ -6,6 +6,18 @@ local mouseActive = false
 
 local overrideTimeScale = false
 
+local effectListScrollPosition = 0
+local isMouseInList = false
+local listScreenHeight = 0
+local listScreenMaxScroll = 0
+local effectCount = 0
+
+function debugInit()
+	for key, value in pairs(chaosEffects.effects) do
+		effectCount = effectCount + 1
+	end
+end
+
 function debugTick()
 	if mouseActive then
 		UiMakeInteractive()
@@ -13,6 +25,7 @@ function debugTick()
 	
 	if debugMenuEnabled then
 		textboxClass.tick()
+		checkMouseScroll()
 	end
 	
 	checkDebugMenuToggles()
@@ -25,6 +38,7 @@ function debugDraw()
 	
 	if debugMenuEnabled then
 		drawDebugMenu()
+		drawEffectList()
 	end
 end
 
@@ -38,7 +52,24 @@ function checkDebugMenuToggles()
 		
 		if not debugMenuEnabled then
 			mouseActive = false
+		else
+			listScreenHeight = UiMiddle() - 20
+			listScreenMaxScroll = (effectCount * 30 + 2) - listScreenHeight + 15
 		end
+	end
+end
+
+function checkMouseScroll()
+	if not isMouseInList then
+		return
+	end
+	
+	effectListScrollPosition = effectListScrollPosition + -InputValue("mousewheel") * 10
+	
+	if effectListScrollPosition < 0 then
+		effectListScrollPosition = 0
+	elseif effectListScrollPosition > listScreenMaxScroll then
+		effectListScrollPosition = listScreenMaxScroll
 	end
 end
 
@@ -122,6 +153,69 @@ function debugTableToText(inputTable, loopThroughTables)
 	returnString = returnString .. "}"
 	
 	return returnString
+end
+
+function drawEffectList()
+	UiPush()
+		UiWordWrap(300)
+		UiButtonImageBox("ui/common/box-outline-6.png", 6, 6)
+		UiFont("regular.ttf", 26)
+		
+		UiTranslate(0, UiHeight())
+		
+		UiAlign("bottom left")
+		
+		UiColor(0, 0, 0, 0.75)
+		
+		UiRect(350, UiMiddle())
+		
+		UiAlign("top center")
+		
+		UiTranslate(175, -UiMiddle())
+		
+		UiColor(1, 1, 1, 0.75)
+		
+		UiRect(350, 30)
+		
+		UiColor(0, 0, 0, 1)
+		
+		UiText("Trigger Effect")
+		
+		UiTranslate(-175, 30)
+		
+		UiAlign("top left")
+		
+		UiPush()
+			isMouseInList = UiIsMouseInRect(350, UiMiddle() - 30)
+		
+			UiWindow(350, UiMiddle() - 30, true)
+			
+			UiColor(1, 1, 1, 1)
+			
+			local i = 0
+			
+			for uid, effect in pairs(chaosEffects.effects) do
+				UiPush()
+				
+				UiTranslate(0, i * 30 + 2 - effectListScrollPosition)
+				
+				if UiTextButton(effect.name, 330, 30) then
+					triggerEffect(getCopyOfEffect(uid))
+				end
+				
+				i = i + 1
+				
+				UiPop()
+			end
+			
+			UiAlign("right middle")
+			
+			UiTranslate(350, effectListScrollPosition / listScreenMaxScroll * UiMiddle())
+			
+			UiRect(20, 40)
+		UiPop()
+		
+	UiPop()
 end
 
 function drawDebugMenu()

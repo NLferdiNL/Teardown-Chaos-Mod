@@ -17,6 +17,12 @@ function init()
 	removeDisabledEffectKeys()
 	
 	chaosSFXInit()
+
+	debugInit()
+end
+
+function getCopyOfEffect(key)
+	return deepcopy(chaosEffects.effects[key])
 end
 
 function getRandomEffect()
@@ -37,17 +43,19 @@ function getRandomEffect()
 	
 	lastEffectKey = key
 	
-	local effectInstance = deepcopy(chaosEffects.effects[key])
+	local effectInstance = getCopyOfEffect(key)
 	
 	return effectInstance
 end
 
-function triggerChaos()
-	table.insert(chaosEffects.activeEffects, 1, getRandomEffect())
+function triggerEffect(effect)
+	table.insert(chaosEffects.activeEffects, 1, effect)
 	
-	local effect = chaosEffects.activeEffects[1]
-
 	effect.onEffectStart(effect)
+end
+
+function triggerChaos()
+	triggerEffect(getRandomEffect())
 end
 
 function removeChaosLogOverflow()

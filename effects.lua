@@ -1350,7 +1350,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 	
-		lowgravity = { -- TODO: Check this
+		lowgravity = {
 			name = "Low Gravity",
 			effectDuration = 15,
 			effectLifetime = 0,
@@ -1387,6 +1387,33 @@ chaosEffects = {
 					
 					SetBodyVelocity(shapeBody, bodyVelocity)
 				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		explosivePunch = {
+			name = "Explosive Punch",
+			effectDuration = 17.5,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+ 
+				local hit, hitPoint, distance = raycast(cameraTransform.pos, rayDirection, 3)
+				
+				if hit == false then
+					return
+				end
+ 
+				if InputDown("lmb") then
+					Explosion(hitPoint, 0.5)
+					SetPlayerHealth(1)
+				end
+ 
 			end,
 			onEffectEnd = function(vars) end,
 		},
