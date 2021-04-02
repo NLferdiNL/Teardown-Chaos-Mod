@@ -128,6 +128,8 @@ function drawDebugText()
 			UiTranslate(0, UiHeight() * 0.025)
 			if type(effectProperty) == "string" or type(effectProperty) == "number" then
 				UiText(key .." = " .. effectProperty)
+			elseif type(effectProperty) == "boolean" then
+				UiText(key .." = " .. tostring(effectProperty))
 			elseif type(effectProperty) == "table" then
 				UiText(key .." = " .. debugTableToText(effectProperty))
 			else

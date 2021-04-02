@@ -1241,7 +1241,7 @@ chaosEffects = {
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
-			effectVariables = { hitPoint = Vec(0,0,0)},
+			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local playerCameraPos = nil
@@ -1250,14 +1250,15 @@ chaosEffects = {
 				
 				local playerPos = playerTransform.pos
 				
-				local rayOrigin = VecAdd(playerPos, Vec(0, 1, 0))
-				local rayDir = TransformToParentVec(playerTransform, {0, 1, 0})
+				-- Camera movement
 				
-				local hit, hitPoint = raycast(rayOrigin, rayDir, 100)
+				local cameraRayOrigin = VecAdd(playerPos, Vec(0, 1, 0))
+				local cameraRayDir = TransformToParentVec(playerTransform, {0, 1, 0})
 				
-				if hit then
-					playerCameraPos = hitPoint
-					vars.effectVariables.hitPoint = hitPoint
+				local cameraHit, cameraHitPoint = raycast(cameraRayOrigin, cameraRayDir, 100)
+				
+				if cameraHit then
+					playerCameraPos = cameraHitPoint
 				else
 					playerCameraPos = VecAdd(GetPlayerCameraTransform().pos, Vec(0, 30, 0))
 				end
@@ -1267,6 +1268,101 @@ chaosEffects = {
 				end
 				
 				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)))
+				-- End camera movement
+				
+				--####################
+				
+				-- Player movement
+				
+				local walkingSpeed = 7
+				
+				local currentPlayerVelocity = GetPlayerVelocity()
+				
+				local forwardMovement = 0
+				
+				local rightMovement = 0
+				
+				local upwardsMovement = 0
+				
+				if InputDown("w") then
+					forwardMovement = forwardMovement + walkingSpeed
+				end
+				
+				if InputDown("s") then
+					forwardMovement = forwardMovement - walkingSpeed
+				end
+				
+				if InputDown("a") then
+					rightMovement = rightMovement - walkingSpeed
+				end
+				
+				if InputDown("d") then
+					rightMovement = rightMovement + walkingSpeed
+				end
+				
+				SetPlayerVelocity(Vec(forwardMovement,  currentPlayerVelocity[2], rightMovement))
+				
+				-- End Player movement
+				
+				--####################
+				
+				-- Enter Vehicle
+				
+				local range = 2
+				
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local bodyList = QueryAabbBodies(minPos, maxPos)
+				
+				local vehicleList = {}
+				
+				for i=1, #bodyList do
+					local currBody = bodyList[i]
+					
+					local vehicle = GetBodyVehicle(currBody) 
+					
+					if vehicle ~= 0 then
+						table.insert(vehicleList, vehicle)
+					end
+				end
+				
+				function getDistToVehicle(vehicle)
+					local vehicleTransform = GetVehicleTransform(vehicle)
+					local vehiclePos = vehicleTransform.pos
+					
+					local directionVector = VecSub(vehiclePos, playerPos)
+					
+					local distance = math.sqrt(directionVector[1]^2 +  directionVector[2]^2 +  directionVector[3]^2)
+					
+					return distance
+				end
+				
+				if #vehicleList <= 0 then
+					return
+				end
+				
+				local closestVehicleDist = getDistToVehicle(vehicleList[1])
+				local closetVehicleIndex = vehicleList[1]
+				
+				if #vehicleList > 1 then
+					for i=2, #vehicleList do
+						local currentVehicle = vehicleList[i]
+						local currDist = getDistToVehicle(currentVehicle)
+						
+						if currDist < closestVehicleDist then
+							closestVehicleDist = currDist
+							closetVehicleIndex = currentVehicle
+						end
+					end
+				end
+				
+				if InputPressed("e") then
+					SetPlayerVehicle(closetVehicleIndex)
+				end
+				
+				-- End Enter Vehicle
+				
+				-- TODO: Render enter vehicle on top of closest vehicle.
 			end,
 			onEffectEnd = function(vars) end,
 		},
