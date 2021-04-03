@@ -87,6 +87,14 @@ function dirVec(a, b)
 	return VecNormalize(VecSub(b, a))
 end
 
+function VecDist(a, b)
+	local directionVector = VecSub(b, a)
+	
+	local distance = math.sqrt(directionVector[1]^2 +  directionVector[2]^2 +  directionVector[3]^2)
+	
+	return distance
+end
+
 function VecToString(vec)
 	return vec[1] .. ", " .. vec[2] .. ", " .. vec[3]
 end

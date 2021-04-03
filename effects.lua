@@ -1325,10 +1325,10 @@ chaosEffects = {
 				local cameraRayOrigin = VecAdd(playerPos, Vec(0, 1, 0))
 				local cameraRayDir = TransformToParentVec(playerTransform, {0, 1, 0})
 				
-				local cameraHit, cameraHitPoint = raycast(cameraRayOrigin, cameraRayDir, 100)
+				local cameraHit, cameraHitPoint = raycast(cameraRayOrigin, cameraRayDir, 30)
 				
 				if cameraHit then
-					playerCameraPos = cameraHitPoint
+					playerCameraPos = VecAdd(cameraHitPoint, Vec(0, -2, 0))
 				else
 					playerCameraPos = VecAdd(GetPlayerCameraTransform().pos, Vec(0, 30, 0))
 				end
@@ -1337,7 +1337,15 @@ chaosEffects = {
 					SpawnParticle("smoke", playerPos, Vec(0, 0, 0),  0.5, 0.5)
 				end
 				
-				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)))
+				local distanceBetweenCamera = VecDist(playerPos, playerCameraPos)
+				
+				local fov = 120 / 30 * (120 - distanceBetweenCamera)
+				
+				if not cameraHit or distanceBetweenCamera < 6 then
+					fov = 90
+				end
+				
+				SetCameraTransform(Transform(playerCameraPos, QuatEuler(-90, -90, 0)), fov)
 				-- End camera movement
 				
 				--####################
@@ -1400,9 +1408,7 @@ chaosEffects = {
 					local vehicleTransform = GetVehicleTransform(vehicle)
 					local vehiclePos = vehicleTransform.pos
 					
-					local directionVector = VecSub(vehiclePos, playerPos)
-					
-					local distance = math.sqrt(directionVector[1]^2 +  directionVector[2]^2 +  directionVector[3]^2)
+					local distance = VecDist(playerPos, vehiclePos)
 					
 					return distance
 				end
@@ -1424,6 +1430,10 @@ chaosEffects = {
 							closetVehicleIndex = currentVehicle
 						end
 					end
+				end
+				
+				if GetPlayerVehicle() == 0 then
+					DrawBodyOutline(GetVehicleBody(closetVehicleIndex), 1, 1, 1, 0.75)
 				end
 				
 				if InputPressed("e") then
