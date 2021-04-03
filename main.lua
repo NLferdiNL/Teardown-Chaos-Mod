@@ -16,8 +16,8 @@ function init()
 	
 	removeDisabledEffectKeys()
 	
-	chaosSFXInit()
-
+	loadChaosEffectData()
+	
 	debugInit()
 end
 

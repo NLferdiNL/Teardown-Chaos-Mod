@@ -20,6 +20,21 @@ function saveFileInit()
 		chaosEffects.disabledEffects = {}
 		SetString(moddataPrefix.. "DisabledEffects", "")
 	end
+	
+	if saveVersion < 3 then
+		saveVersion = 3
+		SetInt(moddataPrefix .. "Version", 3)
+		
+		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+		
+		if chaosEffects.disabledEffects["fakeDeleteVehicle"] == nil then
+			chaosEffects.disabledEffects["fakeDeleteVehicle"] = "disabled"
+		end
+		
+		DebugPrint(chaosEffects.effects.fakeDeleteVehicle.name .. " is disabled by default now. Use the options to reenable.")
+		DebugPrint("Until it is fixed for multi part vehicles.")
+		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
+	end
 end
 
 function SerializeTable(a) -- Currently only works for key value string tables! (Ignores values)
@@ -70,6 +85,10 @@ end
 
 function dirVec(a, b)
 	return VecNormalize(VecSub(b, a))
+end
+
+function VecToString(vec)
+	return vec[1] .. ", " .. vec[2] .. ", " .. vec[3]
 end
 
 function raycast(origin, direction, maxDistance, radius, rejectTransparant)

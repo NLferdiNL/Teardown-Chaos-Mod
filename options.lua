@@ -17,16 +17,30 @@ function draw()
 	
 	UiPush()
 		UiTranslate(UiWidth(), UiHeight())
-		UiTranslate(-50, 3 * -50)
+		UiTranslate(-50, 5 * -50)
 		UiAlign("right bottom")
 	
 		UiFont("regular.ttf", 26)
 		
 		UiButtonImageBox("ui/common/box-outline-6.png", 6, 6)
 		
+		if UiTextButton("Enable All", 200, 50) then
+			chaosEffects.disabledEffects = {}
+		end
+		
+		UiTranslate(0, 60)
+		
+		if UiTextButton("Disable All", 200, 50) then
+			for key, value in ipairs(chaosEffects.effectKeys) do
+				chaosEffects.disabledEffects[value] = "disabled"
+			end
+		end
+		
+		UiTranslate(0, 60)
+		
 		if UiTextButton("Reset to default", 200, 50) then
 			textBox01.value = 10 .. ""
-			chaosEffects.disabledEffects = {}
+			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled"}
 		end
 		
 		UiTranslate(0, 60)
