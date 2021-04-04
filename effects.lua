@@ -1543,7 +1543,6 @@ chaosEffects = {
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local playerPos = GetPlayerPos()
-				local power = 2
 				local range = 50
 
 				local tempVec = GetPlayerVelocity()
@@ -1602,7 +1601,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		--[[suddenFlood = {
+		suddenFlood = {
 			name = "Flood",
 			effectDuration = 10,--20,
 			effectLifetime = 0,
@@ -1615,20 +1614,23 @@ chaosEffects = {
 			end,
 			onEffectTick = function(vars)
 				local playerPos = GetPlayerPos()
+				local playerCamera = GetPlayerCameraTransform()
+				local floatHeightDiff = 0.25
+				
 				local waterPos = VecCopy(playerPos)
 				
 				waterPos[2] = vars.effectVariables.waterHeight
 				
 				local rotation = QuatEuler(90, 0, 0)
-			
-				DrawSprite(vars.effectSprites[1], Transform(waterPos, rotation), 100, 100, 0, 0, 1, 0.25, true, true)
-			
-				local range = 25
 				
-				local floatHeightDiff = -0.5
+				DrawSprite(vars.effectSprites[1], Transform(waterPos, rotation), 500, 500, 0, 0, 1, 0.25, true, true)
 				
-				local minPos = VecAdd(playerPos, Vec(-range, -math.abs(playerPos[2] - vars.effectVariables.waterHeight), -range))
-				local maxPos = VecAdd(playerPos, Vec(range, math.abs(playerPos[2] - vars.effectVariables.waterHeight) + floatHeightDiff, range))
+				-- Object Behaviour
+				
+				local range = 50
+				
+				local minPos = VecAdd(playerPos, Vec(-range, -math.abs(vars.effectVariables.waterHeight - range), -range))
+				local maxPos = VecAdd(playerPos, Vec(range, math.abs(playerPos[2] - vars.effectVariables.waterHeight) - floatHeightDiff, range))
 				
 				--DebugPrint(VecToString(minPos) .. " || " .. VecToString(maxPos))
 				
@@ -1637,36 +1639,62 @@ chaosEffects = {
 				for key, value in ipairs(shapeList) do
 					local shapeBody = GetShapeBody(value)
 				
-					--[ Always returns false, even on dynamic bodies?
+					--[[ Always returns false, even on dynamic bodies?
 					if not IsBodyDynamic(shapeBody) then
 						return
-					end]--
+					end]]--
 
 					local shapeTransform = GetBodyTransform(shape)
 
 					local bodyVelocity = GetBodyVelocity(shapeBody)
 					
-					local bodyMass = GetBodyMass(shapeBody)
+					--local bodyMass = GetBodyMass(shapeBody)
 					
-					DebugPrint(bodyMass)
+					--DebugPrint(bodyMass)
 					
-					bodyVelocity[2] = 0.5
+					bodyVelocity[2] = 0.1 * math.abs(shapeTransform.pos[2] - (vars.effectVariables.waterHeight - floatHeightDiff))--5 / 20000 * bodyMass
 					
 					SetBodyVelocity(shapeBody, bodyVelocity)
 				end
 				
+				-- End Object Behaviour
+				
+				--####################
+				
+				-- Player Behaviour
+				
 				if playerPos[2] < vars.effectVariables.waterHeight - floatHeightDiff then
 					local playerVelocity = GetPlayerVelocity()
 					
-					playerVelocity[2] = 0.5
+					if InputDown("ctrl") then
+						playerVelocity[2] = -3
+					elseif InputDown("space") then
+						playerVelocity[2] = 3
+					else
+						playerVelocity[2] = 2
+					end
+					
 					
 					SetPlayerVelocity(playerVelocity)
 				end
+				
+				if playerCamera.pos[2] < vars.effectVariables.waterHeight then
+					table.insert(drawCallQueue, function() 
+						UiPush()
+							UiAlign("top left")
+							UiColor(0.25, 0.25, 1, 0.5)
+							UiRect(UiWidth() + 20, UiHeight() + 20)
+							UiBlur(0.25)
+						UiPop()
+					end)
+				end
+				
+				-- End Player Behaviour
 			end,
 			onEffectEnd = function(vars) end,
 		},
 		
-		dontStopDriving = {
+		--[[dontStopDriving = {
 			name = "Speed",
 			effectDuration = 20,
 			effectLifetime = 0,
