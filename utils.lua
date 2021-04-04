@@ -78,6 +78,10 @@ function DeserializeTable(a) -- Currently only works for serialized string table
 	return deserializedTable
 end
 
+function roundToTwoDecimals(a) --TODO: Make a better, generic version with more decimal points.
+	return math.floor(a * 100)/100
+end
+
 function rndVec(length)
 	local v = VecNormalize(Vec(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
 	return VecScale(v, length)	

@@ -256,7 +256,7 @@ function drawDebugMenu()
 		
 		UiTranslate(0, 80)
 		
-		UiText("Current time: " .. math.floor(currentTime * 100)/100 .. "/" .. chaosTimer)
+		UiText("Current time: " .. roundToTwoDecimals(currentTime) .. "/" .. chaosTimer)
 		
 		UiTranslate(0, 30)
 		

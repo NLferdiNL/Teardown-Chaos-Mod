@@ -1601,7 +1601,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		suddenFlood = {
+		--[[suddenFlood = {
 			name = "Flood",
 			effectDuration = 10,--20,
 			effectLifetime = 0,
@@ -1639,10 +1639,10 @@ chaosEffects = {
 				for key, value in ipairs(shapeList) do
 					local shapeBody = GetShapeBody(value)
 				
-					--[[ Always returns false, even on dynamic bodies?
+					--[ Always returns false, even on dynamic bodies?
 					if not IsBodyDynamic(shapeBody) then
 						return
-					end]]--
+					end]--
 
 					local shapeTransform = GetBodyTransform(shape)
 
@@ -1692,20 +1692,78 @@ chaosEffects = {
 				-- End Player Behaviour
 			end,
 			onEffectEnd = function(vars) end,
-		},
+		},]]--
 		
-		--[[dontStopDriving = {
+		dontStopDriving = {
 			name = "Speed",
 			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { fuseTimer = 10 },
 			onEffectStart = function(vars) end,
-			onEffectTick = function(vars) end,
+			onEffectTick = function(vars)
+				local vehicle = GetPlayerVehicle()
+				
+				if vehicle == 0 then
+					return
+				end
+				
+				local vehicleBody = GetVehicleBody(vehicle)
+				local vehicleTransform = GetVehicleTransform(vehicle)
+				
+				local vel = TransformToLocalVec(vehicleTransform, GetBodyVelocity(vehicleBody))
+				
+				local speed = -vel[3]
+				--Speed is in meter per second, convert to km/h
+				speed = speed * 3.6
+				
+				speed = math.abs(math.floor(speed))
+				
+				table.insert(drawCallQueue, function()
+					UiPush()
+						UiFont("regular.ttf", 52)
+						UiTextShadow(0, 0, 0, 0.5, 2.0)
+						
+						UiAlign("center middle")
+						
+						UiTranslate(UiCenter(), UiHeight() * 0.2)
+						
+						UiText("Keep above 30 km/u or the bomb explodes!")
+						
+						UiTranslate(0, 40)
+						
+						UiFont("regular.ttf", 26)
+						
+						local fuseStatus = " "
+						
+						if speed < 30 then
+							fuseStatus = "TICKING"
+							vars.effectVariables.fuseTimer = vars.effectVariables.fuseTimer - GetChaosTimeStep()
+						elseif vars.effectVariables.fuseTimer < 10 then
+							vars.effectVariables.fuseTimer = vars.effectVariables.fuseTimer + GetChaosTimeStep()
+							fuseStatus = "RECOVERING"
+						elseif vars.effectVariables.fuseTimer > 10 then
+							 vars.effectVariables.fuseTimer = 10
+						end
+						
+						if vars.effectVariables.fuseTimer <= 0 then
+							Explosion(GetPlayerPos(), 4)
+							vars.effectDuration = 0
+						end
+						
+						UiText("Fuse: " .. math.floor(vars.effectVariables.fuseTimer) .. " " .. fuseStatus)
+						
+						UiTranslate(0, 25)
+						
+						UiText("Current speed: " .. speed .. " km\h")
+					UiPop()
+				end)
+				
+			end,
 			onEffectEnd = function(vars) end,
-		},]]--
+		},
 	},
 }
 
