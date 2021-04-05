@@ -17,6 +17,10 @@ function debugInit()
 	for key, value in pairs(chaosEffects.effects) do
 		effectCount = effectCount + 1
 	end
+	
+	if testThisEffect ~= "" then
+		currentTime = chaosTimer * 0.9
+	end
 end
 
 function debugTick()

@@ -1821,7 +1821,7 @@ chaosEffects = {
 		
 		foggyDay = {
 			name = "Foggy Day",
-			effectDuration = 20,
+			effectDuration = 30,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -1851,11 +1851,147 @@ chaosEffects = {
 			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/carhonks/honk01.ogg"}, 
+						 {isLoop = false, soundPath = "MOD/sfx/carhonks/honk02.ogg"}, 
+						 {isLoop = false, soundPath = "MOD/sfx/carhonks/honk03.ogg"}, 
+						 {isLoop = false, soundPath = "MOD/sfx/carhonks/honk04.ogg"}, 
+						 {isLoop = false, soundPath = "MOD/sfx/carhonks/honk05.ogg"}, },
+			effectSprites = {},
+			effectVariables = {vehicles = {}},
+			onEffectStart = function(vars)
+				local range = 500
+				local minPos = Vec(-range, -range, -range)
+				local maxPos = Vec(range, range, range)
+				local nearbyShapes = QueryAabbShapes(minPos, maxPos)
+
+				for i = 1, #nearbyShapes do
+					local currentShape = nearbyShapes[i]
+					local shapeBody = GetShapeBody(currentShape)
+					
+					if GetBodyVehicle(shapeBody) ~= 0 then
+						local vehicleHandle = GetBodyVehicle(shapeBody)
+						
+						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = {handle = vehicleHandle, honkTimer = 0}
+					end
+				end
+			end,
+			onEffectTick = function(vars)
+				for index, vehicleData in ipairs(vars.effectVariables.vehicles) do
+					if math.random(1, 10) > 6 and vehicleData.honkTimer <= 0 then
+						vehicleData.honkTimer = math.random(3, 5)
+						
+						local vehicleTransform = GetVehicleTransform(vehicleData.handle)
+						
+						local sfxIndex = math.random(1, #vars.effectSFX)
+						
+						PlaySound(vars.effectSFX[sfxIndex], vehicleTransform.pos,  1)
+					else
+						vehicleData.honkTimer = vehicleData.honkTimer - GetChaosTimeStep()
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		superWalkJump = {
+			name = "Super Jump & Super Walkspeed",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { jumpNextFrame = false },
 			onEffectStart = function(vars) end,
-			onEffectTick = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerVel = VecCopy(GetPlayerVelocity())
+				
+				playerVel[1] = 0
+				playerVel[3] = 0
+				
+				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
+				
+				if vars.effectVariables.jumpNextFrame then
+					vars.effectVariables.jumpNextFrame = false
+					
+					playerVel[2] = 15
+					
+					SetPlayerVelocity(playerVel)
+				end
+				
+				if InputPressed("space") and isTouchingGround then
+					vars.effectVariables.jumpNextFrame = true
+				end
+				
+				local forwardMovement = 0
+				local rightMovement = 0
+				
+				if InputDown("up") then
+					forwardMovement = forwardMovement + 1
+				end
+				
+				if InputDown("down") then
+					forwardMovement = forwardMovement - 1
+				end
+				
+				if InputDown("left") then
+					rightMovement = rightMovement - 1
+				end
+				
+				if InputDown("right") then
+					rightMovement = rightMovement + 1
+				end
+				
+				forwardMovement = forwardMovement * 25
+				rightMovement = rightMovement * 25
+				
+				local playerTransform = GetPlayerTransform()
+				
+				local forwardInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(0, 0, -1))
+				local rightInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(1, 0, 0))
+				
+				local forwardDirectionStrength = VecScale(forwardInWorldSpace, forwardMovement)
+				local rightDirectionStrength = VecScale(rightInWorldSpace, rightMovement)
+				
+				playerVel = VecAdd(VecAdd(playerVel, forwardDirectionStrength), rightDirectionStrength)
+				
+				playerVel = playerVel
+				
+				SetPlayerVelocity(playerVel)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		tripleJump = {
+			name = "Triple Jump",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { jumpNextFrame = false, jumpsLeft = 0, maxExtraJumps = 2 },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerVel = GetPlayerVelocity()
+				
+				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
+				
+				if vars.effectVariables.jumpNextFrame then
+					vars.effectVariables.jumpNextFrame = false
+					
+					playerVel[2] = 4
+				end
+				
+				if InputPressed("space") and vars.effectVariables.jumpsLeft > 0 then
+					vars.effectVariables.jumpsLeft = vars.effectVariables.jumpsLeft - 1
+					vars.effectVariables.jumpNextFrame = true
+				end
+				
+				if isTouchingGround and vars.effectVariables.jumpsLeft < vars.effectVariables.maxExtraJumps then
+					vars.effectVariables.jumpsLeft = vars.effectVariables.maxExtraJumps
+				end
+				
+				SetPlayerVelocity(playerVel)
+			end,
 			onEffectEnd = function(vars) end,
 		},
 	},
