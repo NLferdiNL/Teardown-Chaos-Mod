@@ -685,7 +685,7 @@ chaosEffects = {
 		},
 		
 		explodingStare = {
-			name = "Explosion Stare",
+			name = "Explosive Stare",
 			effectDuration = 0,
 			effectLifetime = 0,
 			hideTimer = false,
@@ -1843,6 +1843,19 @@ chaosEffects = {
 					DrawSprite(vars.effectSprites[1], Transform(spritePos, spriteRot), 200, 200, 0.25, 0.25, 0.25, 0.5, true, true)
 				end
 			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		honkingVehicles = {
+			name = "Honk Honk",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
 	},
