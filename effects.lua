@@ -1801,7 +1801,7 @@ chaosEffects = {
 			onEffectTick = function(vars)
 				if InputPressed("lmb") then
 					local cameraTransform = GetCameraTransform()
-					local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+					local rayDirection = TransformToParentVec(cameraTransform, Vec(0, 0, -1))
 	 
 					local hit, hitPoint, distance, normal = raycast(cameraTransform.pos, rayDirection, 100)
 					
@@ -1824,18 +1824,24 @@ chaosEffects = {
 			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
-			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/knock.ogg"}, {isLoop = false, soundPath = "MOD/sfx/knock.ogg"}},
-			effectSprites = {"MOD/sprites/square.png", "MOD/sprites/square.png"},
+			effectSFX = {},
+			effectSprites = {"MOD/sprites/square.png"},
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local cameraTransform = GetCameraTransform()
-				local forwardDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				local forwardDirection = TransformToParentVec(cameraTransform, Vec(0, 0, -1))
 				
-				local spritePos = VecAdd(cameraTransform, forwardDirection)
-				local spriteRot = QuatLookAt(spritePos, cameraTransform.pos)
+				local fogStep = 0.5
+				local fogLayers = 100
+				local fogStart = 100
 				
-				DrawSprite(vars.effectSprites[1], Transform(spritePos, spriteRot), 10, 10, 0, 0, 0, 1, true, true)
+				for i = 1, fogLayers do
+					local spritePos = VecAdd(cameraTransform.pos, VecScale(forwardDirection, fogStart - i * fogStep))
+					local spriteRot = QuatLookAt(spritePos, cameraTransform.pos)
+					
+					DrawSprite(vars.effectSprites[1], Transform(spritePos, spriteRot), 200, 200, 0.25, 0.25, 0.25, 0.5, true, true)
+				end
 			end,
 			onEffectEnd = function(vars) end,
 		},
