@@ -1,19 +1,34 @@
 #include "utils.lua"
 
 function chaosSFXInit()
+	local loadedSFX = {loops = {}, regular = {}}
+	
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
 		
 		if #currentEffect.effectSFX > 0 then
 			for i=1, #currentEffect.effectSFX do
 				local soundData =  currentEffect.effectSFX[i]
+				local soundPath = soundData["soundPath"]
 				local isLoop = soundData["isLoop"]
 				local handle = nil
 				
+				local handle = 0
+				
 				if isLoop then
-					handle = LoadLoop(soundData["soundPath"])
+					if loadedSFX.loops[soundPath] ~= nil then
+						handle = loadedSFX.loops[soundPath]
+					else
+						handle = LoadLoop(soundPath)
+						loadedSFX.loops[soundPath] = handle
+					end
 				else
-					handle = LoadSound(soundData["soundPath"])
+					if loadedSFX.regular[soundPath] ~= nil then
+						handle = loadedSFX.regular[soundPath]
+					else
+						handle = LoadSound(soundPath)
+						loadedSFX.regular[soundPath] = handle
+					end
 				end
 				
 				currentEffect.effectSFX[i] = handle
@@ -23,6 +38,8 @@ function chaosSFXInit()
 end
 
 function chaosSpritesInit()
+	local loadedSprites = {}
+
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
 		
@@ -30,7 +47,14 @@ function chaosSpritesInit()
 			for i=1, #currentEffect.effectSprites do
 				local currentSpriteData = currentEffect.effectSprites[i]
 				
-				local handle = LoadSprite(currentSpriteData)
+				local handle = 0
+				
+				if loadedSprites[currentSpriteData] ~= nil then
+					handle = loadedSprites[currentSpriteData]
+				else
+					handle = LoadSprite(currentSpriteData)
+					loadedSprites[currentSpriteData] = handle
+				end
 				
 				currentEffect.effectSprites[i] = handle
 			end
@@ -1761,6 +1785,57 @@ chaosEffects = {
 					UiPop()
 				end)
 				
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportGun = {
+			name = "Teleport Gun",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if InputPressed("lmb") then
+					local cameraTransform = GetCameraTransform()
+					local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+	 
+					local hit, hitPoint, distance, normal = raycast(cameraTransform.pos, rayDirection, 100)
+					
+					if hit == false then
+						return
+					end
+					
+					local newPos = VecAdd(hitPoint, VecScale(normal, 1.5))
+					
+					local playerTransform = GetPlayerTransform()
+					
+					SetPlayerTransform(Transform(newPos, playerTransform.rot))
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		foggyDay = {
+			name = "Foggy Day",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/knock.ogg"}, {isLoop = false, soundPath = "MOD/sfx/knock.ogg"}},
+			effectSprites = {"MOD/sprites/square.png", "MOD/sprites/square.png"},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local cameraTransform = GetCameraTransform()
+				local forwardDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				
+				local spritePos = VecAdd(cameraTransform, forwardDirection)
+				local spriteRot = QuatLookAt(spritePos, cameraTransform.pos)
+				
+				DrawSprite(vars.effectSprites[1], Transform(spritePos, spriteRot), 10, 10, 0, 0, 0, 1, true, true)
 			end,
 			onEffectEnd = function(vars) end,
 		},

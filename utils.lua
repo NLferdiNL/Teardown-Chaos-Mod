@@ -78,6 +78,24 @@ function DeserializeTable(a) -- Currently only works for serialized string table
 	return deserializedTable
 end
 
+function tableToText(inputTable, loopThroughTables)
+	loopThroughTables = loopThroughTables or true
+
+	local returnString = "{ "
+	for key, value in pairs(inputTable) do
+		if type(value) == "string" or type(value) == "number" then
+			returnString = returnString .. key .." = " .. value .. ", "
+		elseif type(value) == "table" and loopThroughTables then
+			returnString = returnString .. key .. " = " .. tableToText(value) .. ", "
+		else
+			returnString = returnString .. key .. " = " .. type(value) .. ", "
+		end
+	end
+	returnString = returnString .. "}"
+	
+	return returnString
+end
+
 function roundToTwoDecimals(a) --TODO: Make a better, generic version with more decimal points.
 	return math.floor(a * 100)/100
 end

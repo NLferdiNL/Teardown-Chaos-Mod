@@ -1,4 +1,5 @@
 #include "textbox.lua"
+#include "utils.lua"
 
 local debugMenuEnabled = false
 
@@ -131,30 +132,12 @@ function drawDebugText()
 			elseif type(effectProperty) == "boolean" then
 				UiText(key .." = " .. tostring(effectProperty))
 			elseif type(effectProperty) == "table" then
-				UiText(key .." = " .. debugTableToText(effectProperty))
+				UiText(key .." = " .. tableToText(effectProperty))
 			else
 				UiText(key .. " = " .. type(effectProperty))
 			end
 		end
 	UiPop()
-end
-
-function debugTableToText(inputTable, loopThroughTables)
-	loopThroughTables = loopThroughTables or true
-
-	local returnString = "{ "
-	for key, value in pairs(inputTable) do
-		if type(value) == "string" or type(value) == "number" then
-			returnString = returnString .. key .." = " .. value .. ", "
-		elseif type(value) == "table" and loopThroughTables then
-			returnString = returnString .. key .. " = " .. debugTableToText(value) .. ", "
-		else
-			returnString = returnString .. key .. " = " .. type(value) .. ", "
-		end
-	end
-	returnString = returnString .. "}"
-	
-	return returnString
 end
 
 function drawEffectList()
