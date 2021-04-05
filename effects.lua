@@ -1335,7 +1335,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { playerVehicleLastFrame = 0 },
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local playerCameraPos = nil
@@ -1410,6 +1410,11 @@ chaosEffects = {
 				
 				-- Enter Vehicle
 				
+				if GetPlayerVehicle() == 0 and vars.effectVariables.playerVehicleLastFrame ~= 0 then
+					vars.effectVariables.playerVehicleLastFrame = 0
+					return
+				end
+				
 				local range = 2
 				
 				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
@@ -1463,6 +1468,8 @@ chaosEffects = {
 				if InputPressed("e") then
 					SetPlayerVehicle(closetVehicleIndex)
 				end
+				
+				vars.effectVariables.playerVehicleLastFrame = GetPlayerVehicle()
 				
 				-- End Enter Vehicle
 				
