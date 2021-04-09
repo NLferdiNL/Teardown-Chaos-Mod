@@ -35,6 +35,23 @@ function saveFileInit()
 		DebugPrint("Until it is fixed for multi part vehicles.")
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
+	
+	if saveVersion < 4 then
+		saveVersion = 4
+		SetInt(moddataPrefix .. "Version", 4)
+		
+		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+		
+		if chaosEffects.disabledEffects["quakefov"] == nil then
+			chaosEffects.disabledEffects["quakefov"] = "disabled"
+		end
+		
+		if chaosEffects.disabledEffects["turtlemode"] == nil then
+			chaosEffects.disabledEffects["turtlemode"] = "disabled"
+		end
+		
+		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
+	end
 end
 
 function SerializeTable(a) -- Currently only works for key value string tables! (Ignores values)
@@ -94,6 +111,54 @@ function tableToText(inputTable, loopThroughTables)
 	returnString = returnString .. "}"
 	
 	return returnString
+end
+
+function GetEffectCount()
+	local effectCount = 0
+
+	for key, value in pairs(chaosEffects.effects) do
+		effectCount = effectCount + 1
+	end
+	
+	return effectCount
+end
+
+function SortEffectsTable(effectCount)
+	effectCount = effectCount or GetEffectCount()
+	
+	local tableOut = {}
+	
+	for uid, effect in pairs(chaosEffects.effects) do
+		local i = 1
+		
+		local loop = true
+		while loop do
+			if i > #tableOut then
+				tableOut[i] = {uid, effect.name}
+				loop = false
+				break
+			end
+			
+			if effect.name < tableOut[i][2] then
+				table.insert(tableOut, i, {uid, effect.name})
+				loop = false
+				break
+			end
+			
+			if i >= #tableOut + 1 or i >= effectCount + 1 then -- Should never occur, just an infinite loop safe guard.
+				loop = false
+				break
+			end
+			
+			i = i + 1
+		end
+	end
+	
+	for key, value in ipairs(tableOut) do
+		tableOut[key] = value[1]
+	end
+	
+	return tableOut
 end
 
 function roundToTwoDecimals(a) --TODO: Make a better, generic version with more decimal points.

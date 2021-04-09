@@ -1182,7 +1182,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		--[[quakefov = { -- Disables tool functionality, unsure how to fix yet.
+		quakefov = { -- Disables tool functionality, unsure how to fix yet.
 			name = "Quake FOV",
 			effectDuration = 20,
 			effectLifetime = 0,
@@ -1195,10 +1195,28 @@ chaosEffects = {
 				local playerCameraPos = playerCamera.pos
 		
 				SetCameraTransform(Transform(playerCamera.pos, playerCamera.rot), 150)
-				SetBool("game.player.canusetool", true)
 			end,
 			onEffectEnd = function(vars) end,
-		},]]--
+		},
+		
+		turtlemode = {
+			name = "Turtle Mode",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerCamera = GetPlayerCameraTransform()
+				local playerCameraPos = playerCamera.pos
+				
+				local playerCameraRot = QuatRotateQuat(playerCamera.rot, QuatEuler(0, 0, -180))
+		
+				SetCameraTransform(Transform(playerCamera.pos, playerCameraRot))
+			end,
+			onEffectEnd = function(vars) end,
+		},
 		
 		networkLag = {
 			name = "Lag",

@@ -13,14 +13,16 @@ local listScreenHeight = 0
 local listScreenMaxScroll = 0
 local effectCount = 0
 
+local sortedEffectList = {}
+
 function debugInit()
-	for key, value in pairs(chaosEffects.effects) do
-		effectCount = effectCount + 1
-	end
+	effectCount = GetEffectCount()
 	
 	if testThisEffect ~= "" then
 		currentTime = chaosTimer * 0.9
 	end
+	
+	sortedEffectList = SortEffectsTable(effectCount)
 end
 
 function debugTick()
@@ -183,7 +185,9 @@ function drawEffectList()
 			
 			local i = 0
 			
-			for uid, effect in pairs(chaosEffects.effects) do
+			
+			for key, uid in ipairs(sortedEffectList) do
+				local effect = chaosEffects.effects[uid]
 				UiPush()
 				
 				UiTranslate(0, i * 30 + 2 - effectListScrollPosition)
@@ -199,7 +203,7 @@ function drawEffectList()
 			
 			UiAlign("right middle")
 			
-			UiTranslate(350, effectListScrollPosition / listScreenMaxScroll * UiMiddle())
+			UiTranslate(350, (effectListScrollPosition / listScreenMaxScroll) * 2 * UiMiddle())
 			
 			UiRect(20, 40)
 		UiPop()

@@ -2,8 +2,12 @@
 #include "utils.lua"
 #include "textbox.lua"
 
+local sortedEffectList = {}
+
 function init()
 	saveFileInit()
+	
+	sortedEffectList = SortEffectsTable()
 end
 
 function draw()
@@ -40,7 +44,7 @@ function draw()
 		
 		if UiTextButton("Reset to default", 200, 50) then
 			textBox01.value = 10 .. ""
-			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled"}
+			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled", quakefov = "disabled", turtlemode = "disabled"}
 		end
 		
 		UiTranslate(0, 60)
@@ -118,7 +122,7 @@ function draw()
 		local buttonWidth = 320
 		local buttonHeight = 40
 		
-		local items = chaosEffects.effectKeys
+		local items = sortedEffectList
 		
 		UiTranslate(-buttonWidth * 1.5, 0)
 		
