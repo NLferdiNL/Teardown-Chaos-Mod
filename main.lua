@@ -10,7 +10,6 @@ lastEffectKey = ""
 currentTime = 0
 timerPaused = false
 chaosPaused = false
-gameReloadedWarned = false
 hasTheGameReloaded = false
 
 function init()
@@ -100,10 +99,20 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	if not gameReloadedWarned and gameReloaded() then
-		gameReloadedWarned = true
+	if not hasTheGameReloaded and gameReloaded() then
+		chaosEffects.activeEffects = {}
+		
+		local warningEffect = getCopyOfEffect("nothing")
+		warningEffect.name = "Currently the Chaos mod\ndoes not support quick loading.\nThe mod is disabled until restarting\nthe level."
+		
+		warningEffect.onEffectStart = function() end
+		warningEffect.onEffectTick = function() end
+		warningEffect.onEffectEnd = function() end
+		
+		triggerEffect(warningEffect)
+		
 		hasTheGameReloaded = true
-		DebugPrint("Currently the Chaos Mod does not support quick save/load. Chaos Mod is disabled until you restart the level.")
+		currentTime = chaosTimer
 	end
 	
 	if hasTheGameReloaded then
@@ -149,7 +158,11 @@ function drawTimer()
 	UiPop()
 
 	UiPush()
-		UiColor(0.25, 0.25, 1)
+		if hasTheGameReloaded then
+			UiColor(1, 0.25, 0.25)
+		else
+			UiColor(0.25, 0.25, 1)
+		end
 		UiTranslate(UiCenter() * currentTimePercenage, 0)
 		UiRect(UiWidth() * currentTimePercenage, UiHeight() * 0.05)
 	UiPop()
@@ -206,8 +219,11 @@ end
 
 function draw()	
 	if hasTheGameReloaded then
+		drawTimer()
+		drawEffectLog()
 		return
 	end
+	
 	processDrawCallQueue()
 	
 	drawTimer()
