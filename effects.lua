@@ -1537,6 +1537,7 @@ chaosEffects = {
 			effectVariables = { revealTimer = 5, nameBackup = "", transform = 0, vehicle = 0 },
 			onEffectStart = function(vars)
 				local vehicle = GetPlayerVehicle()
+				
 				if vehicle ~= 0 then
 					local vehicleBody = GetVehicleBody(vehicle)
 					local bodyTransform = GetBodyTransform(vehicleBody)
@@ -1544,28 +1545,35 @@ chaosEffects = {
 					vars.effectVariables.vehicle = vehicle
 					vars.effectVariables.transform = TransformCopy(bodyTransform)
 					
+					bodyTransform.pos = VecAdd(bodyTransform.pos, Vec(0, 10000, 0))
+					
 					SetPlayerVehicle(0)
 					
-					SetBodyTransform(vehicleBody, Transform(Vec(0, 10000, 0), GetBodyTransform(GetVehicleBody(vehicle)).rot))--Just get the vehicle out of there
+					SetBodyTransform(vehicleBody, bodyTransform) -- Just get the vehicle out of there
+					SetBodyVelocity(vehicleBody, Vec(0, 0, 0))
+				else
+					return
 				end
 				
 				vars.effectVariables.nameBackup = vars.name
 				vars.name = chaosEffects.effects["removeCurrentVehicle"].name
 			end,
 			onEffectTick = function(vars) 
-			
 				if vars.effectLifetime >= vars.effectVariables.revealTimer or vars.effectVariables.vehicle == 0 then
 					vars.name = vars.effectVariables.nameBackup
 					vars.effectDuration = 0
-					vars.effectLifetime = 0
 
 					local vehicle = vars.effectVariables.vehicle
+					
 					if vehicle ~= 0 then
 						local vehicleBody = GetVehicleBody(vehicle)
+						
+						SetBodyDynamic(vehicleBody, true)
 					
 						SetBodyTransform(vehicleBody, vars.effectVariables.transform)
-						SetBodyVelocity(vehicleBody, Vec(0,0,0))
-						SetBodyDynamic(vehicleBody, true)
+						
+						SetBodyVelocity(vehicleBody, Vec(0, 0, 0))
+						
 						SetPlayerVehicle(vehicle)
 					end
 				else
@@ -2016,6 +2024,98 @@ chaosEffects = {
 				end
 				
 				SetPlayerVelocity(playerVel)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		simonSays = {
+			name = "Gordon Says",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { activeDelay = 2, forcedInput = {key = "up", message = "moving forward"}},
+			onEffectStart = function(vars) 
+				local possibleInputs = {{key = "up", message = "moving forwards"},
+										{key = "down", message = "moving backwards"},
+										{key = "left", message = "moving left"}, 
+										{key = "right", message = "moving right"}}
+				
+				local selectedInput = possibleInputs[math.random(1, #possibleInputs)]
+				
+				vars.effectVariables.forcedInput = selectedInput
+				
+			end,
+			onEffectTick = function(vars) 
+				local forcedInput = vars.effectVariables.forcedInput
+			
+				table.insert(drawCallQueue, function()
+					UiPush()
+						UiFont("regular.ttf", 52)
+						UiTextShadow(0, 0, 0, 0.5, 2.0)
+						
+						UiAlign("center middle")
+						
+						UiTranslate(UiCenter(), UiHeight() * 0.2)
+						
+						UiText("Gordon Says")
+						
+						UiTranslate(0, 40)
+						
+						UiFont("regular.ttf", 26)
+						
+						UiText("Keep " .. forcedInput.message.. "!")
+					UiPop()
+				end)
+			
+				if vars.effectVariables.activeDelay > 0 then
+					vars.effectVariables.activeDelay = vars.effectVariables.activeDelay - GetChaosTimeStep()
+					return
+				end
+				
+				if not InputDown(forcedInput.key) then
+					local playerPos = GetPlayerPos()
+					Explosion(playerPos, 3)
+					SetPlayerHealth(0)
+					vars.effectDuration = 0
+					return
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportToHeaven = {
+			name = "Teleport To Heaven",
+			effectDuration = 50,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				SetPlayerVehicle(0)
+				
+				local playerTransform = GetPlayerTransform()
+				
+				playerTransform.pos = VecAdd(playerTransform.pos, Vec(0, 500, 0))
+				
+				SetPlayerTransform(playerTransform)
+			end,
+			onEffectTick = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				local rayDirection = TransformToParentVec(playerTransform, Vec(0, -1, 0))
+ 
+				local hit, hitPoint, distance, normal = raycast(playerTransform.pos, rayDirection, 2)
+				
+				if hit == false then
+					return
+				end
+				
+				SetPlayerHealth(0.2)
+				SetPlayerVelocity(Vec(0, 0, 0))
+				
+				vars.effectDuration = 0
 			end,
 			onEffectEnd = function(vars) end,
 		},
