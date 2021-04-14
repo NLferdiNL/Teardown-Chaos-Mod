@@ -10,6 +10,8 @@ lastEffectKey = ""
 currentTime = 0
 timerPaused = false
 chaosPaused = false
+gameReloadedWarned = false
+hasTheGameReloaded = false
 
 function init()
 	saveFileInit()
@@ -19,6 +21,10 @@ function init()
 	loadChaosEffectData()
 	
 	debugInit()
+end
+
+function gameReloaded()
+	return chaosEffects.effectTemplate.onEffectStart == nil
 end
 
 function getCopyOfEffect(key)
@@ -94,6 +100,16 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
+	if not gameReloadedWarned and gameReloaded() then
+		gameReloadedWarned = true
+		hasTheGameReloaded = true
+		DebugPrint("Currently the Chaos Mod does not support quick save/load. Chaos Mod is disabled until you restart the level.")
+	end
+	
+	if hasTheGameReloaded then
+		return
+	end
+
 	debugTick()
 	
 	if not timerPaused then
@@ -189,6 +205,9 @@ function processDrawCallQueue()
 end
 
 function draw()	
+	if hasTheGameReloaded then
+		return
+	end
 	processDrawCallQueue()
 	
 	drawTimer()
