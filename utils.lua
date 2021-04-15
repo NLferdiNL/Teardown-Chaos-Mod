@@ -105,7 +105,7 @@ function tableToText(inputTable, loopThroughTables)
 		elseif type(value) == "table" and loopThroughTables then
 			returnString = returnString .. key .. " = " .. tableToText(value) .. ", "
 		else
-			returnString = returnString .. key .. " = " .. type(value) .. ", "
+			returnString = returnString .. key .. " = " .. tostring(value) .. ", "
 		end
 	end
 	returnString = returnString .. "}"

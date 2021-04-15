@@ -206,7 +206,6 @@ UiPush()
 	end
 	
 UiPop()
-
 end
 
 function processDrawCallQueue()
@@ -218,16 +217,18 @@ function processDrawCallQueue()
 end
 
 function draw()	
-	if hasTheGameReloaded then
+	UiPush()
+		if hasTheGameReloaded then
+			drawTimer()
+			drawEffectLog()
+			return
+		end
+		
+		processDrawCallQueue()
+		
 		drawTimer()
 		drawEffectLog()
-		return
-	end
-	
-	processDrawCallQueue()
-	
-	drawTimer()
-	drawEffectLog()
-	
-	debugDraw()
+		
+		debugDraw()
+	UiPop()
 end

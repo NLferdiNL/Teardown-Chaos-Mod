@@ -1116,16 +1116,14 @@ chaosEffects = {
 			effectSFX = {},
 			effectSprites = {},
 			effectVariables = { x = 0, y = 0, px = true, py = true},
-			onEffectStart = function(vars) 
+			onEffectStart = function(vars)
 				vars.effectVariables.x = UiCenter()
 				vars.effectVariables.y = UiMiddle()
 			end,
 			onEffectTick = function(vars)
-
 				local speed = 5
-				local middleSize = UiHeight()/5
+				local middleSize = UiHeight() / 5
 				
-
 				if vars.effectVariables.px then
 					vars.effectVariables.x = vars.effectVariables.x + speed
 				else
@@ -2116,6 +2114,7 @@ chaosEffects = {
 				SetPlayerVelocity(Vec(0, 0, 0))
 				
 				vars.effectDuration = 0
+				vars.effectLifetime = 0
 			end,
 			onEffectEnd = function(vars) end,
 		},

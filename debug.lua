@@ -135,12 +135,10 @@ function drawDebugText()
 			UiTranslate(0, UiHeight() * 0.025)
 			if type(effectProperty) == "string" or type(effectProperty) == "number" then
 				UiText(key .." = " .. effectProperty)
-			elseif type(effectProperty) == "boolean" then
-				UiText(key .." = " .. tostring(effectProperty))
 			elseif type(effectProperty) == "table" then
 				UiText(key .." = " .. tableToText(effectProperty))
 			else
-				UiText(key .. " = " .. type(effectProperty))
+				UiText(key .. " = " .. tostring(effectProperty))
 			end
 		end
 	UiPop()
@@ -189,14 +187,14 @@ function drawEffectList()
 			for key, uid in ipairs(sortedEffectList) do
 				local effect = chaosEffects.effects[uid]
 				UiPush()
-				
-				UiTranslate(0, i * 30 + 2 - effectListScrollPosition)
-				
-				if UiTextButton(effect.name, 330, 30) then
-					triggerEffect(getCopyOfEffect(uid))
-				end
-				
-				i = i + 1
+					
+					UiTranslate(0, i * 30 + 2 - effectListScrollPosition)
+					
+					if UiTextButton(effect.name, 330, 30) then
+						triggerEffect(getCopyOfEffect(uid))
+					end
+					
+					i = i + 1
 				
 				UiPop()
 			end
