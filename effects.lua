@@ -1189,10 +1189,7 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars) 
-				local playerCamera = GetPlayerCameraTransform()
-				local playerCameraPos = playerCamera.pos
-		
-				SetCameraTransform(Transform(playerCamera.pos, playerCamera.rot), 150)
+				SetCameraFov(140)
 			end,
 			onEffectEnd = function(vars) end,
 		},

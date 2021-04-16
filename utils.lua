@@ -52,6 +52,21 @@ function saveFileInit()
 		
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
+	
+	if saveVersion < 5 then
+		saveVersion = 5
+		SetInt(moddataPrefix .. "Version", 5)
+		
+		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+		
+		if chaosEffects.disabledEffects["quakefov"] ~= nil then
+			chaosEffects.disabledEffects["quakefov"] = nil
+			DebugPrint("Quake FOV enabled, because it now works with tools.")
+			DebugPrint("This will not happen again.")
+		end
+		
+		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
+	end
 end
 
 function SerializeTable(a) -- Currently only works for key value string tables! (Ignores values)

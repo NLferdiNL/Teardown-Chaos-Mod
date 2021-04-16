@@ -44,7 +44,7 @@ function draw()
 		
 		if UiTextButton("Reset to default", 200, 50) then
 			textBox01.value = 10 .. ""
-			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled", quakefov = "disabled", turtlemode = "disabled"}
+			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled", turtlemode = "disabled"}
 		end
 		
 		UiTranslate(0, 60)
