@@ -176,7 +176,7 @@ chaosEffects = {
 		
 		jetpack = {
 			name = "Jetpack",
-			effectDuration = 15,
+			effectDuration = 25,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -361,9 +361,13 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				for i = 1, 5 do
+				ParticleReset()
+				ParticleType("smoke")
+				ParticleColor(0.7, 0.6, 0.5)
+				ParticleRadius(1)
+				for i = 1, 20 do
 					local direction = rndVec(10)
-					SpawnParticle("smoke", GetPlayerPos(), direction, 5, 2)
+					SpawnParticle(GetPlayerPos(), direction, 2)
 				end
 			end,
 			onEffectEnd = function(vars) end,
@@ -1591,7 +1595,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { affectedBodies = {}},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local playerPos = GetPlayerPos()
@@ -1607,6 +1611,10 @@ chaosEffects = {
 				
 				for key, value in ipairs(shapeList) do
 					local shapeBody = GetShapeBody(value)
+					
+					if vars.effectVariables.affectedBodies[shapeBody] == nil then
+						vars.effectVariables.affectedBodies[shapeBody] = "hit"
+					end
 				
 					--[[ Always returns false, even on dynamic bodies?
 					if not IsBodyDynamic(shapeBody) then
@@ -1622,7 +1630,12 @@ chaosEffects = {
 					SetBodyVelocity(shapeBody, bodyVelocity)
 				end
 			end,
-			onEffectEnd = function(vars) end,
+			onEffectEnd = function(vars) 
+				for shapeBody, value in pairs(vars.effectVariables.affectedBodies) do
+					local shapeTransform = GetBodyTransform(shapeBody)
+					ApplyBodyImpulse(shapeBody, shapeTransform.pos, Vec(0, -1, 0))
+				end
+			end,
 		},
 		
 		explosivePunch = {
@@ -1862,7 +1875,7 @@ chaosEffects = {
 				
 				local fogStep = 0.5
 				local fogLayers = 100
-				local fogStart = 100
+				local fogStart = 60
 				
 				for i = 1, fogLayers do
 					local spritePos = VecAdd(cameraTransform.pos, VecScale(forwardDirection, fogStart - i * fogStep))
@@ -2115,6 +2128,239 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		jumpyVehicles = {
+			name = "Jumpy Vehicles",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {vehicles = {}},
+			onEffectStart = function(vars)
+				local range = 500
+				local minPos = Vec(-range, -range, -range)
+				local maxPos = Vec(range, range, range)
+				local nearbyShapes = QueryAabbShapes(minPos, maxPos)
+
+				for i = 1, #nearbyShapes do
+					local currentShape = nearbyShapes[i]
+					local shapeBody = GetShapeBody(currentShape)
+					
+					local vehicleHandle = GetBodyVehicle(shapeBody)
+					
+					if vehicleHandle ~= 0 then
+						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = {handle = vehicleHandle, jumpTimer = math.random(0, 3)}
+					end
+				end
+			end,
+			onEffectTick = function(vars)
+				for index, vehicleData in ipairs(vars.effectVariables.vehicles) do
+					if math.random(1, 10) > 5 and vehicleData.jumpTimer <= 0 then
+						vehicleData.jumpTimer = 5
+						
+						local vehicleHandle = vehicleData.handle
+						
+						local vehicleBody = GetVehicleBody(vehicleHandle)
+						
+						local vehicleVelocity = VecCopy(GetBodyVelocity(vehicleBody))
+						
+						vehicleVelocity[2] = 5
+						
+						SetBodyVelocity(vehicleBody, vehicleVelocity)
+						
+					else
+						local vehicleTransform = GetVehicleTransform(vehicleData.handle)
+						local vehicleBody = GetBodyTransform(vehicleTransform)
+						
+						DrawBodyOutline(vehicleBody)
+						vehicleData.jumpTimer = vehicleData.jumpTimer - GetChaosTimeStep()
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		--[[hacking = {
+			name = "Hacking",
+			effectDuration = 60,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { currHack = "nil", lives = 4, wordWheels = {}, ip = {19, 20, 16, 80}},
+			onEffectStart = function(vars) 
+				local hackTypes = {"letterLineup", "ipLookup", "barLineup"}
+				
+				local letterLineupWords = {"teardown", "lockelle", "xplosive", "shotguns", "destroyd", "chaosmod"} --"resident"
+				local letterLineupLetters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+				
+				local hackType = "letterLineup"--hackTypes[math.random(1, #hackTypes)]
+
+				function getRandomLetter()
+					return letterLineupLetters[math.random(1, #letterLineupLetters)]
+				end
+				
+				if hackType == "letterLineup" then
+					local word = letterLineupWords[math.random(1, #letterLineupWords)]
+					
+					for i = 1, 8 do
+						local currLetter = word:sub(i, i)
+						local wordWheel = { offset = math.random(0, 9), locked = false, letters = {currLetter} }
+						
+						for j = 2, 10 do
+							local garbageLetter = currLetter
+							
+							while garbageLetter == currLetter do
+								garbageLetter = getRandomLetter()
+							end
+							
+							wordWheel.letters[j] = garbageLetter
+						end
+						
+						vars.effectVariables.wordWheels[i] = wordWheel
+					end
+				elseif hackType == "ipLookup" then
+				
+				elseif hackType == "barLineup" then
+				
+				end
+
+				vars.effectVariables.currHack = hackType
+			end,
+			onEffectTick = function(vars) 
+				local hackType = vars.effectVariables.currHack
+				local drawCall = function() end
+				
+				function drawBlackScreen()
+					UiPush()
+						UiColor(0, 0, 0, 1)
+						
+						UiAlign("center middle")
+						
+						UiTranslate(UiCenter(), UiMiddle())
+						
+						UiRect(UiWidth() + 10, UiHeight() + 10)
+					UiPop()
+				end
+				
+				function drawWindow()
+					UiPush()
+						UiAlign("center middle")
+							
+						UiTranslate(UiCenter(), UiMiddle())
+						
+						UiColor(0.4, 0.4, 1, 1)
+						
+						UiRect(UiWidth() * 0.6, UiHeight() * 0.7)
+						
+						UiColor(0, 0, 0, 1)
+						
+						UiTranslate(0, UiHeight() * 0.02)
+						
+						UiRect(UiWidth() * 0.595, UiHeight() * 0.65)
+					UiPop()
+				end
+				
+				function drawLives()
+					UiPush()
+						UiAlign("center middle")
+							
+						UiTranslate(UiCenter(), UiMiddle())
+						
+						UiTranslate(UiWidth() * 0.25, -UiHeight() * 0.25)
+						
+						UiAlign("center bottom")
+						
+						for i = 0, 3 do
+							UiPush()
+								if i + 1 <= vars.effectVariables.lives then
+									UiColor(0, 0.8, 0.8, 1)
+								else
+									UiColor(0.5, 0.5, 0.5, 1)
+								end
+							
+								UiTranslate(13 * i, 0)
+								UiRect(10, 10 + i * 7)
+							UiPop()
+						end
+					UiPop()
+				end
+				
+				if vars.effectVariables.lives < 0 then
+					vars.effectDuration = 0
+					vars.effectLifetime = 0
+					
+					local playerPos = GetPlayerPos()
+					Explosion(playerPos, 3)
+					SetPlayerHealth(0)
+					vars.effectDuration = 0
+					return
+				end
+				
+				if hackType == "letterLineup" then
+					drawCall = function()
+						UiPush()
+							drawBlackScreen()
+							drawWindow()
+							drawLives()
+							
+							UiAlign("center middle")
+							UiTranslate(UiCenter(), UiMiddle())
+							
+							UiTranslate(-UiWidth() * 0.195, 0) -- -UiHeight() * 0.175)
+							
+							local width = UiWidth() * 0.5 / 8
+							local offset = 5
+							
+							for i = 0, 7 do
+								UiPush()
+									UiTranslate((width + offset) * i, UiHeight() * 0.15)
+									
+									UiWindow(width * 2, UiHeight() * 0.8, true)
+									
+									UiColor(0.3, 0.3, 0.3, 1)
+									
+									UiRect(UiWidth() * 2, UiHeight() * 2)
+									
+									UiColor(0, 0, 0, 1)
+									
+									UiTranslate(UiCenter() / 2, UiMiddle() / 2)
+									
+									UiRect(UiWidth() * 0.4, UiHeight())
+									
+									UiColor(1, 0, 0, 1)
+									
+									UiRect(5, 5)
+									
+								UiPop()
+							end
+						UiPop()
+					end
+				elseif hackType == "ipLookup" then
+					drawCall = function()
+						UiPush()
+							drawBlackScreen()
+							drawWindow()
+							drawLives()
+							
+						UiPop()
+					end
+				elseif hackType == "barLineup" then
+					drawCall = function()
+						UiPush()
+							drawBlackScreen()
+							drawWindow()
+							drawLives()
+							
+						UiPop()
+					end
+				end
+				
+				table.insert(drawCallQueue, drawCall)
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
 	},
 }
 
