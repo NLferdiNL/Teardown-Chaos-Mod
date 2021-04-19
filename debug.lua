@@ -19,7 +19,8 @@ function debugInit()
 	effectCount = GetEffectCount()
 	
 	if testThisEffect ~= "" then
-		currentTime = chaosTimer * 0.9
+		chaosTimer = chaosEffects.effects[testThisEffect].effectDuration 
+		currentTime = chaosTimer * 0.98
 	end
 	
 	sortedEffectList = SortEffectsTable(effectCount)

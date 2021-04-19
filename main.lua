@@ -81,10 +81,11 @@ function chaosEffectTimersTick(dt)
 	for key, value in ipairs(chaosEffects.activeEffects) do
 		if value.effectDuration > 0 then
 			value.effectLifetime = value.effectLifetime + dt
-			value.onEffectTick(value)
-			if value.effectLifetime > value.effectDuration then
+			if value.effectLifetime >= value.effectDuration then
 				value.onEffectEnd(value)
 				table.remove(chaosEffects.activeEffects, key)
+			else
+				value.onEffectTick(value)
 			end
 		end
 	end

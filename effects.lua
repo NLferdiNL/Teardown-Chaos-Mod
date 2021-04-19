@@ -2181,15 +2181,17 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		--[[hacking = {
+		hacking = {
 			name = "Hacking",
 			effectDuration = 60,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { currHack = "nil", lives = 4, wordWheels = {}, ip = {19, 20, 16, 80}},
+			effectVariables = { currHack = "nil", lives = 4, wordWheels = {}, currentWordWheel = 1, ip = {19, 20, 16, 80}, playerPos = nil},
 			onEffectStart = function(vars) 
+				vars.effectVariables.playerPos = GetPlayerPos()
+			
 				local hackTypes = {"letterLineup", "ipLookup", "barLineup"}
 				
 				local letterLineupWords = {"teardown", "lockelle", "xplosive", "shotguns", "destroyd", "chaosmod"} --"resident"
@@ -2229,6 +2231,17 @@ chaosEffects = {
 				vars.effectVariables.currHack = hackType
 			end,
 			onEffectTick = function(vars) 
+				function endMinigame()
+					vars.effectLifetime = vars.effectDuration
+				end
+				
+				if vars.effectVariables.lives <= 0 then
+					endMinigame()
+					return
+				end
+			
+				SetPlayerTransform(Transform(vars.effectVariables.playerPos, Quat(0, 0, 0, 0)))
+				
 				local hackType = vars.effectVariables.currHack
 				local drawCall = function() end
 				
@@ -2287,18 +2300,51 @@ chaosEffects = {
 					UiPop()
 				end
 				
-				if vars.effectVariables.lives < 0 then
-					vars.effectDuration = 0
-					vars.effectLifetime = 0
+				function resetWordWheels()
+					vars.effectVariables.lives = vars.effectVariables.lives - 1
+					vars.effectVariables.currentWordWheel = 1
 					
-					local playerPos = GetPlayerPos()
-					Explosion(playerPos, 3)
-					SetPlayerHealth(0)
-					vars.effectDuration = 0
-					return
+					for i = 1, 8 do
+						local wordWheel = vars.effectVariables.wordWheels[i]
+						
+						wordWheel.offset = math.random(0, 9)
+						wordWheel.locked = false
+					end
 				end
 				
 				if hackType == "letterLineup" then
+					for i = 1, 8 do
+						local wordWheel = vars.effectVariables.wordWheels[i]
+						
+						if not wordWheel.locked then
+							
+							wordWheel.offset = wordWheel.offset + GetChaosTimeStep() * 3
+							
+							if wordWheel.offset > 10 then
+								wordWheel.offset = 0
+							end
+						end
+					end
+					
+					if vars.effectVariables.currentWordWheel > 8 then
+						endMinigame()
+						return
+					end
+					
+					if InputPressed("space") then
+						local currentWordWheelIndex= vars.effectVariables.currentWordWheel
+						local currentWordWheel = vars.effectVariables.wordWheels[currentWordWheelIndex]
+						local currOffset = currentWordWheel.offset
+						
+						if currOffset >= 0 and currOffset <= 2 then
+							currentWordWheel.offset = 1
+							currentWordWheel.locked = true
+							vars.effectVariables.currentWordWheel = vars.effectVariables.currentWordWheel + 1
+						else
+							resetWordWheels()
+						end
+					end
+				
 					drawCall = function()
 						UiPush()
 							drawBlackScreen()
@@ -2308,33 +2354,78 @@ chaosEffects = {
 							UiAlign("center middle")
 							UiTranslate(UiCenter(), UiMiddle())
 							
-							UiTranslate(-UiWidth() * 0.195, 0) -- -UiHeight() * 0.175)
-							
-							local width = UiWidth() * 0.5 / 8
 							local offset = 5
+							local width = UiWidth() * 0.5 / 8
 							
-							for i = 0, 7 do
-								UiPush()
-									UiTranslate((width + offset) * i, UiHeight() * 0.15)
-									
-									UiWindow(width * 2, UiHeight() * 0.8, true)
-									
-									UiColor(0.3, 0.3, 0.3, 1)
-									
-									UiRect(UiWidth() * 2, UiHeight() * 2)
-									
-									UiColor(0, 0, 0, 1)
-									
-									UiTranslate(UiCenter() / 2, UiMiddle() / 2)
-									
-									UiRect(UiWidth() * 0.4, UiHeight())
-									
-									UiColor(1, 0, 0, 1)
-									
-									UiRect(5, 5)
-									
-								UiPop()
-							end
+							UiPush()
+								UiTranslate(-(width + offset) * 3.5, UiHeight() * 0.075) --0.175
+								
+								for i = 0, 7 do
+									local wordWheel = vars.effectVariables.wordWheels[i + 1]
+								
+									UiPush()
+										UiTranslate((width + offset) * i, 0)-- UiHeight() * 0.15)
+										
+										UiWindow(width, UiHeight() * 0.4, true)
+										
+										UiColor(0.3, 0.3, 0.3, 1)
+										
+										UiRect(UiWidth() * 2, UiHeight() * 2)
+										
+										UiColor(0, 0, 0, 1)
+										
+										UiTranslate(UiCenter(), UiMiddle())
+										
+										UiRect(UiWidth() * 0.97, UiHeight())
+										
+										UiColor(1, 1, 1, 1)
+										
+										UiFont("regular.ttf", 52)
+										
+										for j = -2, 12 do
+											UiPush()
+												local letter = ""
+												
+												if j < 1 then
+													letter = wordWheel.letters[10 + j]
+												elseif j > 10 then
+													letter = wordWheel.letters[j - 10]
+												else
+													letter = wordWheel.letters[j]
+												end
+												
+												if letter == wordWheel.letters[1] then
+													UiColor(1, 0, 0, 1)
+												end
+											
+												UiTranslate(0, -UiHeight() / 5 * wordWheel.offset)
+												UiTranslate(0, UiHeight() / 5 * j)
+												UiText(letter)
+											UiPop()
+										end
+									UiPop()
+								end
+							UiPop()
+							
+							UiPush()
+								UiColor(1, 0, 0, 0.5)
+								
+								UiTranslate(0, UiHeight() * 0.075 / 2)
+								
+								UiRect((width + offset) * 8, 2)
+								
+								UiTranslate(-(width + offset) * 4, UiHeight() * 0.075 / 2)
+								
+								UiRect(2, UiHeight() * 0.075)
+								
+								UiTranslate((width + offset) * 8, 0)
+								
+								UiRect(2, UiHeight() * 0.075)
+								
+								UiTranslate(-(width + offset) * 4, UiHeight() * 0.075 / 2)
+								
+								UiRect((width + offset) * 8, 2)
+							UiPop()
 						UiPop()
 					end
 				elseif hackType == "ipLookup" then
@@ -2357,11 +2448,18 @@ chaosEffects = {
 					end
 				end
 				
+				UiMakeInteractive()
 				table.insert(drawCallQueue, drawCall)
 			end,
-			onEffectEnd = function(vars) end,
-		},]]--
-	},
+			onEffectEnd = function(vars) 
+				if vars.effectVariables.lives <= 0 then
+					local playerPos = GetPlayerPos()
+					Explosion(playerPos, 3)
+					SetPlayerHealth(0)
+				end
+			end,
+		},
+	},	-- EFFECTS TABLE
 }
 
 chaosKeysInit()
