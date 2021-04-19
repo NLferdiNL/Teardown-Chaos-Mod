@@ -2188,16 +2188,16 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { currHack = "nil", lives = 4, wordWheels = {}, currentWordWheel = 1, ip = {19, 20, 16, 80}, playerPos = nil},
+			effectVariables = { currHack = "nil", lives = 4, damageAlpha = 0, wordWheels = {}, currentHackPos = 1, ip = {19, 20, 16, 80}, playerPos = nil, barLineUpBars = {}},
 			onEffectStart = function(vars) 
 				vars.effectVariables.playerPos = GetPlayerPos()
 			
-				local hackTypes = {"letterLineup", "ipLookup", "barLineup"}
+				local hackTypes = {"letterLineup", "barLineup",}-- "ipLookup"}
 				
 				local letterLineupWords = {"teardown", "lockelle", "xplosive", "shotguns", "destroyd", "chaosmod"} --"resident"
 				local letterLineupLetters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 				
-				local hackType = "letterLineup"--hackTypes[math.random(1, #hackTypes)]
+				local hackType = hackTypes[math.random(1, #hackTypes)]
 
 				function getRandomLetter()
 					return letterLineupLetters[math.random(1, #letterLineupLetters)]
@@ -2222,10 +2222,23 @@ chaosEffects = {
 						
 						vars.effectVariables.wordWheels[i] = wordWheel
 					end
-				elseif hackType == "ipLookup" then
-				
+				elseif hackType == "ipLookup" then
 				elseif hackType == "barLineup" then
-				
+					vars.effectVariables.barLineUpBars[1] = { value = 1, direction = 1, locked = false}
+					for i = 2, 8 do
+						local val = 1 - i * 0.2
+						local dir = 1
+						
+						if val > 1 then
+							val = 1
+							dir = -1
+						elseif val < -1 then
+							val = -1
+							dir = 1
+						end
+						
+						vars.effectVariables.barLineUpBars[i] = { value = val, direction = dir }
+					end
 				end
 
 				vars.effectVariables.currHack = hackType
@@ -2244,6 +2257,14 @@ chaosEffects = {
 				
 				local hackType = vars.effectVariables.currHack
 				local drawCall = function() end
+				
+				local damageAlpha = vars.effectVariables.damageAlpha
+				
+				if damageAlpha > 0 then
+					damageAlpha = damageAlpha - GetChaosTimeStep()
+				end
+				
+				vars.effectVariables.damageAlpha = damageAlpha
 				
 				function drawBlackScreen()
 					UiPush()
@@ -2300,8 +2321,27 @@ chaosEffects = {
 					UiPop()
 				end
 				
-				function resetWordWheels()
+				function drawDamage()
+					UiPush()
+						UiAlign("center middle")
+							
+						UiTranslate(UiCenter(), UiMiddle())
+						
+						UiColor(1, 0, 0, vars.effectVariables.damageAlpha)
+						
+						UiTranslate(0, UiHeight() * 0.02)
+						
+						UiRect(UiWidth() * 0.595, UiHeight() * 0.65)
+					UiPop()
+				end
+				
+				function loseLive()
+					vars.effectVariables.damageAlpha = 1
 					vars.effectVariables.lives = vars.effectVariables.lives - 1
+				end
+				
+				function resetWordWheels()
+					loseLive()
 					vars.effectVariables.currentWordWheel = 1
 					
 					for i = 1, 8 do
@@ -2312,13 +2352,27 @@ chaosEffects = {
 					end
 				end
 				
+				function barLineupLoseLevel()
+					loseLive()
+					local currentBarIndex = vars.effectVariables.currentHackPos
+					
+					if currentBarIndex > 1 then
+						currentBarIndex = vars.effectVariables.currentHackPos - 1
+						vars.effectVariables.currentHackPos = currentBarIndex
+					end
+					
+					local currentBar = vars.effectVariables.barLineUpBars[currentBarIndex]
+					
+					currentBar.locked = false
+				end
+				
 				if hackType == "letterLineup" then
 					for i = 1, 8 do
 						local wordWheel = vars.effectVariables.wordWheels[i]
 						
 						if not wordWheel.locked then
 							
-							wordWheel.offset = wordWheel.offset + GetChaosTimeStep() * 3
+							wordWheel.offset = wordWheel.offset + GetChaosTimeStep() * 4
 							
 							if wordWheel.offset > 10 then
 								wordWheel.offset = 0
@@ -2326,20 +2380,20 @@ chaosEffects = {
 						end
 					end
 					
-					if vars.effectVariables.currentWordWheel > 8 then
+					if vars.effectVariables.currentHackPos > 8 then
 						endMinigame()
 						return
 					end
 					
 					if InputPressed("space") then
-						local currentWordWheelIndex= vars.effectVariables.currentWordWheel
+						local currentWordWheelIndex = vars.effectVariables.currentHackPos
 						local currentWordWheel = vars.effectVariables.wordWheels[currentWordWheelIndex]
 						local currOffset = currentWordWheel.offset
 						
 						if currOffset >= 0 and currOffset <= 2 then
 							currentWordWheel.offset = 1
 							currentWordWheel.locked = true
-							vars.effectVariables.currentWordWheel = vars.effectVariables.currentWordWheel + 1
+							vars.effectVariables.currentHackPos = currentWordWheelIndex + 1
 						else
 							resetWordWheels()
 						end
@@ -2351,13 +2405,13 @@ chaosEffects = {
 							drawWindow()
 							drawLives()
 							
-							UiAlign("center middle")
-							UiTranslate(UiCenter(), UiMiddle())
-							
 							local offset = 5
 							local width = UiWidth() * 0.5 / 8
 							
 							UiPush()
+								UiAlign("center middle")
+								UiTranslate(UiCenter(), UiMiddle())
+							
 								UiTranslate(-(width + offset) * 3.5, UiHeight() * 0.075) --0.175
 								
 								for i = 0, 7 do
@@ -2380,7 +2434,7 @@ chaosEffects = {
 										
 										UiColor(1, 1, 1, 1)
 										
-										UiFont("regular.ttf", 52)
+										UiFont("regular.ttf", 80)
 										
 										for j = -2, 12 do
 											UiPush()
@@ -2408,6 +2462,9 @@ chaosEffects = {
 							UiPop()
 							
 							UiPush()
+								UiAlign("center middle")
+								UiTranslate(UiCenter(), UiMiddle())
+							
 								UiColor(1, 0, 0, 0.5)
 								
 								UiTranslate(0, UiHeight() * 0.075 / 2)
@@ -2426,6 +2483,8 @@ chaosEffects = {
 								
 								UiRect((width + offset) * 8, 2)
 							UiPop()
+							
+							drawDamage()
 						UiPop()
 					end
 				elseif hackType == "ipLookup" then
@@ -2438,12 +2497,107 @@ chaosEffects = {
 						UiPop()
 					end
 				elseif hackType == "barLineup" then
+					for i = 1, 8 do
+						local currBar = vars.effectVariables.barLineUpBars[i]
+						
+						if not currBar.locked then
+							local dir = currBar.direction
+							local val = currBar.value + GetChaosTimeStep() * dir * 1.5
+							
+							if val > 1 then
+								val = 1
+								dir = -1
+							elseif val < -1 then
+								val = -1
+								dir = 1
+							end
+							
+							currBar.value = val
+							currBar.direction = dir
+						end
+					end
+					
+					if vars.effectVariables.currentHackPos > 8 then
+						endMinigame()
+						return
+					end
+					
+					if InputPressed("space") then
+						local currentBarIndex = vars.effectVariables.currentHackPos
+						local currentBar = vars.effectVariables.barLineUpBars[currentBarIndex]
+						local currValue = currentBar.value
+						
+						if currValue <= 0.2 and currValue >= -0.2 then
+							currentBar.value = 0
+							currentBar.locked = true
+							vars.effectVariables.currentHackPos = currentBarIndex + 1
+						else
+							barLineupLoseLevel()
+						end
+					end
+				
 					drawCall = function()
 						UiPush()
 							drawBlackScreen()
 							drawWindow()
 							drawLives()
 							
+							UiPush()
+								UiAlign("center middle")
+								UiTranslate(UiCenter(), UiMiddle())
+							
+								local barHeight = UiHeight() * 0.2
+								local barWidth = UiHeight() * 0.025
+								local offset = UiWidth() * 0.075 / 8
+							
+								UiTranslate(0, UiHeight() * 0.1)
+								
+								UiColor(1, 0, 0, 1)
+								
+								UiRect(UiHeight() * 0.5, UiHeight() * 0.4)
+								
+								UiColor(0, 0, 0, 1)
+								
+								UiRect(UiHeight() * 0.49, UiHeight() * 0.39)
+								
+								UiColor(1, 0, 0, 1)
+								
+								UiRect(UiHeight() * 0.5, barHeight * 0.15)
+								
+								UiTranslate(-(barWidth + offset) * 4.5, 0)
+								
+								for i = 1, 8 do
+									local currVal = vars.effectVariables.barLineUpBars[i].value
+								
+									UiPush()
+										UiTranslate((barWidth + offset) * i, currVal * 100)
+										
+										UiColor(1, 1, 1, 1)
+										
+										UiTranslate(0, -barHeight * 0.3)
+										
+										if vars.effectVariables.currentHackPos == i then
+											UiColor(0.9, 0.9, 0, 1)
+											UiRect(barWidth + 6, barHeight * 0.4 + 6)
+											UiColor(1, 1, 1, 1)
+										end
+										
+										UiRect(barWidth, barHeight * 0.4)
+										
+										UiTranslate(0, barHeight * 0.6)
+										
+										if vars.effectVariables.currentHackPos == i then
+											UiColor(0.9, 0.9, 0, 1)
+											UiRect(barWidth + 6, barHeight * 0.4 + 6)
+											UiColor(1, 1, 1, 1)
+										end
+										
+										UiRect(barWidth, barHeight * 0.4)
+									UiPop()
+								end
+							UiPop()
+							
+							drawDamage()
 						UiPop()
 					end
 				end
