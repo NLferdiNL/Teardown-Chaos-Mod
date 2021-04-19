@@ -197,6 +197,10 @@ function VecDist(a, b)
 	return distance
 end
 
+function VecMag(a)
+	return math.sqrt((a[1] * a[1]) + (a[2] * a[2]) + (a[3] * a[3]))
+end
+
 function VecToString(vec)
 	return vec[1] .. ", " .. vec[2] .. ", " .. vec[3]
 end

@@ -2616,6 +2616,45 @@ chaosEffects = {
 				end
 			end,
 		},
+		
+		--[[grieferJesus = {
+			name = "Griefer Jesus",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { npcTransform = nil},
+			onEffectStart = function(vars) 
+				local playerCameraTransform = GetPlayerCameraTransform()
+				local cameraForward = Vec(0, 0, -5)
+				local cameraForwardWorldSpace = TransformToParentPoint(playerCameraTransform, cameraForward)
+				
+				vars.effectVariables.npcTransform = Transform(cameraForwardWorldSpace, QuatEuler(0, 0, 0))
+			end,
+			onEffectTick = function(vars) 
+				function getAngleToPlayer()
+					local grieferTransform = vars.effectVariables.npcTransform
+					local grieferForward = Vec(0, 0, -5)
+					local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
+					
+					local playerPos = GetPlayerPos()
+				
+					local angle = math.acos(VecDot(grieferForwardWorldSpace, playerPos) / (VecMag(grieferForwardWorldSpace) * VecMag(playerPos)))
+					
+					DebugPrint(angle)
+					DebugCross(grieferTransform.pos, 1, 0, 0, 1)
+					DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
+					
+					return angle
+				end
+				
+				getAngleToPlayer()
+				
+				
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
 	},	-- EFFECTS TABLE
 }
 
