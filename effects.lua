@@ -921,12 +921,13 @@ chaosEffects = {
 			hideTimer = true,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { deathTimer = 5, nameBackup = "" },
+			effectVariables = { deathTimer = 5, nameBackup = "", playerTransform = nil},
 			onEffectStart = function(vars)
 				if GetPlayerVehicle() ~= 0 then
 					SetPlayerVehicle(0)
 				end
 				
+				vars.effectVariables.playerTransform = GetPlayerTransform()
 				vars.effectVariables.nameBackup = vars.name -- In case I decide on a new name
 				vars.name = chaosEffects.effects["instantDeath"].name
 			end,
@@ -936,13 +937,15 @@ chaosEffects = {
 					vars.effectDuration = 0
 					vars.effectLifetime = 0
 				else
-				
 					SetPlayerHealth(1)
 					
 					local playerCamera = GetPlayerCameraTransform()
 					local playerCameraPos = playerCamera.pos
 				
 					SetCameraTransform(Transform(VecAdd(playerCameraPos, Vec(0, -1, 0)), QuatEuler(-5, 0, 45)))
+					
+					SetPlayerTransform(vars.effectVariables.playerTransform)
+					
 					table.insert(drawCallQueue, function()
 					UiPush()
 						local currFade = 100 / 5 * vars.effectLifetime / 100
