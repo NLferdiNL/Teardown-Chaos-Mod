@@ -2655,6 +2655,58 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},]]--
+		
+		virtualReality = {
+			name = "Virtual Reality",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {transform = 0},
+			onEffectStart = function(vars)
+				vars.effectVariables.transform = TransformCopy(GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				SetPlayerTransform(vars.effectVariables.transform)
+			end,
+		},
+		
+		randomInformation = {
+			name = "Useless Information",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local gpv = GetPlayerVehicle()
+				local fire = GetFireCount()
+				local health = GetPlayerHealth()
+				local shape = GetPlayerPickShape()
+				if shape ~= 0 then
+					DrawShapeOutline(shape, 0.5)
+				end
+				
+				table.insert(drawCallQueue, function()
+					UiPush()
+						UiFont("regular.ttf", 30)
+						UiTextShadow(0, 0, 0, 0.5, 2.0)
+						UiAlign("left")
+						UiTranslate(UiCenter() * 0.3, UiHeight() * 0.2)
+						UiText("Active fires: " .. fire) -- Fire counter
+						UiTranslate(0, 40)
+						UiText("Player Vehicle Handle: " .. gpv) -- Player vehicle handle
+						UiTranslate(0, 40)
+						UiText("Player Health: " .. math.floor(health * 100)) -- Health
+					UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 
