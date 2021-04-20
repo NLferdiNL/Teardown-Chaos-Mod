@@ -2619,7 +2619,7 @@ chaosEffects = {
 		
 		--[[grieferJesus = {
 			name = "Griefer Jesus",
-			effectDuration = 20,
+			effectDuration = 500, -- 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -2635,18 +2635,25 @@ chaosEffects = {
 			onEffectTick = function(vars) 
 				function getAngleToPlayer()
 					local grieferTransform = vars.effectVariables.npcTransform
-					local grieferForward = Vec(0, 0, -5)
+					local grieferForward = Vec(0, 0, -1)
 					local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
 					
-					local playerPos = GetPlayerPos()
-				
-					local angle = math.acos(VecDot(grieferForwardWorldSpace, playerPos) / (VecMag(grieferForwardWorldSpace) * VecMag(playerPos)))
+					local playerPos = VecCopy(GetPlayerPos())
 					
-					DebugPrint(angle)
+					playerPos[2] = grieferTransform.pos[2]
+					
+					local vectorToPlayer = dirVec(playerPos, grieferTransform.pos)
+					local vectorToPlayerLocalSpace = TransformToLocalVec(grieferTransform, vectorToPlayer)
+				
+					local angleRadian = math.acos(VecDot(grieferForward, vectorToPlayerLocalSpace) / (VecMag(grieferForward) * VecMag(vectorToPlayerLocalSpace)))
+					local angleDegrees = angleRadian / 2 * 360
+					
+					DebugPrint(angleDegrees % 360)
 					DebugCross(grieferTransform.pos, 1, 0, 0, 1)
 					DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
+					DebugLine(grieferTransform.pos, vectorToPlayer, 0, 1, 0, 1)
 					
-					return angle
+					return angleDegrees
 				end
 				
 				getAngleToPlayer()
