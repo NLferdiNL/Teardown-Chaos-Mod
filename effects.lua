@@ -2617,7 +2617,7 @@ chaosEffects = {
 			end,
 		},
 		
-		--[[grieferJesus = {
+--[[grieferJesus = {
 			name = "Griefer Jesus",
 			effectDuration = 500, -- 20,
 			effectLifetime = 0,
@@ -2629,6 +2629,8 @@ chaosEffects = {
 				local playerCameraTransform = GetPlayerCameraTransform()
 				local cameraForward = Vec(0, 0, -5)
 				local cameraForwardWorldSpace = TransformToParentPoint(playerCameraTransform, cameraForward)
+				
+				cameraForwardWorldSpace[2] = GetPlayerPos()[2]
 				
 				vars.effectVariables.npcTransform = Transform(cameraForwardWorldSpace, QuatEuler(0, 0, 0))
 			end,
@@ -2642,18 +2644,22 @@ chaosEffects = {
 					
 					playerPos[2] = grieferTransform.pos[2]
 					
-					local vectorToPlayer = dirVec(playerPos, grieferTransform.pos)
-					local vectorToPlayerLocalSpace = TransformToLocalVec(grieferTransform, vectorToPlayer)
-				
-					local angleRadian = math.acos(VecDot(grieferForward, vectorToPlayerLocalSpace) / (VecMag(grieferForward) * VecMag(vectorToPlayerLocalSpace)))
-					local angleDegrees = angleRadian / 2 * 360
+					local dirToPlayer = dirVec(grieferTransform.pos, playerPos)
+					local dirToPlayerFromGriefer = VecAdd(grieferTransform.pos, dirToPlayer)
 					
-					DebugPrint(angleDegrees % 360)
+					local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayerFromGriefer)
+					
+					DebugLine(grieferTransform.pos, dirToPlayerFromGriefer, 0, 1, 0, 1)
+					
+					local angleRadian = math.acos(VecDot(grieferForwardWorldSpace, dirToPlayerFromGriefer) / (VecMag(grieferForwardWorldSpace) * VecMag(dirToPlayerFromGriefer)))
+					local angleDegrees = angleRadian * 360 / math.pi
+					
+					DebugPrint(angleRadian .. " = " .. angleDegrees)
+					
 					DebugCross(grieferTransform.pos, 1, 0, 0, 1)
 					DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
-					DebugLine(grieferTransform.pos, vectorToPlayer, 0, 1, 0, 1)
 					
-					return angleDegrees
+					return 0
 				end
 				
 				getAngleToPlayer()

@@ -192,7 +192,7 @@ end
 function VecDist(a, b)
 	local directionVector = VecSub(b, a)
 	
-	local distance = math.sqrt(directionVector[1]^2 +  directionVector[2]^2 +  directionVector[3]^2)
+	local distance = VecMag(directionVector)
 	
 	return distance
 end
