@@ -189,6 +189,24 @@ function dirVec(a, b)
 	return VecNormalize(VecSub(b, a))
 end
 
+function VecAngle(a, b) -- NON FUNCTIONAL RIGHT NOW
+	local magA = math.sqrt(180) --VecMag(a)
+	local magB = math.sqrt(134) --VecMag(b)
+	
+	local dotP = 122 --VecDot(a, b)
+	
+	local angle = math.acos(dotP / (magA * magB)) -- This part is wrong. I need an inverse cosine (which this appearantly isn't)
+	
+	DebugPrint(b[1] .. ", " .. b[2] .. ", " .. b[3])
+	DebugPrint(dotP .. " / (" .. magA .. " * " .. magB .. ")")
+	DebugPrint(dotP .. " / (" .. magA * magB .. ")")
+	DebugPrint(dotP / (magA * magB))
+	DebugPrint(angle)
+	DebugPrint("-----")
+
+	return angle
+end
+
 function VecDist(a, b)
 	local directionVector = VecSub(b, a)
 	
@@ -198,7 +216,7 @@ function VecDist(a, b)
 end
 
 function VecMag(a)
-	return math.sqrt((a[1] * a[1]) + (a[2] * a[2]) + (a[3] * a[3]))
+	return math.sqrt(a[1]^2 + a[2]^2 + a[3]^2)
 end
 
 function VecToString(vec)

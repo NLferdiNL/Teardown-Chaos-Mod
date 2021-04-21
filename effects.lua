@@ -2617,7 +2617,7 @@ chaosEffects = {
 			end,
 		},
 		
---[[grieferJesus = {
+		--[[grieferJesus = {
 			name = "Griefer Jesus",
 			effectDuration = 500, -- 20,
 			effectLifetime = 0,
@@ -2638,28 +2638,23 @@ chaosEffects = {
 				function getAngleToPlayer()
 					local grieferTransform = vars.effectVariables.npcTransform
 					local grieferForward = Vec(0, 0, -1)
-					local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
-					
 					local playerPos = VecCopy(GetPlayerPos())
 					
 					playerPos[2] = grieferTransform.pos[2]
 					
 					local dirToPlayer = dirVec(grieferTransform.pos, playerPos)
+					local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayer)
+					
+					local angle = VecAngle(grieferForward, localSpaceDirToPlayer)
+					
 					local dirToPlayerFromGriefer = VecAdd(grieferTransform.pos, dirToPlayer)
-					
-					local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayerFromGriefer)
-					
 					DebugLine(grieferTransform.pos, dirToPlayerFromGriefer, 0, 1, 0, 1)
 					
-					local angleRadian = math.acos(VecDot(grieferForwardWorldSpace, dirToPlayerFromGriefer) / (VecMag(grieferForwardWorldSpace) * VecMag(dirToPlayerFromGriefer)))
-					local angleDegrees = angleRadian * 360 / math.pi
-					
-					DebugPrint(angleRadian .. " = " .. angleDegrees)
-					
+					local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
 					DebugCross(grieferTransform.pos, 1, 0, 0, 1)
 					DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
 					
-					return 0
+					return angle
 				end
 				
 				getAngleToPlayer()
