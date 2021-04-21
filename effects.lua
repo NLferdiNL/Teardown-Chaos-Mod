@@ -2617,13 +2617,20 @@ chaosEffects = {
 			end,
 		},
 		
-		--[[grieferJesus = {
+		grieferJesus = {
 			name = "Griefer Jesus",
 			effectDuration = 500, -- 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
-			effectSprites = {},
+			effectSprites = {"MOD/sprites/grieferJesus/Playa1.png", 
+							 "MOD/sprites/grieferJesus/Playa2.png", 
+							 "MOD/sprites/grieferJesus/Playa3.png", 
+							 "MOD/sprites/grieferJesus/Playa4.png", 
+							 "MOD/sprites/grieferJesus/Playa5.png", 
+							 "MOD/sprites/grieferJesus/Playa6.png", 
+							 "MOD/sprites/grieferJesus/Playa7.png", 
+							 "MOD/sprites/grieferJesus/Playa8.png"},
 			effectVariables = { npcTransform = nil},
 			onEffectStart = function(vars) 
 				local playerCameraTransform = GetPlayerCameraTransform()
@@ -2635,34 +2642,46 @@ chaosEffects = {
 				vars.effectVariables.npcTransform = Transform(cameraForwardWorldSpace, QuatEuler(0, 0, 0))
 			end,
 			onEffectTick = function(vars) 
-				function getAngleToPlayer()
-					local grieferTransform = vars.effectVariables.npcTransform
-					local grieferForward = Vec(0, 0, -1)
-					local playerPos = VecCopy(GetPlayerPos())
-					
-					playerPos[2] = grieferTransform.pos[2]
-					
-					local dirToPlayer = dirVec(grieferTransform.pos, playerPos)
-					local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayer)
-					
-					local angle = VecAngle(grieferForward, localSpaceDirToPlayer)
-					
-					local dirToPlayerFromGriefer = VecAdd(grieferTransform.pos, dirToPlayer)
-					DebugLine(grieferTransform.pos, dirToPlayerFromGriefer, 0, 1, 0, 1)
-					
-					local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
-					DebugCross(grieferTransform.pos, 1, 0, 0, 1)
-					DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
-					
-					return angle
-				end
+				--function getAngleToPlayer()
+				local grieferTransform = vars.effectVariables.npcTransform
+				local grieferForward = Vec(0, 0, -1)
+				local cameraTransform = GetCameraTransform()
+				local cameraPos = VecCopy(cameraTransform.pos)
 				
-				getAngleToPlayer()
+				cameraPos[2] = grieferTransform.pos[2]
 				
+				local dirToPlayer = dirVec(grieferTransform.pos, cameraPos)
+				local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayer)
+				
+				local currentAngle = VecAngle(grieferForward, localSpaceDirToPlayer)
+				
+				--[[DEBUG
+				local dirToPlayerFromGriefer = VecAdd(grieferTransform.pos, dirToPlayer)
+				DebugLine(grieferTransform.pos, dirToPlayerFromGriefer, 0, 1, 0, 1)
+				
+				local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
+				DebugCross(grieferTransform.pos, 1, 0, 0, 1)
+				DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
+				--]]--
+				
+				--return angle
+				--end
+				
+				--local currentAngle = getAngleToPlayer()
+				
+				local viewPoint = ((currentAngle - (currentAngle % 45)) / 45) + 1
+				
+				DebugPrint(currentAngle .. " = " .. viewPoint)
+				
+				local spriteRot = QuatLookAt(grieferTransform.pos, cameraPos)
+				
+				local spriteTransform = Transform(grieferTransform.pos, spriteRot)
+				
+				DrawSprite(vars.effectSprites[viewPoint],  spriteTransform, 1, 2, 1, 1, 1, 1, true, false)
 				
 			end,
 			onEffectEnd = function(vars) end,
-		},]]--
+		},
 		
 		virtualReality = {
 			name = "Virtual Reality",
