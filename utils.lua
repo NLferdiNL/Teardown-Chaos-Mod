@@ -197,13 +197,6 @@ function VecAngle(a, b)
 	
 	local angle = math.deg(math.acos(dotP / (magA * magB)))
 	
-	--[[DebugPrint(b[1] .. ", " .. b[2] .. ", " .. b[3]) -- TO BE REMOVED NEXT PUSH (doing it for history sake)
-	DebugPrint(dotP .. " / (" .. magA .. " * " .. magB .. ")")
-	DebugPrint(dotP .. " / (" .. magA * magB .. ")")
-	DebugPrint(dotP / (magA * magB))
-	DebugPrint(angle)
-	DebugPrint("-----")]]--
-
 	return angle
 end
 
