@@ -2617,7 +2617,7 @@ chaosEffects = {
 			end,
 		},
 		
-		grieferJesus = {
+		--[[grieferJesus = {
 			name = "Griefer Jesus",
 			effectDuration = 500, -- 20,
 			effectLifetime = 0,
@@ -2642,7 +2642,6 @@ chaosEffects = {
 				vars.effectVariables.npcTransform = Transform(cameraForwardWorldSpace, QuatEuler(0, 0, 0))
 			end,
 			onEffectTick = function(vars) 
-				--function getAngleToPlayer()
 				local grieferTransform = vars.effectVariables.npcTransform
 				local grieferForward = Vec(0, 0, -1)
 				local cameraTransform = GetCameraTransform()
@@ -2654,20 +2653,6 @@ chaosEffects = {
 				local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayer)
 				
 				local currentAngle = VecAngle(grieferForward, localSpaceDirToPlayer)
-				
-				--[[DEBUG
-				local dirToPlayerFromGriefer = VecAdd(grieferTransform.pos, dirToPlayer)
-				DebugLine(grieferTransform.pos, dirToPlayerFromGriefer, 0, 1, 0, 1)
-				
-				local grieferForwardWorldSpace = TransformToParentPoint(grieferTransform, grieferForward)
-				DebugCross(grieferTransform.pos, 1, 0, 0, 1)
-				DebugLine(grieferTransform.pos, grieferForwardWorldSpace, 1, 0, 0, 1)
-				--]]--
-				
-				--return angle
-				--end
-				
-				--local currentAngle = getAngleToPlayer()
 				
 				local viewPoint = ((currentAngle - (currentAngle % 45)) / 45) + 1
 				
@@ -2681,7 +2666,7 @@ chaosEffects = {
 				
 			end,
 			onEffectEnd = function(vars) end,
-		},
+		},]]--
 		
 		virtualReality = {
 			name = "Virtual Reality",
