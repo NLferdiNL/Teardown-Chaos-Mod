@@ -1610,27 +1610,23 @@ chaosEffects = {
 				
 				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
 				local maxPos = VecAdd(playerPos, Vec(range, range, range))
-				local shapeList = QueryAabbShapes(minPos, maxPos)
+				local shapeList = QueryAabbBodies(minPos, maxPos)
 				
-				for key, value in ipairs(shapeList) do
-					local shapeBody = GetShapeBody(value)
+				for i = 1, #shapeList do
+					local shapeBody = shapeList[i]
 					
-					if vars.effectVariables.affectedBodies[shapeBody] == nil then
-						vars.effectVariables.affectedBodies[shapeBody] = "hit"
+					if IsBodyDynamic(shapeBody) then
+							
+						if vars.effectVariables.affectedBodies[shapeBody] == nil then
+							vars.effectVariables.affectedBodies[shapeBody] = "hit"
+						end
+		
+						local bodyVelocity = GetBodyVelocity(shapeBody)
+					
+						bodyVelocity[2] = 0.5
+					
+						SetBodyVelocity(shapeBody, bodyVelocity)
 					end
-				
-					--[[ Always returns false, even on dynamic bodies?
-					if not IsBodyDynamic(shapeBody) then
-						return
-					end]]--
-
-					local shapeTransform = GetBodyTransform(shape)
-
-					local bodyVelocity = GetBodyVelocity(shapeBody)
-					
-					bodyVelocity[2] = 0.5
-					
-					SetBodyVelocity(shapeBody, bodyVelocity)
 				end
 			end,
 			onEffectEnd = function(vars) 
@@ -1669,9 +1665,9 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		--[[suddenFlood = {
-			name = "Flood",
-			effectDuration = 10,--20,
+		suddenFlood = {
+			name = "Sudden Flood",
+			effectDuration = 30,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -1707,22 +1703,19 @@ chaosEffects = {
 				for key, value in ipairs(shapeList) do
 					local shapeBody = GetShapeBody(value)
 				
-					--[ Always returns false, even on dynamic bodies?
-					if not IsBodyDynamic(shapeBody) then
-						return
-					end]--
+					if IsBodyDynamic(shapeBody) then
+						local shapeTransform = GetBodyTransform(shape)
 
-					local shapeTransform = GetBodyTransform(shape)
-
-					local bodyVelocity = GetBodyVelocity(shapeBody)
-					
-					--local bodyMass = GetBodyMass(shapeBody)
-					
-					--DebugPrint(bodyMass)
-					
-					bodyVelocity[2] = 0.1 * math.abs(shapeTransform.pos[2] - (vars.effectVariables.waterHeight - floatHeightDiff))--5 / 20000 * bodyMass
-					
-					SetBodyVelocity(shapeBody, bodyVelocity)
+						local bodyVelocity = GetBodyVelocity(shapeBody)
+						
+						--local bodyMass = GetBodyMass(shapeBody)
+						
+						--DebugPrint(bodyMass)
+						
+						bodyVelocity[2] = 0.1 * math.abs(shapeTransform.pos[2] - (vars.effectVariables.waterHeight - floatHeightDiff))--5 / 20000 * bodyMass
+						
+						SetBodyVelocity(shapeBody, bodyVelocity)
+					end
 				end
 				
 				-- End Object Behaviour
@@ -1760,7 +1753,7 @@ chaosEffects = {
 				-- End Player Behaviour
 			end,
 			onEffectEnd = function(vars) end,
-		},]]--
+		},
 		
 		dontStopDriving = {
 			name = "Speed",
@@ -2668,22 +2661,50 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},]]--
 		
-		virtualReality = {
-			name = "Virtual Reality",
+		gravityField = {
+			name = "Gravity Field",
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {transform = 0},
-			onEffectStart = function(vars)
-				vars.effectVariables.transform = TransformCopy(GetPlayerTransform())
+			effectVariables = { affectedBodies = {}},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerPos = GetPlayerPos()
+				local range = 50
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local shapeList = QueryAabbBodies(minPos, maxPos)
+				
+				for i = 1, #shapeList do
+					local shapeBody = shapeList[i]
+					
+					if IsBodyDynamic(shapeBody) then
+							
+						if vars.effectVariables.affectedBodies[shapeBody] == nil then
+							vars.effectVariables.affectedBodies[shapeBody] = "hit"
+						end
+		
+						local shapeTransform = GetBodyTransform(shapeBody)
+						
+						local dirToPlayer = VecScale(dirVec(shapeTransform.pos, playerPos), 5)
+						
+						local bodyVelocity = dirToPlayer
+						
+						SetBodyVelocity(shapeBody, bodyVelocity)
+					end
+				end
 			end,
-			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) 
-				SetPlayerTransform(vars.effectVariables.transform)
+				for shapeBody, value in pairs(vars.effectVariables.affectedBodies) do
+					local shapeTransform = GetBodyTransform(shapeBody)
+					ApplyBodyImpulse(shapeBody, shapeTransform.pos, Vec(0, -1, 0))
+				end
 			end,
 		},
+		
 		
 		randomInformation = {
 			name = "Useless Information",

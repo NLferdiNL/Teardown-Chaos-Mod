@@ -62,7 +62,7 @@ function saveFileInit()
 		if chaosEffects.disabledEffects["quakefov"] ~= nil then
 			chaosEffects.disabledEffects["quakefov"] = nil
 			DebugPrint("Quake FOV enabled, because it now works with tools.")
-			DebugPrint("This will not happen again.")
+			DebugPrint("This reset will only occur once.")
 		end
 		
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
