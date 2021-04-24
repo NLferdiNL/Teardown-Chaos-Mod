@@ -200,6 +200,22 @@ function VecAngle(a, b)
 	return angle
 end
 
+function VecDet(a, b)
+	local firstDet = a[1] * b[3]
+	local secondDet = a[3] * b[1]
+	
+	return firstDet - secondDet
+end
+
+function VecAngle360(a, b)
+	local det = VecDet(a, b)
+	local dot = VecDot(a, b)
+	
+	local angle = math.deg(math.atan2(det, dot))
+	
+	return angle
+end
+
 function VecDist(a, b)
 	local directionVector = VecSub(b, a)
 	

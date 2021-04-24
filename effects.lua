@@ -2610,7 +2610,7 @@ chaosEffects = {
 			end,
 		},
 		
-		--[[grieferJesus = {
+		grieferJesus = {
 			name = "Griefer Jesus",
 			effectDuration = 500, -- 20,
 			effectLifetime = 0,
@@ -2624,7 +2624,7 @@ chaosEffects = {
 							 "MOD/sprites/grieferJesus/Playa6.png", 
 							 "MOD/sprites/grieferJesus/Playa7.png", 
 							 "MOD/sprites/grieferJesus/Playa8.png"},
-			effectVariables = { npcTransform = nil},
+			effectVariables = { npcTransform = nil, attackCooldown = 5, maxCooldown = 5},
 			onEffectStart = function(vars) 
 				local playerCameraTransform = GetPlayerCameraTransform()
 				local cameraForward = Vec(0, 0, -5)
@@ -2642,14 +2642,26 @@ chaosEffects = {
 				
 				cameraPos[2] = grieferTransform.pos[2]
 				
+				-- ROTATE TOWARDS PLAYER BEHAVIOR
+				
+				local endRot = QuatLookAt(grieferTransform.pos, cameraPos)
+				
+				local rotStep = QuatSlerp(grieferTransform.rot, endRot, GetChaosTimeStep() * 2)
+				
+				grieferTransform.rot = rotStep
+				
+				-- RENDER SPRITE BEHAVIOR
+				
 				local dirToPlayer = dirVec(grieferTransform.pos, cameraPos)
 				local localSpaceDirToPlayer = TransformToLocalVec(grieferTransform, dirToPlayer)
 				
-				local currentAngle = VecAngle(grieferForward, localSpaceDirToPlayer)
+				local currentAngle = VecAngle360(grieferForward, localSpaceDirToPlayer)
+				
+				if currentAngle < 0 then
+					currentAngle = currentAngle + 360
+				end
 				
 				local viewPoint = ((currentAngle - (currentAngle % 45)) / 45) + 1
-				
-				DebugPrint(currentAngle .. " = " .. viewPoint)
 				
 				local spriteRot = QuatLookAt(grieferTransform.pos, cameraPos)
 				
@@ -2657,9 +2669,54 @@ chaosEffects = {
 				
 				DrawSprite(vars.effectSprites[viewPoint],  spriteTransform, 1, 2, 1, 1, 1, 1, true, false)
 				
+				-- ATTACK BEHAVIOR
+				
+				vars.effectVariables.attackCooldown = vars.effectVariables.attackCooldown - GetChaosTimeStep()
+				
+				if math.random(1, 10) < 5 or vars.effectVariables.attackCooldown > 0 then
+					return
+				end
+				
+				vars.effectVariables.attackCooldown = vars.effectVariables.maxCooldown
+				
+				local attackAngle = 15
+				
+				if currentAngle < attackAngle or currentAngle > 360 - attackAngle then
+					local playerPos = GetPlayerPos()
+				
+					local rayStart = grieferTransform.pos
+					
+					local rayDir = dirVec(grieferTransform.pos, playerPos)
+					
+					local rayDist = VecDist(grieferTransform.pos, playerPos)
+					
+					local rayOffset = rndVec(rayDist / 5000)
+					
+					rayDir = VecAdd(rayDir, rayOffset)
+					
+					-- TODO: Particle Effects
+					
+					local hit, hitPoint, distance = raycast(rayStart, rayDir, rayDist)
+					
+					if not hit then
+						local shotLocation = VecAdd(rayStart, VecScale(rayDir, rayDist))
+						
+						local distToPlayer = VecDist(shotLocation, playerPos)
+						
+						if distToPlayer <= 0.25 then
+							local playerHealth = GetPlayerHealth() - 0.7
+						
+							Explosion(shotLocation, 3)
+							SetPlayerHealth(playerHealth)
+						else
+							-- TODO: MISS LOGIC
+						end
+					end
+				end
+				
 			end,
 			onEffectEnd = function(vars) end,
-		},]]--
+		},
 		
 		gravityField = {
 			name = "Gravity Field",
