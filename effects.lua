@@ -2669,48 +2669,103 @@ chaosEffects = {
 				
 				DrawSprite(vars.effectSprites[viewPoint],  spriteTransform, 1, 2, 1, 1, 1, 1, true, false)
 				
+				-- MOVEMENT BEHAVIOR
+				
+				
+				
 				-- ATTACK BEHAVIOR
+				
+				local playerPos = GetPlayerPos()
+				
+				function FireShot(rayDist, rayOffset)
+					local rayStart = grieferTransform.pos
+					
+					local rayDir = dirVec(grieferTransform.pos, playerPos)
+					
+					rayDir = VecAdd(rayDir, rayOffset)
+					
+					local shotLocation = VecAdd(rayStart, VecScale(rayDir, rayDist))
+					
+					local hit, hitPoint = raycast(rayStart, rayDir, rayDist)
+					
+					return shotLocation, hit, hitPoint
+				end
+				
+				function SpawnParticles(startPoint, endPoint)
+					local particleDist = VecDist(startPoint, endPoint)
+				
+					local particles = math.floor(particleDist)
+					
+					local particleDir = dirVec(startPoint, endPoint)
+					
+					ParticleReset()
+					ParticleType("smoke")
+					ParticleRadius(0.1, 0.3)
+					ParticleGravity(0, 0.4)
+					ParticleCollide(1)
+					
+					for i = 1, particles do
+						local currPos = VecAdd(startPoint, VecScale(particleDir, i))
+						
+						SpawnParticle(currPos, particleDir, 3)
+					end
+				end
+				
+				function CanSeePlayer()
+					local rayStart = grieferTransform.pos
+					local rayDir = dirVec(grieferTransform.pos, playerPos)
+					local rayDist = VecDist(grieferTransform.pos, playerPos)
+					local hit, hitPoint = raycast(rayStart, rayDir, rayDist)
+					
+					return not hit
+				end
 				
 				vars.effectVariables.attackCooldown = vars.effectVariables.attackCooldown - GetChaosTimeStep()
 				
-				if math.random(1, 10) < 5 or vars.effectVariables.attackCooldown > 0 then
+				if math.random(1, 10) < 5 or vars.effectVariables.attackCooldown >= 0 then
 					return
 				end
 				
 				vars.effectVariables.attackCooldown = vars.effectVariables.maxCooldown
 				
+				if not CanSeePlayer() then
+					return
+				end
+				
 				local attackAngle = 15
 				
 				if currentAngle < attackAngle or currentAngle > 360 - attackAngle then
-					local playerPos = GetPlayerPos()
-				
-					local rayStart = grieferTransform.pos
-					
-					local rayDir = dirVec(grieferTransform.pos, playerPos)
-					
 					local rayDist = VecDist(grieferTransform.pos, playerPos)
-					
 					local rayOffset = rndVec(rayDist / 5000)
 					
-					rayDir = VecAdd(rayDir, rayOffset)
-					
-					-- TODO: Particle Effects
-					
-					local hit, hitPoint, distance = raycast(rayStart, rayDir, rayDist)
+					local shotLocation, hit, hitPoint = FireShot(rayDist, rayOffset)
 					
 					if not hit then
-						local shotLocation = VecAdd(rayStart, VecScale(rayDir, rayDist))
-						
 						local distToPlayer = VecDist(shotLocation, playerPos)
 						
 						if distToPlayer <= 0.25 then
 							local playerHealth = GetPlayerHealth() - 0.7
-						
+							
 							Explosion(shotLocation, 3)
 							SetPlayerHealth(playerHealth)
+							SpawnParticles(grieferTransform.pos, shotLocation)
 						else
-							-- TODO: MISS LOGIC
+							local secondShotLocation, secondHit, secondHitPoint = FireShot(rayDist * 2, rayOffset)
+							
+							if secondHit then
+								Explosion(secondHitPoint, 3)
+								SpawnParticles(grieferTransform.pos, secondHitPoint)
+							else
+								SpawnParticles(grieferTransform.pos, secondShotLocation)
+								Explosion(secondShotLocation, 3)
+							end
 						end
+					else
+						local distToHit = VecDist(grieferTransform.pos, hitPoint)
+						
+						SpawnParticles(grieferTransform.pos, hitPoint)
+						
+						Explosion(hitPoint, 3)
 					end
 				end
 				
