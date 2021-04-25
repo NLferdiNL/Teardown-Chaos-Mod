@@ -2612,7 +2612,7 @@ chaosEffects = {
 		
 		grieferJesus = {
 			name = "Griefer Jesus",
-			effectDuration = 500, -- 20,
+			effectDuration = 30,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
