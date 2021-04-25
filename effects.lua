@@ -2640,15 +2640,9 @@ chaosEffects = {
 				local cameraTransform = GetCameraTransform()
 				local cameraPos = VecCopy(cameraTransform.pos)
 				
+				local playerPos = GetPlayerPos()
+				
 				cameraPos[2] = grieferTransform.pos[2]
-				
-				-- ROTATE TOWARDS PLAYER BEHAVIOR
-				
-				local endRot = QuatLookAt(grieferTransform.pos, cameraPos)
-				
-				local rotStep = QuatSlerp(grieferTransform.rot, endRot, GetChaosTimeStep() * 2)
-				
-				grieferTransform.rot = rotStep
 				
 				-- RENDER SPRITE BEHAVIOR
 				
@@ -2671,11 +2665,69 @@ chaosEffects = {
 				
 				-- MOVEMENT BEHAVIOR
 				
+				-- -- ROTATE TOWARDS PLAYER BEHAVIOR
 				
+				local endRot = QuatLookAt(grieferTransform.pos, cameraPos)
+				
+				local rotStep = QuatSlerp(grieferTransform.rot, endRot, GetChaosTimeStep() * 2)
+				
+				grieferTransform.rot = rotStep
+				
+				-- MOVEMENT
+				
+				local grieferBackwards = VecScale(grieferForward, -1)
+				local grieferRight = Vec(1, 0, 0)
+				local grieferLeft = VecScale(grieferRight, -1)
+				
+				local walkSpeed = 2.5
+				
+				local distanceFromPlayer = VecDist(grieferTransform.pos, playerPos)
+				
+				function CanSeePlayer()
+					local rayStart = grieferTransform.pos
+					local rayDir = dirVec(grieferTransform.pos, playerPos)
+					local rayDist = VecDist(grieferTransform.pos, playerPos)
+					local hit, hitPoint = raycast(rayStart, rayDir, rayDist, true)
+					
+					return not hit
+				end
+				
+				function canMoveTowards(direction)
+					local directionWorldSpace = TransformToParentPoint(grieferTransform, direction)
+					local dirVector = dirVec(grieferTransform.pos, directionWorldSpace)
+					
+					local hit = raycast(grieferTransform.pos, dirVector, 1, 0.25)
+					
+					return not hit
+				end
+					
+				function moveTowards(direction)
+					local directionWorldSpace = TransformToParentPoint(grieferTransform, direction)
+					local dirVector = dirVec(grieferTransform.pos, directionWorldSpace)
+					
+					local newPos = VecCopy(grieferTransform.pos)
+					
+					local movedDistance = VecScale(dirVector, walkSpeed * GetChaosTimeStep())
+					
+					newPos = VecAdd(newPos, movedDistance)
+					
+					grieferTransform.pos = newPos
+				end
+				
+				if not CanSeePlayer() or distanceFromPlayer > 30 then
+					
+					if canMoveTowards(grieferForward) then
+						moveTowards(grieferForward)
+					elseif canMoveTowards(grieferRight) then
+						moveTowards(grieferRight)
+					elseif canMoveTowards(grieferLeft) then
+						moveTowards(grieferLeft)
+					elseif canMoveTowards(grieferBackwards) then
+						moveTowards(grieferBackwards)
+					end
+				end
 				
 				-- ATTACK BEHAVIOR
-				
-				local playerPos = GetPlayerPos()
 				
 				function FireShot(rayDist, rayOffset)
 					local rayStart = grieferTransform.pos
@@ -2711,15 +2763,6 @@ chaosEffects = {
 					end
 				end
 				
-				function CanSeePlayer()
-					local rayStart = grieferTransform.pos
-					local rayDir = dirVec(grieferTransform.pos, playerPos)
-					local rayDist = VecDist(grieferTransform.pos, playerPos)
-					local hit, hitPoint = raycast(rayStart, rayDir, rayDist)
-					
-					return not hit
-				end
-				
 				vars.effectVariables.attackCooldown = vars.effectVariables.attackCooldown - GetChaosTimeStep()
 				
 				if math.random(1, 10) < 5 or vars.effectVariables.attackCooldown >= 0 then
@@ -2727,10 +2770,6 @@ chaosEffects = {
 				end
 				
 				vars.effectVariables.attackCooldown = vars.effectVariables.maxCooldown
-				
-				if not CanSeePlayer() then
-					return
-				end
 				
 				local attackAngle = 15
 				
