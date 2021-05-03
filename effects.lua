@@ -1871,7 +1871,7 @@ chaosEffects = {
 				
 				local fogStep = 0.5
 				local fogLayers = 100
-				local fogStart = 60
+				local fogStart = 40
 				
 				for i = 1, fogLayers do
 					local spritePos = VecAdd(cameraTransform.pos, VecScale(forwardDirection, fogStart - i * fogStep))
@@ -2888,6 +2888,117 @@ chaosEffects = {
 						UiText("Player Health: " .. math.floor(health * 100)) -- Health
 					UiPop()
 				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		explodeNearbyVehicle = {
+			name = "Explode Nearby Vehicle",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				local vehicles = {}
+				for i=1, #nearbyShapes do
+					if GetBodyVehicle(GetShapeBody(nearbyShapes[i])) ~= 0 then
+						vehicles[#vehicles+1] = GetBodyVehicle(GetShapeBody(nearbyShapes[i]))
+					end
+				end
+
+				if(#vehicles == 0) then
+					return
+				end
+
+				local closestVehicle = 0
+				local closestDistance = 10000
+
+				local playerPos = GetPlayerTransform().pos
+				for i = 1, #vehicles do
+					local vehicleTransform = GetVehicleTransform(vehicles[i])
+					local distance = VecDist(vehicleTransform.pos, playerPos)
+
+					if distance < closestDistance then
+						closestDistance = distance
+						closestVehicle = vehicles[i]
+					end
+				end
+				
+				if closestVehicle <= 0 then
+					return
+				end
+				
+				local vehicleTransform = GetVehicleTransform(closestVehicle)
+
+				Explosion(vehicleTransform.pos, 2.5)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		playerSwap = {
+			name = "Player Swap",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {prevZoomStep = 0, cameraWobbleOffset = Vec(0, 0, 0) },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				-- Camera position Calc
+				function getZoomStep(i, steps)
+					-- Example: i = 17.7, steps = 5
+					-- (17.7 - (17.7 % 5)) / 5
+					-- (17.7 - 2.7) / 5
+					-- 15 / 5 = 3
+					
+					return (i - (i % steps)) / steps
+				end
+				
+				local zoomStep = vars.effectVariables.prevZoomStep
+			
+				if vars.effectLifetime <= 10 then -- Zoom out
+					zoomStep = getZoomStep(vars.effectLifetime, 2.5)
+					
+				elseif vars.effectLifetime >= 15 then -- Zoom back in
+					local lifetimeAfter = 12.5 - (vars.effectLifetime - 12.5)
+					
+					zoomStep = getZoomStep(lifetimeAfter, 2.5)
+				end
+				
+				-- Camera positioning
+				
+				local playerPos = GetPlayerPos()
+				
+				local cameraWobbleOffset = vars.effectVariables.cameraWobbleOffset
+				
+				cameraWobbleOffset = VecAdd(cameraWobbleOffset, rndVec(0.01))
+				
+				vars.effectVariables.cameraWobbleOffset = cameraWobbleOffset
+				
+				playerPos = VecAdd(playerPos, cameraWobbleOffset)
+				
+				local cameraOffset = Vec(0, 20 + zoomStep * 20, 0)
+				
+				local cameraPos = VecAdd(playerPos, cameraOffset)
+				
+				local cameraRot = QuatLookAt(cameraPos, playerPos)
+				
+				local newTransform = Transform(cameraPos, cameraRot)
+				
+				table.insert(drawCallQueue, function() UiBlur(0.1) end)
+				
+				if vars.effectVariables.prevZoomStep ~= zoomStep then
+					vars.effectVariables.prevZoomStep = zoomStep
+					-- TODO: Ui effect: Flash
+				end
+				
+				SetCameraTransform(newTransform)
 			end,
 			onEffectEnd = function(vars) end,
 		},
