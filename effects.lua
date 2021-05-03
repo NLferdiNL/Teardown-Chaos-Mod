@@ -2975,19 +2975,13 @@ chaosEffects = {
 				
 				local playerPos = GetPlayerPos()
 				
-				local cameraWobbleOffset = vars.effectVariables.cameraWobbleOffset
-				
-				cameraWobbleOffset = VecAdd(cameraWobbleOffset, rndVec(0.01))
-				
-				vars.effectVariables.cameraWobbleOffset = cameraWobbleOffset
-				
-				playerPos = VecAdd(playerPos, cameraWobbleOffset)
-				
 				local cameraOffset = Vec(0, 20 + zoomStep * 20, 0)
 				
 				local cameraPos = VecAdd(playerPos, cameraOffset)
 				
 				local cameraRot = QuatLookAt(cameraPos, playerPos)
+				
+				--TODO: Use cameraWobbleOffset to offset cameraRot in euler.
 				
 				local newTransform = Transform(cameraPos, cameraRot)
 				
