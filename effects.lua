@@ -2947,8 +2947,10 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {prevZoomStep = 0, cameraWobbleOffset = Vec(0, 0, 0) },
-			onEffectStart = function(vars) end,
+			effectVariables = {flashPos = 0, playerTransform = nil, prevZoomStep = 0, cameraWobbleOffset = Vec(0, 0, 0)},
+			onEffectStart = function(vars) 
+				vars.effectVariables.playerTransform = GetPlayerTransform()
+			end,
 			onEffectTick = function(vars) 
 				-- Camera position Calc
 				function getZoomStep(i, steps)
@@ -2981,18 +2983,36 @@ chaosEffects = {
 				
 				local cameraRot = QuatLookAt(cameraPos, playerPos)
 				
-				--TODO: Use cameraWobbleOffset to offset cameraRot in euler.
+				vars.effectVariables.cameraWobbleOffset = VecAdd(vars.effectVariables.cameraWobbleOffset, VecScale(rndVec(0.5), GetChaosTimeStep() * (zoomStep)))
 				
-				local newTransform = Transform(cameraPos, cameraRot)
+				local cameraWobbleQuat = QuatEuler(vars.effectVariables.cameraWobbleOffset[1], vars.effectVariables.cameraWobbleOffset[2], vars.effectVariables.cameraWobbleOffset[3])
 				
-				table.insert(drawCallQueue, function() UiBlur(0.1) end)
+				local cameraRotEndPoint = QuatRotateQuat(cameraRot, cameraWobbleQuat)
+				
+				local newTransform = Transform(cameraPos, cameraRotEndPoint)
+				
+				table.insert(drawCallQueue, function() 
+					UiPush()
+						UiTranslate(UiCenter(), UiMiddle())
+						UiAlign("center middle")
+						UiColor(1, 0.75, 0.21, 0.25)
+						UiRect(UiWidth() + 10, UiHeight() + 10)
+						UiColor(1, 1, 1, vars.effectVariables.flashPos)
+						UiRect(UiWidth() + 10, UiHeight() + 10)
+						UiBlur(0.25) 
+					UiPop()
+				end)
 				
 				if vars.effectVariables.prevZoomStep ~= zoomStep then
 					vars.effectVariables.prevZoomStep = zoomStep
-					-- TODO: Ui effect: Flash
+					vars.effectVariables.flashPos = 0.5
+				elseif vars.effectVariables.flashPos > 0 then
+					vars.effectVariables.flashPos = vars.effectVariables.flashPos - GetChaosTimeStep()
 				end
 				
 				SetCameraTransform(newTransform)
+				
+				SetPlayerTransform(vars.effectVariables.playerTransform)
 			end,
 			onEffectEnd = function(vars) end,
 		},
