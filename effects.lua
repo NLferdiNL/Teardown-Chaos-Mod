@@ -2945,7 +2945,7 @@ chaosEffects = {
 			effectDuration = 25,
 			effectLifetime = 0,
 			hideTimer = false,
-			effectSFX = {},
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/drum.ogg"}},
 			effectSprites = {},
 			effectVariables = {flashPos = 0, playerTransform = nil, prevZoomStep = 0, cameraWobbleOffset = Vec(0, 0, 0)},
 			onEffectStart = function(vars) 
@@ -3003,7 +3003,10 @@ chaosEffects = {
 					UiPop()
 				end)
 				
+				-- TODO: Fix sound
+				
 				if vars.effectVariables.prevZoomStep ~= zoomStep then
+					PlaySound(vars.effectSFX[1], cameraPos.pos)
 					vars.effectVariables.prevZoomStep = zoomStep
 					vars.effectVariables.flashPos = 0.5
 				elseif vars.effectVariables.flashPos > 0 then
