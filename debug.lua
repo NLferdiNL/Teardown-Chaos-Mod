@@ -241,8 +241,8 @@ function drawDebugMenu()
 		UiTranslate(-230, 40)
 		
 		UiColor(1, 1, 1, 1)
-		
-		UiText("(While this menu is open)\nPress H to toggle mouse input.\nCTRL to backspace input boxes.")
+		-- TODO: Remove this text eventually.
+		UiText("(While this menu is open)\nPress H to toggle mouse input.\nNow backspace to backspace input boxes.")
 		
 		UiTranslate(0, 80)
 		

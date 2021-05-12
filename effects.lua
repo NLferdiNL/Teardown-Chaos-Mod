@@ -3017,6 +3017,25 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		swapToRandomTool = {
+			name = "Swap To Random Tool",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local toolList = ListKeys("game.tool")
+				
+				local selectedTool = toolList[math.random(1, #toolList)]
+				
+				SetString("game.player.tool", selectedTool)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 

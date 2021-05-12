@@ -109,7 +109,7 @@ textboxClass = {
 					me.setActiveState(me, me.checkMouseInRect(me))
 				elseif InputPressed("return") then
 					me.setActiveState(me, false)
-				elseif InputPressed("ctrl") then
+				elseif InputPressed("backspace") then
 					me.value = me.value:sub(1, #me.value - 1)
 				else
 					for j = 1, #textboxClass.inputNumbers do
