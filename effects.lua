@@ -1074,8 +1074,10 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { tools = {"sledge", "spraycan", "extinguisher", "blowtorch", "shotgun", "plank", "pipebomb", "gun", "bomb", "rocket"} },
+			effectVariables = {tools = {}},
 			onEffectStart = function(vars)
+				vars.effectVariables.tools = ListKeys("game.tool")
+			
 				for i = 1, #vars.effectVariables.tools do
 					SetBool("game.tool."..vars.effectVariables.tools[i]..".enabled", false)
 				end
@@ -3036,6 +3038,67 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		loseSomething = {
+            name = "Lose Something?",
+            effectDuration = 10,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { disabledTool = "" },
+            onEffectStart = function(vars)
+				local tools = ListKeys("game.tool")
+                local randomToolIndex = math.random(1, #tools)
+                local randomToolId = tools[randomToolIndex]
+				
+				local isToolEnabled = GetBool("game.tool." .. vars.effectVariables.disabledTool .. ".enabled")
+				
+				if not isToolEnabled then -- To prevent unlocking tools the player shouldn't have.
+					randomToolId = "sledge"
+				end
+				
+				vars.effectVariables.disabledTool = randomToolId
+				
+				SetBool("game.tool." .. vars.effectVariables.disabledTool .. ".enabled", false)
+            end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) 
+				SetBool("game.tool." .. vars.effectVariables.disabledTool .. ".enabled", true)
+            end,
+        },
+		
+		opExplosive = {
+            name = "Upgrade Random Explosive",
+            effectDuration = 0,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = {debugShape = 0},
+            onEffectStart = function(vars)
+                local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+ 
+                local explosives = {}
+                for i=1, #nearbyShapes do
+                    if HasTag(nearbyShapes[i], "explosive") then
+                        explosives[#explosives + 1] = nearbyShapes[i]
+                    end
+                end
+ 
+                if(#explosives == 0) then
+                    return
+                end
+                
+                local randomExplosive = explosives[math.random(1, #explosives)]
+				
+				vars.effectVariables.debugShape = randomExplosive
+                
+                SetTag(randomExplosive, "explosive", 110) 
+			end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) end,
+        },
 	},	-- EFFECTS TABLE
 }
 
