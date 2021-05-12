@@ -3003,10 +3003,8 @@ chaosEffects = {
 					UiPop()
 				end)
 				
-				-- TODO: Fix sound
-				
 				if vars.effectVariables.prevZoomStep ~= zoomStep then
-					PlaySound(vars.effectSFX[1], cameraPos.pos)
+					PlaySound(vars.effectSFX[1], cameraPos, 5)
 					vars.effectVariables.prevZoomStep = zoomStep
 					vars.effectVariables.flashPos = 0.5
 				elseif vars.effectVariables.flashPos > 0 then
