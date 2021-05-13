@@ -1695,10 +1695,8 @@ chaosEffects = {
 				
 				local range = 50
 				
-				local minPos = VecAdd(playerPos, Vec(-range, -math.abs(vars.effectVariables.waterHeight - range), -range))
-				local maxPos = VecAdd(playerPos, Vec(range, math.abs(playerPos[2] - vars.effectVariables.waterHeight) - floatHeightDiff, range))
-				
-				--DebugPrint(VecToString(minPos) .. " || " .. VecToString(maxPos))
+				local minPos = VecAdd(waterPos, Vec(-range, -(vars.effectVariables.waterHeight + range), -range))
+				local maxPos = VecAdd(waterPos, Vec(range, -floatHeightDiff, range))
 				
 				local shapeList = QueryAabbShapes(minPos, maxPos)
 				
@@ -1710,11 +1708,7 @@ chaosEffects = {
 
 						local bodyVelocity = GetBodyVelocity(shapeBody)
 						
-						--local bodyMass = GetBodyMass(shapeBody)
-						
-						--DebugPrint(bodyMass)
-						
-						bodyVelocity[2] = 0.1 * math.abs(shapeTransform.pos[2] - (vars.effectVariables.waterHeight - floatHeightDiff))--5 / 20000 * bodyMass
+						bodyVelocity[2] = 0.1 * math.abs(shapeTransform.pos[2] - (vars.effectVariables.waterHeight - floatHeightDiff))
 						
 						SetBodyVelocity(shapeBody, bodyVelocity)
 					end
