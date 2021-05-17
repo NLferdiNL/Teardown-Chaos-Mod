@@ -76,8 +76,8 @@ function draw()
 		UiFont("regular.ttf", 26)
 	
 		UiTranslate(0, 50)
-		
-		UiText("To backspace an input box press Ctrl.")
+		--TODO: Remove this in a future update
+		UiText("To backspace an input box press Backspace.")
 	
 		UiTranslate(0, 50)
 		
