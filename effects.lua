@@ -3093,6 +3093,90 @@ chaosEffects = {
             onEffectTick = function(vars) end,
             onEffectEnd = function(vars) end,
         },
+		
+		metaAlterEffectDuration = {
+			name = "(Meta)_x Effect Duration",
+            effectDuration = 35,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = {metaTimerAltered = true},
+            onEffectStart = function(vars) 
+				local speed = math.random(1, 2)
+				
+				if speed == 1 then
+					vars.effectVariables.speed = 2
+				else
+					vars.effectVariables.speed = 0.5
+				end
+				
+				vars.name = "(Meta)".. vars.effectVariables.speed .. "x Effect Duration"
+			end,
+            onEffectTick = function(vars) 
+				for i = 1, #chaosEffects.activeEffects do
+					local currEffect = chaosEffects.activeEffects[i]
+					
+					if currEffect.effectDuration > 0 and currEffect.effectVariables["metaTimerAltered"] == nil then
+						currEffect.effectVariables.metaTimerAltered = true
+						currEffect.effectDuration = currEffect.effectDuration * vars.effectVariables.speed
+					end
+					
+				end
+			end,
+            onEffectEnd = function(vars) end,
+		},
+		
+		metaAlterChaosTimer = {
+			name = "(Meta)_x Timer Speed",
+            effectDuration = 35,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { chaosTimerBackup = -1},
+            onEffectStart = function(vars) 
+				vars.effectVariables.chaosTimerBackup = chaosTimer
+				
+				local speed = math.random(1,3)
+				
+				if speed == 1 then
+					chaosTimer = chaosTimer * 2
+					vars.name = "(Meta)0.5x Timer Speed"
+				elseif speed == 2 then
+					chaosTimer = chaosTimer / 2
+					vars.name = "(Meta)2x Timer Speed"
+				else
+					chaosTimer = chaosTimer / 5
+					vars.name = "(Meta)5x Timer Speed"
+				end
+				
+			end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) 
+				chaosTimer = vars.effectVariables.chaosTimerBackup
+			end,
+		},
+		
+		metaNoChaos = {
+			name = "(Meta)No Chaos",
+            effectDuration = 20,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { chaosTimerBackup = -1},
+            onEffectStart = function(vars) 
+				chaosEffects.activeEffects = {vars}
+				vars.effectVariables.chaosTimerBackup = chaosTimer
+				chaosTimer = 100000000
+			end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) 
+				currentTime = 0
+				chaosTimer = vars.effectVariables.chaosTimerBackup
+			end,
+		},
 	},	-- EFFECTS TABLE
 }
 

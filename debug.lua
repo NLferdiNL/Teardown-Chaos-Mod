@@ -6,6 +6,7 @@ local debugMenuEnabled = false
 local mouseActive = false
 
 local overrideTimeScale = false
+local overrideChaosTime = false
 
 local effectListScrollPosition = 0
 local isMouseInList = false
@@ -242,9 +243,9 @@ function drawDebugMenu()
 		
 		UiColor(1, 1, 1, 1)
 		-- TODO: Remove this text eventually.
-		UiText("(While this menu is open)\nPress H to toggle mouse input.\nNow backspace to backspace input boxes.")
+		UiText("(While this menu is open)\nPress H to toggle mouse input.")
 		
-		UiTranslate(0, 80)
+		UiTranslate(0, 50)
 		
 		UiText("Current time: " .. roundToTwoDecimals(currentTime) .. "/" .. chaosTimer)
 		
@@ -331,7 +332,11 @@ function drawDebugMenu()
 		
 		textBox01.render(textBox01)
 		
-		UiTranslate(0, 40)
+		UiTranslate(-120, 40)
+		
+		UiText("Chaos timer editing currently broken.")
+		
+		UiTranslate(120, 30)
 		
 		local textBox02, newBox02 = textboxClass.getTextBox(2)
 		
@@ -342,13 +347,17 @@ function drawDebugMenu()
 			textBox02.limitsActive = true
 			textBox02.numberMin = 2
 			textBox02.numberMax = 100
+			textBox02.active = false
 			textBox02.height = 30
 		end
 		
-		if textBox02.value == "" then
-			chaosTimer = 100
-		else
+		if textBox02.inputFinished(textBox02) then
 			chaosTimer = tonumber(textBox02.value)
+			if chaosTimer <= 0 then
+				chaosTimer = 100
+			end
+		elseif not textBox02.inputActive then
+			textBox02.value = chaosTimer .. ""
 		end
 		
 		textBox02.render(textBox02)

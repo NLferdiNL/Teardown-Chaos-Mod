@@ -31,6 +31,7 @@ textboxClass = {
 	
 	default = {
 		name = "TextBox",
+		active = true,
 		value = "",
 		width = 100,
 		height = 40,
@@ -48,9 +49,9 @@ textboxClass = {
 			UiText(me.name .. ":")
 			UiTranslate(me.width + #me.name * 2.7, 0)
 			
-			if me.checkMouseInRect(me) and not me.inputActive then
+			if me.checkMouseInRect(me) and not me.inputActive and me.active then
 				UiColor(1,1,0)
-			elseif me.inputActive then
+			elseif me.inputActive and me.active then
 				UiColor(0,1,0)
 			else
 				UiColor(1,1,1)
