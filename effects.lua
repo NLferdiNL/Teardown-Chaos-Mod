@@ -3134,7 +3134,7 @@ chaosEffects = {
             hideTimer = false,
             effectSFX = {},
             effectSprites = {},
-            effectVariables = { chaosTimerBackup = -1},
+            effectVariables = { metaAlterChaosTime = true, chaosTimerBackup = -1},
             onEffectStart = function(vars) 
 				vars.effectVariables.chaosTimerBackup = chaosTimer
 				
@@ -3167,6 +3167,16 @@ chaosEffects = {
             effectSprites = {},
             effectVariables = { chaosTimerBackup = -1},
             onEffectStart = function(vars) 
+				-- See if the other chaos alter time effect exists, before wiping all effects.
+				-- Copy the backup over.
+				for i = 1, #chaosEffects.activeEffects do
+					local currEffect = chaosEffects.activeEffects[i]
+					
+					if currEffect.effectVariables["metaAlterChaosTime"] ~= nil then
+						chaosTimer = currEffect.effectVariables.chaosTimerBackup
+					end
+				end
+			
 				chaosEffects.activeEffects = {vars}
 				vars.effectVariables.chaosTimerBackup = chaosTimer
 				chaosTimer = 100000000
