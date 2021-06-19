@@ -1533,12 +1533,12 @@ chaosEffects = {
 		
 		fakeDeleteVehicle = {
 			name = "Fake Delete Vehicle",
-			effectDuration = 5,
+			effectDuration = 10,
 			effectLifetime = 0,
 			hideTimer = true,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { revealTimer = 5, nameBackup = "", transform = 0, vehicle = 0 },
+			effectVariables = { revealTimer = 5, nameBackup = "", transform = 0, vehicle = 0, triggered = false},
 			onEffectStart = function(vars)
 				local vehicle = GetPlayerVehicle()
 				
@@ -1563,7 +1563,9 @@ chaosEffects = {
 				vars.name = chaosEffects.effects["removeCurrentVehicle"].name
 			end,
 			onEffectTick = function(vars) 
-				if vars.effectLifetime >= vars.effectVariables.revealTimer or vars.effectVariables.vehicle == 0 then
+				if (vars.effectLifetime >= vars.effectVariables.revealTimer or vars.effectVariables.vehicle == 0) and not vars.effectVariables.triggered then
+					vars.effectVariables.triggered = true
+					
 					vars.name = vars.effectVariables.nameBackup
 					vars.effectDuration = 0
 
@@ -1572,21 +1574,11 @@ chaosEffects = {
 					if vehicle ~= 0 then
 						local vehicleBody = GetVehicleBody(vehicle)
 						
-						SetBodyDynamic(vehicleBody, true)
-					
 						SetBodyTransform(vehicleBody, vars.effectVariables.transform)
 						
 						SetBodyVelocity(vehicleBody, Vec(0, 0, 0))
 						
 						SetPlayerVehicle(vehicle)
-					end
-				else
-					if vars.effectVariables.vehicle ~= 0 then
-						local vehicleBody = GetVehicleBody(vehicle)
-						
-						if IsBodyDynamic(vehicleBody) then
-							SetBodyDynamic(vehicleBody, false)
-						end
 					end
 				end
 			end,
