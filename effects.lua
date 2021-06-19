@@ -231,7 +231,7 @@ chaosEffects = {
 			effectSprites = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
-				Explosion(GetPlayerPos(), 7.5)
+				Explosion(GetPlayerTransform().pos, 7.5)
 				SetPlayerHealth(1)
 			end,
 			onEffectTick = function(vars) end,
@@ -367,7 +367,7 @@ chaosEffects = {
 				ParticleRadius(1)
 				for i = 1, 20 do
 					local direction = rndVec(10)
-					SpawnParticle(GetPlayerPos(), direction, 2)
+					SpawnParticle(GetPlayerTransform().pos, direction, 2)
 				end
 			end,
 			onEffectEnd = function(vars) end,
@@ -499,7 +499,7 @@ chaosEffects = {
 				end
 				
 				function randomPosInSky()
-					local playerPos = GetPlayerPos()
+					local playerPos = GetPlayerTransform().pos
 					
 					playerPos[2] = playerPos[2] + 150
 					
@@ -510,7 +510,7 @@ chaosEffects = {
 				end
 				
 				function randomDirection(projectilePos)
-					local playerPos = GetPlayerPos()
+					local playerPos = GetPlayerTransform().pos
 					
 					local direction = dirVec(projectilePos, playerPos)
 					
@@ -1530,7 +1530,7 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
-
+		
 		fakeDeleteVehicle = {
 			name = "Fake Delete Vehicle",
 			effectDuration = 5,
@@ -1590,6 +1590,7 @@ chaosEffects = {
 					end
 				end
 			end,
+			
 			onEffectEnd = function(vars) end,
 		},
 	
@@ -1603,7 +1604,7 @@ chaosEffects = {
 			effectVariables = { affectedBodies = {}},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				local playerPos = GetPlayerPos()
+				local playerPos = GetPlayerTransform().pos
 				local range = 50
 
 				local tempVec = GetPlayerVelocity()
@@ -1679,7 +1680,7 @@ chaosEffects = {
 				vars.effectVariables.waterHeight = math.random(12, 15)
 			end,
 			onEffectTick = function(vars)
-				local playerPos = GetPlayerPos()
+				local playerPos = GetPlayerTransform().pos
 				local playerCamera = GetPlayerCameraTransform()
 				local floatHeightDiff = 0.25
 				
@@ -1806,7 +1807,7 @@ chaosEffects = {
 						end
 						
 						if vars.effectVariables.fuseTimer <= 0 then
-							Explosion(GetPlayerPos(), 4)
+							Explosion(GetPlayerTransform().pos, 4)
 							vars.effectDuration = 0
 						end
 						
@@ -2075,7 +2076,7 @@ chaosEffects = {
 				end
 				
 				if not InputDown(forcedInput.key) then
-					local playerPos = GetPlayerPos()
+					local playerPos = GetPlayerTransform().pos
 					Explosion(playerPos, 3)
 					SetPlayerHealth(0)
 					vars.effectDuration = 0
@@ -2182,7 +2183,7 @@ chaosEffects = {
 			effectSprites = {},
 			effectVariables = { currHack = "nil", lives = 4, damageAlpha = 0, wordWheels = {}, currentHackPos = 1, ip = {19, 20, 16, 80}, playerPos = nil, barLineUpBars = {}},
 			onEffectStart = function(vars) 
-				vars.effectVariables.playerPos = GetPlayerPos()
+				vars.effectVariables.playerPos = GetPlayerTransform().pos
 			
 				local hackTypes = {"letterLineup", "barLineup",}-- "ipLookup"}
 				
@@ -2599,7 +2600,7 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) 
 				if vars.effectVariables.lives <= 0 then
-					local playerPos = GetPlayerPos()
+					local playerPos = GetPlayerTransform().pos
 					Explosion(playerPos, 3)
 					SetPlayerHealth(0)
 				end
@@ -2626,7 +2627,7 @@ chaosEffects = {
 				local cameraForward = Vec(0, 0, -5)
 				local cameraForwardWorldSpace = TransformToParentPoint(playerCameraTransform, cameraForward)
 				
-				cameraForwardWorldSpace[2] = GetPlayerPos()[2]
+				cameraForwardWorldSpace[2] = GetPlayerTransform().pos[2]
 				
 				vars.effectVariables.npcTransform = Transform(cameraForwardWorldSpace, QuatEuler(0, 0, 0))
 			end,
@@ -2636,7 +2637,7 @@ chaosEffects = {
 				local cameraTransform = GetCameraTransform()
 				local cameraPos = VecCopy(cameraTransform.pos)
 				
-				local playerPos = GetPlayerPos()
+				local playerPos = GetPlayerTransform().pos
 				
 				cameraPos[2] = grieferTransform.pos[2]
 				
@@ -2818,7 +2819,7 @@ chaosEffects = {
 			effectVariables = { affectedBodies = {}},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				local playerPos = GetPlayerPos()
+				local playerPos = GetPlayerTransform().pos
 				local range = 50
 
 				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
@@ -2971,7 +2972,7 @@ chaosEffects = {
 				
 				-- Camera positioning
 				
-				local playerPos = GetPlayerPos()
+				local playerPos = GetPlayerTransform().pos
 				
 				local cameraOffset = Vec(0, 20 + zoomStep * 20, 0)
 				
@@ -3147,8 +3148,8 @@ chaosEffects = {
 					chaosTimer = chaosTimer / 2
 					vars.name = "(Meta)2x Timer Speed"
 				else
-					chaosTimer = chaosTimer / 5
-					vars.name = "(Meta)5x Timer Speed"
+					chaosTimer = chaosTimer / 3
+					vars.name = "(Meta)3x Timer Speed"
 				end
 				
 			end,

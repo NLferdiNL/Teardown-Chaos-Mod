@@ -33,7 +33,7 @@ function debugTick()
 	end
 	
 	if debugMenuEnabled then
-		textboxClass.tick()
+		textboxClass_tick()
 		checkMouseScroll()
 	end
 	
@@ -259,7 +259,7 @@ function drawDebugMenu()
 			end
 			effects = effects .. value.name
 		end
-		
+	
 		UiText("Active effects: " .. effects)
 		
 		UiTranslate(0, 90)
@@ -310,7 +310,7 @@ function drawDebugMenu()
 		
 		UiTranslate(120, 40)
 		
-		local textBox01, newBox01 = textboxClass.getTextBox(1)
+		local textBox01, newBox01 = textboxClass_getTextBox(1)
 		
 		if newBox01 then
 			textBox01.name = "Timescale"
@@ -330,39 +330,30 @@ function drawDebugMenu()
 			end
 		end
 		
-		textBox01.render(textBox01)
+		textboxClass_render(textBox01)
 		
-		UiTranslate(-120, 40)
+		UiTranslate(0, 30)
 		
-		UiText("Chaos timer editing currently broken.")
-		
-		UiTranslate(120, 30)
-		
-		local textBox02, newBox02 = textboxClass.getTextBox(2)
+		local textBox02, newBox02 = textboxClass_getTextBox(2)
 		
 		if newBox02 then
 			textBox02.name = "Chaos Timer"
 			textBox02.value = chaosTimer .. ""
 			textBox02.numbersOnly = true
 			textBox02.limitsActive = true
-			textBox02.numberMin = 2
-			textBox02.numberMax = 100
+			textBox02.numberMin = 1
+			textBox02.numberMax = 10000
 			textBox02.active = false
 			textBox02.height = 30
 		end
 		
-		if textBox02.inputFinished(textBox02) then
+		if textboxClass_inputFinished(textBox02) then
 			chaosTimer = tonumber(textBox02.value)
-			if chaosTimer <= 0 then
-				chaosTimer = 100
-			end
 		elseif not textBox02.inputActive then
 			textBox02.value = chaosTimer .. ""
 		end
 		
-		textBox02.render(textBox02)
-		
-		UiTranslate(-120, 30)
+		textboxClass_render(textBox02)
 		
 	UiPop()
 end

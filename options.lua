@@ -11,7 +11,7 @@ function init()
 end
 
 function draw()
-	local textBox01, newBox01 = textboxClass.getTextBox(1)
+	local textBox01, newBox01 = textboxClass_getTextBox(1)
 	
 	--[[local mX, mY = UiGetMousePos()
 	UiButtonImageBox("ui/common/box-solid-6.png", 6, 6)
@@ -90,7 +90,7 @@ function draw()
 			textBox01.numberMax = 1000
 		end
 		
-		textBox01.render(textBox01)
+		textboxClass_render(textBox01)
 		
 		UiTranslate(0, 35)
 		
@@ -160,5 +160,5 @@ function draw()
 end
 
 function tick()
-	textboxClass.tick()
+	textboxClass_tick()
 end
