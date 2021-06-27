@@ -586,6 +586,7 @@ chaosEffects = {
 				end
 
 				table.insert(drawCallQueue, function()
+				UiBlur(vars.effectVariables.fadeAlpha)
 				UiPush()
 
 					UiColor(0, 0, 0, vars.effectVariables.fadeAlpha)
