@@ -1167,6 +1167,29 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
+		launchAllVehicles = {
+			name = "Launch All Vehicles Up",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				for i=1, #nearbyShapes do
+					if GetBodyVehicle(GetShapeBody(nearbyShapes[i])) ~= 0 then
+						SetBodyVelocity(GetShapeBody(nearbyShapes[i]), Vec(0, 25, 0))
+					end
+				end
+
+				vars.effectVariables.vehs = vehicles
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+
 		flipVehicle = {
 			name = "Invert Vehicle",
 			effectDuration = 0,
@@ -2994,7 +3017,6 @@ chaosEffects = {
 				end
 			end,
 		},
-
 
 		randomInformation = {
 			name = "Useless Information",
