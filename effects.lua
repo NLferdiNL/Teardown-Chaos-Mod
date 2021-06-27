@@ -1459,6 +1459,54 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
+		vr = {
+			name = "Virtual Reality",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {lastPlayerPos = nil, lastPlayerRot = nil, lastPlayerVel = nil, lastPlayerVehicle = 0, lastPlayerVehiclePos = nil, lastPlayerVehicleRot = nil, lastPlayerVehicleVel = nil,},
+			onEffectStart = function(vars)
+				local playerTransform = GetPlayerTransform()
+
+				vars.effectVariables.lastPlayerPos = playerTransform.pos
+				vars.effectVariables.lastPlayerRot = playerTransform.rot
+
+				vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
+
+				if vars.effectVariables.lastPlayerVehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(vars.effectVariables.lastPlayerVehicle)
+					local vehicleTransform = GetBodyTransform(vehicleBody)
+
+					vars.effectVariables.lastPlayerVehiclePos = vehicleTransform.pos
+					vars.effectVariables.lastPlayerVehicleRot = vehicleTransform.rot
+					vars.effectVariables.lastPlayerVehicleVel = GetBodyVelocity(vehicleBody)
+				end
+			end,
+			onEffectTick = function(vars)
+				table.insert(drawCallQueue, function()
+					UiPush()
+						UiColor(0, 1, 0, 0.3)
+						UiRect(UiWidth(), UiHeight())
+					UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars)
+				if vars.effectVariables.lastPlayerVehicle ~= 0 then
+					local vehicleBody = GetVehicleBody(vars.effectVariables.lastPlayerVehicle)
+					local vehicleTransform = GetBodyTransform(vehicleBody)
+
+					SetBodyTransform(vehicleBody, Transform(vars.effectVariables.lastPlayerVehiclePos, vars.effectVariables.lastPlayerVehicleRot))
+					SetBodyVelocity(vehicleBody, vars.effectVariables.lastPlayerVehicleVel)
+				else
+					SetPlayerTransform(Transform(vars.effectVariables.lastPlayerPos, vars.effectVariables.lastPlayerRot))
+					SetPlayerVehicle(vars.effectVariables.lastPlayerVehicle)
+					SetPlayerVelocity(vars.effectVariables.lastPlayerVel)
+				end
+			end,
+		},
+
 		vehicleKickflip = {
 			name = "Kickflip",
 			effectDuration = 0,
