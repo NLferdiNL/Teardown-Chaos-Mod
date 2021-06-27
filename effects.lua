@@ -549,10 +549,13 @@ chaosEffects = {
 			effectSFX = {},
 			effectSprites = {},
 			effectVariables = {},
-			onEffectStart = function(vars) end,
+			onEffectStart = function(vars)
+				SetPlayerHealth(1)
+			end,
 			onEffectTick = function(vars)
-				if GetPlayerHealth() > 0.1 then
-					SetPlayerHealth(0.1)
+				vars.effectVariables.hp = GetPlayerHealth()
+				if GetPlayerHealth() < 1 then
+					SetPlayerHealth(0)
 				end
 			end,
 			onEffectEnd = function(vars) end,
