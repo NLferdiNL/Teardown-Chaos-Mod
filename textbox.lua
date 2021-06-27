@@ -3,9 +3,9 @@
 textboxClass = {
 	inputNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."},
 	inputLetters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"},
-	
+
 	textboxes = { },
-	
+
 	default = {
 		name = "TextBox",
 		value = "",
@@ -32,7 +32,7 @@ UiPush()
 	UiTranslate(-me.width - #me.name * 3, 0)
 	UiText(me.name .. ":")
 	UiTranslate(me.width + #me.name * 3, 0)
-	
+
 	if textboxClass_checkMouseInRect(me) and not me.inputActive then
 		UiColor(1,1,0)
 	elseif me.inputActive then
@@ -40,19 +40,19 @@ UiPush()
 	else
 		UiColor(1,1,1)
 	end
-	
+
 	local tempVal = me.value
-	
+
 	if tempVal == "" then
 		tempVal = " "
 	end
-	
+
 	if UiTextButton(tempVal, me.width, me.height) then
 		me.inputActive = not me.inputActive
 	end
-	
+
 	UiColor(1,1,1)
-	
+
 UiPop()
 end
 
@@ -62,13 +62,13 @@ function textboxClass_getTextBox(id)
 	end
 	local textBox = textboxClass.textboxes[id]
 	local newBox = false
-	
+
 	if textBox == nil then
 		textboxClass.textboxes[id] = deepcopy(textboxClass.default)
 		textBox = textboxClass.textboxes[id]
 		newBox = true
 	end
-	
+
 	return textBox, newBox
 end
 
@@ -116,7 +116,7 @@ function textboxClass_setActiveState(me, newState)
 			if me.value == "" then
 				me.value = me.numberMin .. ""
 			end
-			
+
 			if me.limitsActive then
 				local tempVal = tonumber(me.value)
 				if tempVal < me.numberMin then
