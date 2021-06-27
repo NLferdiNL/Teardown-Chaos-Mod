@@ -1522,6 +1522,7 @@ chaosEffects = {
 				if vars.effectVariables.flashOpacity > 0 then
 					if vars.effectLifetime > 2.5 then
 						table.insert(drawCallQueue, function()
+							UiBlur(vars.effectVariables.flashOpacity)
 							UiPush()
 								UiColor(1, 1, 1, vars.effectVariables.flashOpacity)
 								UiRect(UiWidth(), UiHeight())
