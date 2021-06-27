@@ -290,6 +290,26 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
+		disintegrationField = {
+			name = "Disintegration Field",
+			effectDuration = 5,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				local offset = Vec(0, 0, 0)
+
+				for i = -4, 4, 1 do
+					MakeHole(VecAdd(playerTransform.pos, Vec(0, i, 0)), 5, 5, 5)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
 		stopAndStare = {
 			name = "Stop And Stare",
 			effectDuration = 5,
@@ -348,6 +368,107 @@ chaosEffects = {
 			onEffectTick = function(vars)
 				timeScale = 0.5
 			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		superhot = {
+			name = "SUPERTEARDOWN",
+			effectDuration = 10,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {tempSpeed = 0, lastCamRot = nil,},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				-- Add temporary speedup on click
+				if InputDown("lmb") then
+					vars.effectVariables.tempSpeed = 2
+				end
+
+				-- Calculate effect for camera turn and velocity
+				local currCamRot = GetPlayerCameraTransform().rot
+				local velocitySpeed = VecDist(Vec(0, 0, 0), GetPlayerVelocity())
+				local camSpeed = 0
+				if vars.effectVariables.lastCamRot ~= nil then
+					camSpeed = math.min(VecDist(Vec(0, 0, 0), VecSub(currCamRot, vars.effectVariables.lastCamRot)), 0.5) * 50
+				end
+				vars.effectVariables.lastCamRot = currCamRot
+				local totalSpeed = velocitySpeed + camSpeed + vars.effectVariables.tempSpeed
+
+				-- Apply effect
+				if GetPlayerHealth() ~= 0 then
+					timeScale = 0.05 + (math.min(totalSpeed / 7, 1) * 0.95)
+				else
+					timeScale = 0.5
+				end
+
+				-- slowly lessen temp speed overtime
+				if vars.effectVariables.tempSpeed > 0 then
+					vars.effectVariables.tempSpeed = vars.effectVariables.tempSpeed - 0.05
+				else
+					vars.effectVariables.tempSpeed = 0
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		triggerAlarm = {
+			name = "Trigger Alarm",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				SetBool("level.alarm", true)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportToTarget = {
+			name = "Teleport to Random Target",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local targets = FindBodies("target", true)
+				if(#targets == 0) then
+					return
+				end
+				local randomTarget = targets[math.random(1, #targets)]
+
+				local t = Transform(GetBodyTransform(randomTarget).pos, GetPlayerTransform().rot)
+				SetPlayerTransform(t)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		teleportTarget = {
+			name = "Teleport Random Target to Player",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local targets = FindBodies("target", true)
+				if(#targets == 0) then
+					return
+				end
+				local randomTarget = targets[math.random(1, #targets)]
+
+				local t = Transform(GetPlayerTransform().pos, GetBodyTransform(randomTarget).rot)
+				SetBodyTransform(randomTarget, t)
+			end,
+			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
 		
@@ -1013,6 +1134,34 @@ chaosEffects = {
 						SetBodyVelocity(vehicleBody, VecScale(GetBodyVelocity(vehicleBody), limit/speed))
 					end
 					
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		ghostRider = {
+			name = "Ghost Rider",
+			effectDuration = 10,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {vehs = {},},
+			onEffectStart = function(vars) 
+				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
+
+				local vehicles = {}
+				for i=1, #nearbyShapes do
+					if GetBodyVehicle(GetShapeBody(nearbyShapes[i])) ~= 0 then
+						vehicles[#vehicles+1] = GetBodyVehicle(GetShapeBody(nearbyShapes[i]))
+					end
+				end
+
+				vars.effectVariables.vehs = vehicles
+			end,
+			onEffectTick = function(vars) 
+				for i=1, #vars.effectVariables.vehs do
+					DriveVehicle(vars.effectVariables.vehs[i], 1, 0, false)
 				end
 			end,
 			onEffectEnd = function(vars) end,
@@ -2207,7 +2356,8 @@ chaosEffects = {
 						
 						vars.effectVariables.wordWheels[i] = wordWheel
 					end
-				elseif hackType == "ipLookup" then
+				elseif hackType == "ipLookup" then
+
 				elseif hackType == "barLineup" then
 					vars.effectVariables.barLineUpBars[1] = { value = 1, direction = 1, locked = false}
 					for i = 2, 8 do
