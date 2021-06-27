@@ -1507,6 +1507,58 @@ chaosEffects = {
 			end,
 		},
 
+		flashbang = {
+			name = "Flashbang",
+			effectDuration = 10,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/flashbang.ogg"}},
+			effectSprites = {},
+			effectVariables = {flashOpacity = 1,},
+			onEffectStart = function(vars)
+				PlaySound(vars.effectSFX[1])
+			end,
+			onEffectTick = function(vars)
+				if vars.effectVariables.flashOpacity > 0 then
+					if vars.effectLifetime > 2.5 then
+						table.insert(drawCallQueue, function()
+							UiPush()
+								UiColor(1, 1, 1, vars.effectVariables.flashOpacity)
+								UiRect(UiWidth(), UiHeight())
+							UiPop()
+						end)
+					end
+					if vars.effectLifetime > 4.2 then
+						vars.effectVariables.flashOpacity = vars.effectVariables.flashOpacity - 0.01
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		moveOrDie = {
+			name = "Move or Die",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local hp = GetPlayerHealth()
+				local step = 0.01
+
+				-- Don't count vertical velocity
+				local vel = GetPlayerVelocity()
+				vel[2] = 0
+
+				local nextHPStep = ((VecLength(vel) / 3.5) * step) - step
+				SetPlayerHealth(hp + nextHPStep)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
 		vehicleKickflip = {
 			name = "Kickflip",
 			effectDuration = 0,
