@@ -4,95 +4,95 @@ function saveFileInit()
 	saveVersion = GetInt(moddataPrefix .. "Version")
 	chaosTimer = GetInt(moddataPrefix .. "ChaosTimer")
 	chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
-	
+
 	if saveVersion < 1 then
 		saveVersion = 1
 		SetInt(moddataPrefix .. "Version", 1)
-		
+
 		chaosTimer = 10
 		SetInt(moddataPrefix .. "ChaosTimer", chaosTimer)
 	end
-	
+
 	if saveVersion < 2 then
 		saveVersion = 2
 		SetInt(moddataPrefix .. "Version", 2)
-		
+
 		chaosEffects.disabledEffects = {}
 		SetString(moddataPrefix.. "DisabledEffects", "")
 	end
-	
+
 	if saveVersion < 3 then
 		saveVersion = 3
 		SetInt(moddataPrefix .. "Version", 3)
-		
+
 		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
-		
+
 		if chaosEffects.disabledEffects["fakeDeleteVehicle"] == nil then
 			chaosEffects.disabledEffects["fakeDeleteVehicle"] = "disabled"
 		end
-		
+
 		DebugPrint(chaosEffects.effects.fakeDeleteVehicle.name .. " is disabled by default now. Use the options to reenable.")
 		DebugPrint("Until it is fixed for multi part vehicles.")
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
-	
+
 	if saveVersion < 4 then
 		saveVersion = 4
 		SetInt(moddataPrefix .. "Version", 4)
-		
+
 		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
-		
+
 		if chaosEffects.disabledEffects["quakefov"] == nil then
 			chaosEffects.disabledEffects["quakefov"] = "disabled"
 		end
-		
+
 		if chaosEffects.disabledEffects["turtlemode"] == nil then
 			chaosEffects.disabledEffects["turtlemode"] = "disabled"
 		end
-		
+
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
-	
+
 	if saveVersion < 5 then
 		saveVersion = 5
 		SetInt(moddataPrefix .. "Version", 5)
-		
+
 		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
-		
+
 		if chaosEffects.disabledEffects["quakefov"] ~= nil then
 			chaosEffects.disabledEffects["quakefov"] = nil
 			DebugPrint("Quake FOV enabled, because it now works with tools.")
 			DebugPrint("This reset will only occur once.")
 		end
-		
+
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
 end
 
 function SerializeTable(a) -- Currently only works for key value string tables! (Ignores values)
 	local serializedTable = ""
-	
+
 	if a == nil then
 		return serializedTable
 	end
-	
+
 	local i = 1
 	local tableSize = 0
-	
+
 	for key, value in pairs(a) do
 		tableSize = tableSize + 1
 	end
-	
+
 	for key, value in pairs(a) do
 		serializedTable = serializedTable .. key
-		
+
 		if i < tableSize then
 			serializedTable = serializedTable .. ","
 		end
-		
+
 		i = i + 1
 	end
-	
+
 	return serializedTable
 end
 
@@ -100,13 +100,13 @@ function DeserializeTable(a) -- Currently only works for serialized string table
 	if a == nil or a == "" then
 		return {}
 	end
-	
+
 	local deserializedTable = {}
-	
+
 	for str in string.gmatch(a, "([^"..",".."]+)") do
 		deserializedTable[str] = "disabled"
 	end
-	
+
 	return deserializedTable
 end
 
@@ -124,7 +124,7 @@ function tableToText(inputTable, loopThroughTables)
 		end
 	end
 	returnString = returnString .. "}"
-	
+
 	return returnString
 end
 
@@ -134,18 +134,18 @@ function GetEffectCount()
 	for key, value in pairs(chaosEffects.effects) do
 		effectCount = effectCount + 1
 	end
-	
+
 	return effectCount
 end
 
 function SortEffectsTable(effectCount)
 	effectCount = effectCount or GetEffectCount()
-	
+
 	local tableOut = {}
-	
+
 	for uid, effect in pairs(chaosEffects.effects) do
 		local i = 1
-		
+
 		local loop = true
 		while loop do
 			if i > #tableOut then
@@ -153,26 +153,26 @@ function SortEffectsTable(effectCount)
 				loop = false
 				break
 			end
-			
+
 			if effect.name < tableOut[i][2] then
 				table.insert(tableOut, i, {uid, effect.name})
 				loop = false
 				break
 			end
-			
+
 			if i >= #tableOut + 1 or i >= effectCount + 1 then -- Should never occur, just an infinite loop safe guard.
 				loop = false
 				break
 			end
-			
+
 			i = i + 1
 		end
 	end
-	
+
 	for key, value in ipairs(tableOut) do
 		tableOut[key] = value[1]
 	end
-	
+
 	return tableOut
 end
 
@@ -182,7 +182,7 @@ end
 
 function rndVec(length)
 	local v = VecNormalize(Vec(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
-	return VecScale(v, length)	
+	return VecScale(v, length)
 end
 
 function dirVec(a, b)
@@ -192,35 +192,35 @@ end
 function VecAngle(a, b)
 	local magA = VecMag(a)
 	local magB = VecMag(b)
-	
+
 	local dotP = VecDot(a, b)
-	
+
 	local angle = math.deg(math.acos(dotP / (magA * magB)))
-	
+
 	return angle
 end
 
 function VecDet(a, b)
 	local firstDet = a[1] * b[3]
 	local secondDet = a[3] * b[1]
-	
+
 	return firstDet - secondDet
 end
 
 function VecAngle360(a, b)
 	local det = VecDet(a, b)
 	local dot = VecDot(a, b)
-	
+
 	local angle = math.deg(math.atan2(det, dot))
-	
+
 	return angle
 end
 
 function VecDist(a, b)
 	local directionVector = VecSub(b, a)
-	
+
 	local distance = VecMag(directionVector)
-	
+
 	return distance
 end
 
@@ -235,12 +235,12 @@ end
 function raycast(origin, direction, maxDistance, radius, rejectTransparant)
 	maxDistance = maxDistance or 500 -- Make this arguement optional, it is usually not required to raycast further than this.
 	local hit, distance, normal, shape = QueryRaycast(origin, direction, maxDistance, radius, rejectTransparant)
-	
+
 	if hit then
 		local hitPoint = VecAdd(origin, VecScale(direction, distance))
 		return hit, hitPoint, distance, normal, shape
 	end
-	
+
 	return false, nil, nil, nil, nil
 end
 
