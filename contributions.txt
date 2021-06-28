@@ -1,26 +1,46 @@
 Superfroggman:
-Laser Vision (id: laserVision)
-Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
-Let's Try That Again (id: rewind)
-Explode Random Explosive (id: explodeRandomExplosive)
-Feather Falling (id: featherFalling)
-Who's there? (id: knocking)
-Diggy Diggy Hole (id: diggydiggyhole)
-Cinematic Mode (id: cinematicMode)
-Hold On To That Tool (id: disableTools)
-Invert Vehicle (id: flipVehicle)
-Speed Limit (id: speedLimit)
-Fake Teleport (id: fakeTeleport)
-DVD Screensaver (id: dvdScreensaver)
-Fake Delete Vehicle (id: fakeDeleteVehicle)
-Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
-Lets Try That Again (id: rewind)
+    Steam: https://steamcommunity.com/id/Superfrogman
+    Github: https://github.com/superfroggman
+    
+    Laser Vision (id: laserVision)
+    Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
+    Let's Try That Again (id: rewind)
+    Explode Random Explosive (id: explodeRandomExplosive)
+    Feather Falling (id: featherFalling)
+    Who's there? (id: knocking)
+    Diggy Diggy Hole (id: diggydiggyhole)
+    Cinematic Mode (id: cinematicMode)
+    Hold On To That Tool (id: disableTools)
+    Invert Vehicle (id: flipVehicle)
+    Speed Limit (id: speedLimit)
+    Fake Teleport (id: fakeTeleport)
+    DVD Screensaver (id: dvdScreensaver)
+    Fake Delete Vehicle (id: fakeDeleteVehicle)
+    Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
+    Lets Try That Again (id: rewind)
 
 der_baumkrieger:
-GTA 2 (id: birdPerspective)
-Hope That Can Fly (id: objectFlyAway)
-Low Gravity (id: lowgravity)
-Explosive Punch (id: explosivePunch)
-Useless Information (id: randomInformation)
-Lose Something? (id: loseSomething)
-Upgrade Random Explosive (id: opExplosive)
+    Steam: https://steamcommunity.com/profiles/76561199083584422
+    
+    GTA 2 (id: birdPerspective)
+    Hope That Can Fly (id: objectFlyAway)
+    Low Gravity (id: lowgravity)
+    Explosive Punch (id: explosivePunch)
+    Useless Information (id: randomInformation)
+    Lose Something? (id: loseSomething)
+    Upgrade Random Explosive (id: opExplosive)
+
+Snazzah:
+    Github: https://github.com/Snazzah
+    Steam: https://steamcommunity.com/id/Snazzah
+    
+    Disintegration Field (id: disintegrationField)
+    SUPERTEARDOWN (id: superhot)
+    Trigger Alarm (id: triggerAlarm)
+    Teleport to Random Target (id: teleportToTarget)
+    Teleport Random Target to Player (id: teleportTarget)
+    Ghost Cars (id: ghostCars)
+    Launch All Vehicles Up (id: launchAllVehicles)
+    Virtual Reality (id: virtualReality)
+    Flashbang (id: Flashbang)
+    Move or Die (id:  moveOrDie)

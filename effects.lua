@@ -1459,7 +1459,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
-		vr = {
+		virtualReality = {
 			name = "Virtual Reality",
 			effectDuration = 15,
 			effectLifetime = 0,
