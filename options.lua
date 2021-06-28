@@ -3,11 +3,15 @@
 #include "textbox.lua"
 
 local sortedEffectList = {}
+local menuScrollPosition = 0
+local listScreenMaxScroll = 0
 
 function init()
 	saveFileInit()
 
 	sortedEffectList = SortEffectsTable()
+    
+    listScreenMaxScroll = #sortedEffectList / 4 * 20 + 10
 end
 
 function draw()
@@ -62,6 +66,8 @@ function draw()
 			Menu()
 		end
 	UiPop()
+    
+    UiTranslate(0, -menuScrollPosition)
 
 	UiPush()
 		UiWordWrap(400)
@@ -77,7 +83,7 @@ function draw()
 
 		UiTranslate(0, 50)
 		--TODO: Remove this in a future update
-		UiText("To backspace an input box press Backspace.")
+		UiText("You can scroll this menu now!")
 
 		UiTranslate(0, 50)
 
@@ -122,11 +128,9 @@ function draw()
 		local buttonWidth = 320
 		local buttonHeight = 40
 
-		local items = sortedEffectList
-
 		UiTranslate(-buttonWidth * 1.5, 0)
 
-		for key, value in ipairs(items) do
+		for key, value in ipairs(sortedEffectList) do
 			--UiPush()
 
 				--UiTranslate(-xOffset + (key % rows) * buttonWidth, math.floor((key / col)) * buttonHeight)
@@ -159,6 +163,17 @@ function draw()
 
 end
 
+function checkMouseScroll()
+	menuScrollPosition = menuScrollPosition + -InputValue("mousewheel") * 10
+
+	if menuScrollPosition < 0 then
+		menuScrollPosition = 0
+	elseif menuScrollPosition > listScreenMaxScroll then
+		menuScrollPosition = listScreenMaxScroll
+	end
+end
+
 function tick()
+    checkMouseScroll()
 	textboxClass_tick()
 end
