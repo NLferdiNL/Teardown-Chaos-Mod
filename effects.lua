@@ -220,7 +220,7 @@ chaosEffects = {
 			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
-		} ,
+		},
 
 		explosionAtPlayer = {
 			name = "Explode Player",
@@ -373,7 +373,7 @@ chaosEffects = {
 
 		superhot = {
 			name = "SUPERTEARDOWN",
-			effectDuration = 10,
+			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -1143,8 +1143,8 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
-		ghostRider = {
-			name = "Ghost Rider",
+		ghostCars = {
+			name = "Ghost Cars",
 			effectDuration = 10,
 			effectLifetime = 0,
 			hideTimer = false,
