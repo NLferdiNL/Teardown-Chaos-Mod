@@ -1706,6 +1706,126 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
+		keepGoingForward = {
+			name = "My W Key is Stuck",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerVel = VecCopy(GetPlayerVelocity())
+
+				playerVel[1] = 0
+				playerVel[3] = 0
+
+				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
+
+				if vars.effectVariables.jumpNextFrame then
+					vars.effectVariables.jumpNextFrame = false
+
+					playerVel[2] = 5
+
+					SetPlayerVelocity(playerVel)
+				end
+
+				if InputPressed("space") and isTouchingGround then
+					vars.effectVariables.jumpNextFrame = true
+				end
+
+				local forwardMovement = 1
+				local rightMovement = 0
+
+				if InputDown("left") then
+					rightMovement = rightMovement - 1
+				end
+
+				if InputDown("right") then
+					rightMovement = rightMovement + 1
+				end
+
+				forwardMovement = forwardMovement * 10
+				rightMovement = rightMovement * 10
+
+				local playerTransform = GetPlayerTransform()
+
+				local forwardInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(0, 0, -1))
+				local rightInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(1, 0, 0))
+
+				local forwardDirectionStrength = VecScale(forwardInWorldSpace, forwardMovement)
+				local rightDirectionStrength = VecScale(rightInWorldSpace, rightMovement)
+
+				playerVel = VecAdd(VecAdd(playerVel, forwardDirectionStrength), rightDirectionStrength)
+
+				SetPlayerVelocity(playerVel)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		keepJumping = {
+			name = "Bhop",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerVel = VecCopy(GetPlayerVelocity())
+
+				playerVel[1] = 0
+				playerVel[3] = 0
+
+				local groundBelow = raycast(GetPlayerTransform().pos, Vec(0, -1, 0), 0.1)
+				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
+				vars.effectVariables.a = playerVel[2]
+
+				if groundBelow then
+					playerVel[2] = 7
+				end
+
+				local forwardMovement = 0
+				local rightMovement = 0
+
+				if InputDown("up") then
+					forwardMovement = forwardMovement + 1
+				end
+
+				if InputDown("down") then
+					forwardMovement = forwardMovement - 1
+				end
+
+				if InputDown("left") then
+					rightMovement = rightMovement - 1
+				end
+
+				if InputDown("right") then
+					rightMovement = rightMovement + 1
+				end
+
+				forwardMovement = forwardMovement * 7
+				rightMovement = rightMovement * 7
+
+				local playerTransform = GetPlayerTransform()
+
+				local forwardInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(0, 0, -1))
+				local rightInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(1, 0, 0))
+
+				local forwardDirectionStrength = VecScale(forwardInWorldSpace, forwardMovement)
+				local rightDirectionStrength = VecScale(rightInWorldSpace, rightMovement)
+
+				playerVel = VecAdd(VecAdd(playerVel, forwardDirectionStrength), rightDirectionStrength)
+
+				playerVel = playerVel
+
+				SetPlayerVelocity(playerVel)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
 		vehicleKickflip = {
 			name = "Kickflip",
 			effectDuration = 0,
