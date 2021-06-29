@@ -382,7 +382,7 @@ chaosEffects = {
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				-- Add temporary speedup on click
-				if InputDown("lmb") then
+				if InputDown("usetool") then
 					vars.effectVariables.tempSpeed = 2
 				end
 
@@ -467,6 +467,152 @@ chaosEffects = {
 
 				local t = Transform(GetPlayerTransform().pos, GetBodyTransform(randomTarget).rot)
 				SetBodyTransform(randomTarget, t)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+
+		disintegrateVehicle = {
+			name = "Disintegrate Vehicle",
+			effectDuration = 2,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {body = 0, tickHalt = 0, lastOffset = 0},
+			onEffectStart = function(vars)
+				-- Get Current Vehicle
+				if GetPlayerVehicle() ~= 0 then
+					local body = GetVehicleBody(GetPlayerVehicle())
+					vars.effectVariables.body = body
+					return
+				end
+
+				-- Get Looked At Vehicle
+				local cameraTransform = GetCameraTransform()
+				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				local hit, hitPoint, distance, normal, shape = raycast(cameraTransform.pos, rayDirection, 50)
+				if hit then
+					local body = GetShapeBody(shape)
+					local veh = GetBodyVehicle(body)
+					if veh then
+						local body = GetVehicleBody(veh)
+						vars.effectVariables.body = body
+						return
+					end
+				end
+			end,
+			onEffectTick = function(vars)
+				local holeSize = 0.3
+				local haltAfterHit = 2
+
+				function gridstep(x, y, w, h, xs, ys)
+					if ys == nil then ys = xs end
+					local res = {}
+					local xStep = w / xs
+					local yStep = h / ys
+					for i=0, xs do
+						for j=0, ys do
+							table.insert(res, {(i * xStep) + x, (j * yStep) + y})
+						end
+					end
+
+					return res
+				end
+
+				function IsUnbreakable(mat)
+						return not mat or mat == 'rock' or mat == 'heavymetal' or mat == 'unbreakable' or mat == 'hardmasonry'
+				end
+
+				if vars.effectVariables.body ~= 0 then
+					-- Halt by tick
+					if vars.effectVariables.tickHalt > 0 then
+						vars.effectVariables.tickHalt = vars.effectVariables.tickHalt - 1
+						return
+					end
+
+					-- Calculate breakable points
+					local min, max = GetBodyBounds(vars.effectVariables.body)
+					local xSize = max[1] - min[1]
+					local ySize = max[2] - min[2]
+					local zSize = max[3] - min[3]
+					local zOffset = (vars.effectLifetime / vars.effectDuration) * zSize
+					if zOffset - vars.effectVariables.lastOffset < holeSize then
+						return
+					end
+					vars.effectVariables.lastOffset = zOffset
+
+					local grid = gridstep(min[1], min[2], xSize, ySize, xSize / holeSize, ySize / holeSize)
+					for i=1, #grid do
+						local cell = grid[i]
+						local pos = Vec(cell[1], cell[2], min[3] + zOffset)
+						local hit, p, n, shape = QueryClosestPoint(pos, holeSize)
+						if hit then
+							local mat = GetShapeMaterialAtPosition(shape, pos)
+							if mat and not IsUnbreakable(mat) then
+								MakeHole(pos, holeSize, holeSize, holeSize, silent)
+								-- DebugCross(pos, 1, 0, 0, 1)
+								vars.effectVariables.tickHalt = haltAfterHit
+							end
+						end
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
+		blindingLights = {
+			name = "Blinding Lights",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
+				local allLights = {}
+				for i=1, #shapes do
+					local lights = GetShapeLights(shapes[i])
+					for j=1, #lights do
+						if not HasTag(lights[j], "alarm") then
+							table.insert(allLights, lights[j])
+						end
+					end
+				end
+
+				for i=1, #allLights do
+					SetLightEnabled(allLights[i], true)
+					SetLightIntensity(allLights[i], 10000.0)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+
+		blackout = {
+			name = "Blackout",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
+				local allLights = {}
+				for i=1, #shapes do
+					local lights = GetShapeLights(shapes[i])
+					for j=1, #lights do
+						if not HasTag(lights[j], "alarm") then
+							table.insert(allLights, lights[j])
+						end
+					end
+				end
+
+				for i=1, #allLights do
+					SetLightEnabled(allLights[i], false)
+				end
 			end,
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
