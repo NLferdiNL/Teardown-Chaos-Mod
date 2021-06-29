@@ -180,6 +180,22 @@ function roundToTwoDecimals(a) --TODO: Make a better, generic version with more 
 	return math.floor(a * 100)/100
 end
 
+function splitString(inputstr, sep)
+	if sep == nil then
+		sep = "%s"
+	end
+	local t = {}
+	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+		table.insert(t, str)
+	end
+	return t
+end
+
+function stringLeftPad(str, len, char)
+	if char == nil then char = ' ' end
+	return str .. string.rep(char, len - #str)
+end
+
 function rndVec(length)
 	local v = VecNormalize(Vec(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
 	return VecScale(v, length)

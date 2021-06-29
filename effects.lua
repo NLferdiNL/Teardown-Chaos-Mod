@@ -2174,15 +2174,23 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { fuseTimer = 10 },
+			effectVariables = { fuseTimer = 10, inVehicle = false, uiHeightAnim = -300 },
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local vehicle = GetPlayerVehicle()
 
+				-- Explode if exiting during speed
 				if vehicle == 0 then
+					if vars.effectVariables.inVehicle then
+						vars.effectVariables.inVehicle = false
+						vars.effectDuration = 0
+						Explosion(GetPlayerTransform().pos, 4)
+						Explosion(GetPlayerTransform().pos, 4)
+					end
 					return
 				end
 
+				vars.effectVariables.inVehicle = true
 				local vehicleBody = GetVehicleBody(vehicle)
 				local vehicleTransform = GetVehicleTransform(vehicle)
 
@@ -2191,46 +2199,81 @@ chaosEffects = {
 				local speed = -vel[3]
 				--Speed is in meter per second, convert to km/h
 				speed = speed * 3.6
-
 				speed = math.abs(math.floor(speed))
 
 				table.insert(drawCallQueue, function()
 					UiPush()
-						UiFont("regular.ttf", 52)
-						UiTextShadow(0, 0, 0, 0.5, 2.0)
+						if vars.effectVariables.uiHeightAnim <= 0 then
+							vars.effectVariables.uiHeightAnim = vars.effectVariables.uiHeightAnim + (GetChaosTimeStep() * 600)
+							UiTranslate(0, vars.effectVariables.uiHeightAnim)
+						end
 
-						UiAlign("center middle")
+						local w = UiWidth() * 0.6
+						local h = 150
+						UiAlign("top center")
+						UiTranslate(UiWidth()/2, UiHeight() * 0.05)
+						UiColor(0, 0, 0, 0.5)
+						UiImageBox("ui/common/box-solid-shadow-50.png", w, h, -50, -50)
+						UiWindow(w, h, true)
 
-						UiTranslate(UiCenter(), UiHeight() * 0.2)
+						local warnAmount = 0
+						if vars.effectVariables.fuseTimer < 3 then
+							warnAmount = (3 - vars.effectVariables.fuseTimer) / 3
+						end
 
-						UiText("Keep above 30 km/u or the bomb explodes!")
-
-						UiTranslate(0, 40)
-
-						UiFont("regular.ttf", 26)
-
-						local fuseStatus = " "
-
-						if speed < 30 then
-							fuseStatus = "TICKING"
+						local recovering = speed >= 30
+						if not recovering then
 							vars.effectVariables.fuseTimer = vars.effectVariables.fuseTimer - GetChaosTimeStep()
 						elseif vars.effectVariables.fuseTimer < 10 then
 							vars.effectVariables.fuseTimer = vars.effectVariables.fuseTimer + GetChaosTimeStep()
-							fuseStatus = "RECOVERING"
 						elseif vars.effectVariables.fuseTimer > 10 then
 							 vars.effectVariables.fuseTimer = 10
 						end
 
 						if vars.effectVariables.fuseTimer <= 0 then
 							Explosion(GetPlayerTransform().pos, 4)
+							Explosion(GetPlayerTransform().pos, 4)
 							vars.effectDuration = 0
 						end
 
-						UiText("Fuse: " .. math.floor(vars.effectVariables.fuseTimer) .. " " .. fuseStatus)
+						UiPush()
+							UiFont("bold.ttf", 50)
+							UiAlign("center middle")
+							UiTranslate(UiCenter(), 50)
+							UiTextShadow(0, 0, 0, 0.5, 2.0)
+							UiScale(2.0)
 
-						UiTranslate(0, 25)
+							if recovering then
+								UiColor(0.25, 1, 0.25)
+							else
+								UiColor(1, (1 - warnAmount), (1 - warnAmount))
+							end
 
-						UiText("Current speed: " .. speed .. " km\h")
+							local shakeDist = 5
+							local shakeX = math.random(-(shakeDist * warnAmount), (shakeDist * warnAmount))
+							local shakeY = math.random(-(shakeDist * warnAmount), (shakeDist * warnAmount))
+							UiTranslate(shakeX, shakeY)
+
+							local decSplit = splitString(tostring(vars.effectVariables.fuseTimer), '.')
+							local decimals = '00'
+							if decSplit[2] ~= nil then
+								decimals = stringLeftPad(string.sub(decSplit[2], 0, 2), 2, '0')
+							end
+							UiText(decSplit[1] .. '.' .. decimals)
+						UiPop()
+
+						UiPush()
+							UiFont("regular.ttf", 40)
+							UiColor(1, 1, 1)
+							UiTextShadow(0, 0, 0, 0.5, 2.0)
+							UiAlign("bottom center")
+							UiTranslate(UiCenter(), UiHeight() * 0.85)
+							UiText("Keep above 30 km/h or the bomb explodes!")
+
+							UiFont("regular.ttf", 26)
+							UiTranslate(0, 25)
+							UiText("Current speed: " .. speed .. " km/h")
+						UiPop()
 					UiPop()
 				end)
 
