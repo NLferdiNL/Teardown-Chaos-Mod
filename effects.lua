@@ -1750,7 +1750,7 @@ chaosEffects = {
 		},
 
 		keepGoingForward = {
-			name = "My W Key is Stuck",
+			name = "My W Key Is Stuck",
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
@@ -1759,6 +1759,13 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
+				local playerVehicle = GetPlayerVehicle()
+				
+				if playerVehicle > 0 then
+					DriveVehicle(playerVehicle, 1, 0, false)
+					return
+				end
+			
 				local playerVel = VecCopy(GetPlayerVelocity())
 
 				playerVel[1] = 0
