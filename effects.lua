@@ -428,6 +428,23 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
+		pauseAlarm = {
+			name = "Pause Alarm",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { timer = 100, },
+			onEffectStart = function(vars)
+				vars.effectVariables.timer = GetFloat("level.alarmtimer")
+			end,
+			onEffectTick = function(vars)
+				SetFloat("level.alarmtimer", vars.effectVariables.timer)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
 		teleportToTarget = {
 			name = "Teleport to Random Target",
 			effectDuration = 0,
@@ -1525,6 +1542,20 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
+		binoculars = {
+			name = "Binoculars",
+			effectDuration = 20,
+			effectLifetime = 0,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				SetCameraFov(10)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+
 		turtlemode = {
 			name = "Turtle Mode",
 			effectDuration = 20,
@@ -1765,7 +1796,7 @@ chaosEffects = {
 		},
 
 		keepJumping = {
-			name = "Bhop",
+			name = "Bunnyhop",
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
@@ -2127,6 +2158,49 @@ chaosEffects = {
 			end,
 
 			onEffectEnd = function(vars) end,
+		},
+
+		freezeFrame = {
+			name = "Freeze Frame",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { bodies = {} },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local function has_value(tab, val)
+					for index, value in ipairs(tab) do
+							if value == val then
+									return true
+							end
+					end
+					return false
+				end
+
+				local range = 100
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local bodies = QueryAabbBodies(minPos, maxPos)
+
+				for i=1, #bodies do
+					local body = bodies[i]
+					if IsBodyDynamic(body) and not has_value(vars.effectVariables.bodies, body) then
+						table.insert(vars.effectVariables.bodies, body)
+						SetBodyDynamic(body, false)
+					end
+				end
+			end,
+			onEffectEnd = function(vars)
+				for key, body in ipairs(vars.effectVariables.bodies) do
+					SetBodyDynamic(body, true)
+					local com = GetBodyCenterOfMass(body)
+					local worldPoint = TransformToParentPoint(GetBodyTransform(body), com)
+					ApplyBodyImpulse(body, worldPoint, Vec(0, 0, 10))
+				end
+			end,
 		},
 
 		lowgravity = {
