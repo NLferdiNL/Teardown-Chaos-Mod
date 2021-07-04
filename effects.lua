@@ -3811,13 +3811,15 @@ chaosEffects = {
 						UiTextShadow(0, 0, 0, 0.5, 2.0)
 						UiFont("regular.ttf", 26)
 						
-						UiText("Right Mouse Button to use tools.\n(Flickering warning, don't use inside or low below voxels)")
+						UiText("Shift to sprint.\nRight Mouse Button to use tools and interact with the world.\n(Flickering warning, don't use inside or close above/below voxels)")
 					UiPop()
 				end)
 			
 				local xMovement = 0
 				local yMovement = 0
 				local zMovement = 0
+				
+				local movementSpeed = 5
 				
 				if InputDown("up") then
 					zMovement = zMovement - 1
@@ -3843,6 +3845,10 @@ chaosEffects = {
 					yMovement = yMovement - 1
 				end
 				
+				if InputDown("shift") then
+					movementSpeed = movementSpeed * 2
+				end
+				
 				local cameraTransform = GetCameraTransform()
 				local playerTransform = GetPlayerTransform()
 				local playerPos = vars.effectVariables.playerPos 
@@ -3853,7 +3859,7 @@ chaosEffects = {
 					local worldDirectionPoint = TransformToParentPoint(cameraTransform, Vec(xMovement, yMovement, zMovement))
 					local worldDirectionDir = dirVec(cameraTransform.pos, worldDirectionPoint)
 					
-					local distanceTraveled = VecScale(worldDirectionDir, 5 * GetChaosTimeStep())
+					local distanceTraveled = VecScale(worldDirectionDir, movementSpeed * GetChaosTimeStep())
 					
 					playerPos = VecAdd(playerPos, distanceTraveled)
 					
@@ -3866,6 +3872,21 @@ chaosEffects = {
 				
 				SetPlayerTransform(Transform(playerPos, playerTransform.rot))
 				SetPlayerVelocity(Vec(0, 0, 0))
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		quietDay = {
+			name = "Quiet Day",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				UiMute(1, true)
 			end,
 			onEffectEnd = function(vars) end,
 		},
