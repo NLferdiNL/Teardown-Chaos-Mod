@@ -148,7 +148,7 @@ end
 
 function drawEffectList()
 	UiPush()
-		UiWordWrap(300)
+		UiWordWrap(330)
 		UiButtonImageBox("ui/common/box-outline-6.png", 6, 6)
 		UiFont("regular.ttf", 26)
 
@@ -189,9 +189,20 @@ function drawEffectList()
 			for key, uid in ipairs(sortedEffectList) do
 				local effect = chaosEffects.effects[uid]
 				UiPush()
-
 					UiTranslate(0, i * 30 + 2 - effectListScrollPosition)
+					
+					local textWidth, textHeight = UiGetTextSize(effect.name)
+					local fontSize = 26
+					local fontDecreaseIncrement = 2
+					
+					while textWidth > 320 do
+						fontSize = fontSize - fontDecreaseIncrement
 
+						UiFont("regular.ttf", fontSize)
+						
+						textWidth, textHeight = UiGetTextSize(effect.name)
+					end
+					
 					if UiTextButton(effect.name, 330, 30) then
 						triggerEffect(getCopyOfEffect(uid))
 					end

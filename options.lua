@@ -142,14 +142,27 @@ function draw()
 				else
 					UiButtonImageBox("ui/common/box-outline-6.png", 6, 6, 0, 1, 0, 1)
 				end
+				UiPush()
+					local textWidth, textHeight = UiGetTextSize(chaosEffects.effects[value].name)
+					local fontSize = 26
+					local fontDecreaseIncrement = 2
+					
+					while textWidth > buttonWidth - 10 do
+						fontSize = fontSize - fontDecreaseIncrement
 
-				if UiTextButton(chaosEffects.effects[value].name, buttonWidth, buttonHeight) then
-					if effectDisabled then
-						chaosEffects.disabledEffects[value] = nil
-					else
-						chaosEffects.disabledEffects[value] = "disabled"
+						UiFont("regular.ttf", fontSize)
+						
+						textWidth, textHeight = UiGetTextSize(chaosEffects.effects[value].name)
 					end
-				end
+				
+					if UiTextButton(chaosEffects.effects[value].name, buttonWidth, buttonHeight) then
+						if effectDisabled then
+							chaosEffects.disabledEffects[value] = nil
+						else
+							chaosEffects.disabledEffects[value] = "disabled"
+						end
+					end
+				UiPop()
 
 				UiTranslate(buttonWidth, 0)
 
