@@ -3785,6 +3785,90 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		noclip = {
+			name = "Noclip",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { playerPos = nil, offset = nil},
+			onEffectStart = function(vars)
+				local cameraTransform = GetCameraTransform()
+				local playerTransform = GetPlayerTransform()
+				
+				vars.effectVariables.playerPos = playerTransform.pos
+				
+				vars.effectVariables.offset = VecSub(cameraTransform.pos, playerTransform.pos)
+			end,
+			onEffectTick = function(vars)
+				table.insert(drawCallQueue, function()
+					UiPush()
+						UiAlign("center middle")
+						UiTranslate(UiWidth() * 0.5, UiHeight() * 0.9)
+						
+						UiTextShadow(0, 0, 0, 0.5, 2.0)
+						UiFont("regular.ttf", 26)
+						
+						UiText("Right Mouse Button to use tools.\n(Flickering warning, don't use inside or low below voxels)")
+					UiPop()
+				end)
+			
+				local xMovement = 0
+				local yMovement = 0
+				local zMovement = 0
+				
+				if InputDown("up") then
+					zMovement = zMovement - 1
+				end
+				
+				if InputDown("down") then
+					zMovement = zMovement + 1
+				end
+				
+				if InputDown("left") then
+					xMovement = xMovement - 1
+				end
+				
+				if InputDown("right") then
+					xMovement = xMovement + 1
+				end
+				
+				if InputDown("jump") then
+					yMovement = yMovement + 1
+				end
+				
+				if InputDown("crouch") then
+					yMovement = yMovement - 1
+				end
+				
+				local cameraTransform = GetCameraTransform()
+				local playerTransform = GetPlayerTransform()
+				local playerPos = vars.effectVariables.playerPos 
+				
+				if xMovement ~= 0 or yMovement ~= 0 or zMovement ~= 0 then
+					local cameraTransform = GetCameraTransform()
+					
+					local worldDirectionPoint = TransformToParentPoint(cameraTransform, Vec(xMovement, yMovement, zMovement))
+					local worldDirectionDir = dirVec(cameraTransform.pos, worldDirectionPoint)
+					
+					local distanceTraveled = VecScale(worldDirectionDir, 5 * GetChaosTimeStep())
+					
+					playerPos = VecAdd(playerPos, distanceTraveled)
+					
+					vars.effectVariables.playerPos = playerPos
+				end
+				
+				if not InputDown("rmb") then
+					SetCameraTransform(Transform(VecAdd(playerPos, vars.effectVariables.offset), playerTransform.rot))
+				end
+				
+				SetPlayerTransform(Transform(playerPos, playerTransform.rot))
+				SetPlayerVelocity(Vec(0, 0, 0))
+			end,
+			onEffectEnd = function(vars) end,
+		},
 
 		metaAlterEffectDuration = {
 			name = "(Meta)_x Effect Duration",
