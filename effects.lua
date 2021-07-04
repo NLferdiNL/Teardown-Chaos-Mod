@@ -580,31 +580,37 @@ chaosEffects = {
 
 		blindingLights = {
 			name = "Blinding Lights",
-			effectDuration = 0,
+			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { allLights = {}},
 			onEffectStart = function(vars)
 				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
-				local allLights = {}
 				for i=1, #shapes do
 					local lights = GetShapeLights(shapes[i])
 					for j=1, #lights do
 						if not HasTag(lights[j], "alarm") then
-							table.insert(allLights, lights[j])
+							table.insert(vars.effectVariables.allLights, lights[j])
 						end
 					end
 				end
 
-				for i=1, #allLights do
-					SetLightEnabled(allLights[i], true)
-					SetLightIntensity(allLights[i], 10000.0)
+				for i=1, #vars.effectVariables.allLights do
+					local currentLight = vars.effectVariables.allLights[i]
+					SetLightEnabled(currentLight, true)
+					SetLightIntensity(currentLight, 10000.0)
 				end
 			end,
 			onEffectTick = function(vars) end,
-			onEffectEnd = function(vars) end,
+			onEffectEnd = function(vars)
+				for i=1, #vars.effectVariables.allLights do
+					local currentLight = vars.effectVariables.allLights[i]
+					SetLightEnabled(currentLight, true)
+					SetLightIntensity(currentLight, 5.0)
+				end
+			end,
 		},
 
 		blackout = {
