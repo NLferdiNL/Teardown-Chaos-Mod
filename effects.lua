@@ -585,7 +585,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { allLights = {}},
+			effectVariables = { allLights = {} },
 			onEffectStart = function(vars)
 				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
 				for i=1, #shapes do
@@ -615,12 +615,12 @@ chaosEffects = {
 
 		blackout = {
 			name = "Blackout",
-			effectDuration = 0,
+			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {},
+			effectVariables = { allLights = {} },
 			onEffectStart = function(vars)
 				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
 				local allLights = {}
@@ -628,17 +628,23 @@ chaosEffects = {
 					local lights = GetShapeLights(shapes[i])
 					for j=1, #lights do
 						if not HasTag(lights[j], "alarm") then
-							table.insert(allLights, lights[j])
+							table.insert(vars.effectVariables.allLights, lights[j])
 						end
 					end
 				end
 
-				for i=1, #allLights do
-					SetLightEnabled(allLights[i], false)
+				for i=1, #vars.effectVariables.allLights do
+					local currentLight = vars.effectVariables.allLights[i]
+					SetLightEnabled(currentLight, false)
 				end
 			end,
 			onEffectTick = function(vars) end,
-			onEffectEnd = function(vars) end,
+			onEffectEnd = function(vars) 
+				for i=1, #vars.effectVariables.allLights do
+					local currentLight = vars.effectVariables.allLights[i]
+					SetLightEnabled(currentLight, true)
+				end
+			end,
 		},
 
 		smokeScreen = {
