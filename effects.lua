@@ -3734,13 +3734,13 @@ chaosEffects = {
 		},
 
 		opExplosive = {
-			name = "Upgrade Random Explosive",
-			effectDuration = 0,
+			name = "Upgrade Random Explosives",
+			effectDuration = 11,
 			effectLifetime = 0,
-			hideTimer = false,
+			hideTimer = true,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {debugShape = 0},
+			effectVariables = { upgraded = {}},
 			onEffectStart = function(vars)
 				local nearbyShapes = QueryAabbShapes(Vec(-100, -100, -100), Vec(100, 100, 100))
 
@@ -3754,14 +3754,35 @@ chaosEffects = {
 				if(#explosives == 0) then
 						return
 				end
+				
+				local minRandom = math.floor(#explosives * 0.1)
+				local maxRandom = math.floor(#explosives * 0.5)
+				
+				for i = 1, math.random(minRandom, maxRandom) do
+					local randomIndex = math.random(1, #explosives)
+					local randomExplosive = explosives[randomIndex]
 
-				local randomExplosive = explosives[math.random(1, #explosives)]
+					vars.effectVariables.upgraded[i] = randomExplosive
 
-				vars.effectVariables.debugShape = randomExplosive
-
-				SetTag(randomExplosive, "explosive", 110)
+					SetTag(randomExplosive, "explosive", 110)
+					
+					table.remove(explosives, randomIndex, 1)
+				end
 			end,
-			onEffectTick = function(vars) end,
+			onEffectTick = function(vars) 
+				local alpha = 1 - vars.effectLifetime / (vars.effectDuration - 1)
+				
+				for i = 1, #vars.effectVariables.upgraded do
+					local explosive = vars.effectVariables.upgraded[i]
+					
+					DrawShapeOutline(explosive, 1, 0, 0, alpha)
+				end
+				
+				if vars.effectLifetime >= 10 then
+					vars.effectLifetime = 0
+					vars.effectDuration = 0
+				end
+			end,
 			onEffectEnd = function(vars) end,
 		},
 
