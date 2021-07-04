@@ -16,6 +16,6 @@ https://github.com/NLferdiNL/Teardown-Chaos-Mod/wiki
 # About
 This mod started as an experiment for myself but quickly turned into something functional.
 Now this mod is a collaberation between dev behind the first Chaos mod for Teardown [superfroggman](https://github.com/superfroggman)
-and myself. With me working on the game code and him working something big (no spoilers yet!)
+and myself. With me working on the game code and him doing effects, and also researching is something cool is possible.
 
 This mod is based on the Chaos mods from the GTA series.
