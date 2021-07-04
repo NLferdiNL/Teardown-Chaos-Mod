@@ -184,7 +184,7 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				if InputDown("space") then
+				if InputDown("jump") then
 					local tempVec = GetPlayerVelocity()
 
 					tempVec[2] = 5
@@ -2259,20 +2259,19 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				local cameraTransform = GetCameraTransform()
-				local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+				if InputPressed("usetool") then
+					local cameraTransform = GetCameraTransform()
+					local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
 
-				local hit, hitPoint, distance = raycast(cameraTransform.pos, rayDirection, 3)
+					local hit, hitPoint, distance = raycast(cameraTransform.pos, rayDirection, 3)
 
-				if hit == false then
-					return
-				end
+					if hit == false then
+						return
+					end
 
-				if InputDown("lmb") then
 					Explosion(hitPoint, 0.5)
 					SetPlayerHealth(1)
 				end
-
 			end,
 			onEffectEnd = function(vars) end,
 		},
@@ -2333,9 +2332,9 @@ chaosEffects = {
 				if playerPos[2] < vars.effectVariables.waterHeight - floatHeightDiff then
 					local playerVelocity = GetPlayerVelocity()
 
-					if InputDown("ctrl") then
+					if InputDown("crouch") then
 						playerVelocity[2] = -3
-					elseif InputDown("space") then
+					elseif InputDown("jump") then
 						playerVelocity[2] = 3
 					else
 						playerVelocity[2] = 2
@@ -2485,7 +2484,7 @@ chaosEffects = {
 			effectVariables = {},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
-				if InputPressed("lmb") then
+				if InputPressed("usetool") then
 					local cameraTransform = GetCameraTransform()
 					local rayDirection = TransformToParentVec(cameraTransform, Vec(0, 0, -1))
 
@@ -2604,7 +2603,7 @@ chaosEffects = {
 					SetPlayerVelocity(playerVel)
 				end
 
-				if InputPressed("space") and isTouchingGround then
+				if InputPressed("jump") and isTouchingGround then
 					vars.effectVariables.jumpNextFrame = true
 				end
 
@@ -2667,7 +2666,7 @@ chaosEffects = {
 					playerVel[2] = 4
 				end
 
-				if InputPressed("space") and vars.effectVariables.jumpsLeft > 0 then
+				if InputPressed("jump") and vars.effectVariables.jumpsLeft > 0 then
 					vars.effectVariables.jumpsLeft = vars.effectVariables.jumpsLeft - 1
 					vars.effectVariables.jumpNextFrame = true
 				end
