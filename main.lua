@@ -1,3 +1,4 @@
+#include "quickload.lua"
 #include "effects.lua"
 #include "utils.lua"
 #include "debug.lua"
@@ -11,18 +12,18 @@ currentTime = 0
 timerPaused = false
 chaosPaused = false
 hasTheGameReloaded = false
+UpdateQuickloadPatch()
 
 function init()
 	saveFileInit()
-
 	removeDisabledEffectKeys()
-
 	loadChaosEffectData()
-
 	debugInit()
+
+	UpdateQuickloadPatch()
 end
 
-function gameReloaded()
+function chaosUnavailable()
 	return chaosEffects.effectTemplate.onEffectStart == nil
 end
 
@@ -100,23 +101,20 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	if not hasTheGameReloaded and gameReloaded() then
+	quickloadTick()
+
+	-- Failsafe
+	if chaosUnavailable() then
 		chaosEffects.activeEffects = {}
 
 		local warningEffect = getCopyOfEffect("nothing")
-		warningEffect.name = "Currently the Chaos mod\ndoes not support quick loading.\nThe mod is disabled until restarting\nthe level."
-
+		warningEffect.name = "An error occurred while loading\nthe effects from a quick load.\nPlease restart the level to\nkeep using Chaos mod."
 		warningEffect.onEffectStart = function() end
 		warningEffect.onEffectTick = function() end
 		warningEffect.onEffectEnd = function() end
 
 		triggerEffect(warningEffect)
-
-		hasTheGameReloaded = true
 		currentTime = chaosTimer
-	end
-
-	if hasTheGameReloaded then
 		return
 	end
 
