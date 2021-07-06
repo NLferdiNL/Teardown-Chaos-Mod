@@ -1,87 +1,65 @@
 #include "utils.lua"
 
-function chaosSFXInit(quickloaded)
+function chaosSFXInit()
 	local loadedSFX = {loops = {}, regular = {}}
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
 		
-		if currentEffect.effectSFXBackup == nil then
-			currentEffect.effectSFXBackup = {}
-		end
-		
 		if #currentEffect.effectSFX > 0 then
 			for i=1, #currentEffect.effectSFX do
-				local soundData = nil
+				local soundData = currentEffect.effectSFX[i]
 				
-				if quickloaded then
-					soundData = currentEffect.effectSFXBackup[i]
-				else
-					soundData = currentEffect.effectSFX[i]
-				end
-				
-				local soundPath = soundData["soundPath"]
-				local isLoop = soundData["isLoop"]
-				local handle = nil
+				if type(soundData) == "table" then
+					local soundPath = soundData["soundPath"]
+					local isLoop = soundData["isLoop"]
+					local handle = 0
 
-				local handle = 0
-
-				if isLoop then
-					if loadedSFX.loops[soundPath] ~= nil then
-						handle = loadedSFX.loops[soundPath]
+					if isLoop then
+						if loadedSFX.loops[soundPath] ~= nil then
+							handle = loadedSFX.loops[soundPath]
+						else
+							handle = LoadLoop(soundPath)
+							loadedSFX.loops[soundPath] = handle
+						end
 					else
-						handle = LoadLoop(soundPath)
-						loadedSFX.loops[soundPath] = handle
+						if loadedSFX.regular[soundPath] ~= nil then
+							handle = loadedSFX.regular[soundPath]
+						else
+							handle = LoadSound(soundPath)
+							loadedSFX.regular[soundPath] = handle
+						end
 					end
-				else
-					if loadedSFX.regular[soundPath] ~= nil then
-						handle = loadedSFX.regular[soundPath]
-					else
-						handle = LoadSound(soundPath)
-						loadedSFX.regular[soundPath] = handle
-					end
+					
+					currentEffect.effectSFX[i] = handle
 				end
-
-				currentEffect.effectSFX[i] = handle
-				currentEffect.effectSFXBackup[i] = soundData
 			end
 		end
 	end
 end
 
-function chaosSpritesInit(quickloaded)
-	quickloaded = quickloaded or false
-	
+function chaosSpritesInit()
 	local loadedSprites = {}
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
 		
-		if currentEffect.effectSpritesBackup == nil then
-			currentEffect.effectSpritesBackup = {}
-		end
-
 		if #currentEffect.effectSprites > 0 then
 			for i=1, #currentEffect.effectSprites do
-				local currentSpriteData = nil
+				local currentSpriteData = currentEffect.effectSprites[i]
 				
-				if quickloaded then
-					currentSpriteData = currentEffect.effectSpritesBackup[i]
-				else
-					currentSpriteData = currentEffect.effectSprites[i]
+				if type(currentSpriteData) == "table" then
+					local handle = 0
+
+					if loadedSprites[currentSpriteData] ~= nil then
+						handle = loadedSprites[currentSpriteData]
+					else
+						handle = LoadSprite(currentSpriteData)
+						loadedSprites[currentSpriteData] = handle
+					end
+					
+					currentEffect.effectSprites[i] = handle
 				end
-
-				local handle = 0
-
-				if loadedSprites[currentSpriteData] ~= nil then
-					handle = loadedSprites[currentSpriteData]
-				else
-					handle = LoadSprite(currentSpriteData)
-					loadedSprites[currentSpriteData] = handle
-				end
-
-				currentEffect.effectSprites[i] = handle
-				currentEffect.effectSpritesBackup[i] = currentSpriteData
 			end
 		end
 	end
@@ -100,9 +78,9 @@ function chaosKeysInit()
 	table.remove(chaosEffects.activeEffects, 1)
 end
 
-function loadChaosEffectData(quickloaded)
-	chaosSFXInit(quickloaded)
-	chaosSpritesInit(quickloaded)
+function loadChaosEffectData()
+	chaosSFXInit()
+	chaosSpritesInit()
 end
 
 function removeDisabledEffectKeys()
