@@ -101,6 +101,10 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
+	if hasQuickloaded() then
+		loadChaosEffectData(true)
+	end
+
 	quickloadTick()
 
 	-- Failsafe

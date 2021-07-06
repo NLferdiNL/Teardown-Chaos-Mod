@@ -1,14 +1,25 @@
 #include "utils.lua"
 
-function chaosSFXInit()
+function chaosSFXInit(quickloaded)
 	local loadedSFX = {loops = {}, regular = {}}
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
-
+		
+		if currentEffect.effectSFXBackup == nil then
+			currentEffect.effectSFXBackup = {}
+		end
+		
 		if #currentEffect.effectSFX > 0 then
 			for i=1, #currentEffect.effectSFX do
-				local soundData =  currentEffect.effectSFX[i]
+				local soundData = nil
+				
+				if quickloaded then
+					soundData = currentEffect.effectSFXBackup[i]
+				else
+					soundData = currentEffect.effectSFX[i]
+				end
+				
 				local soundPath = soundData["soundPath"]
 				local isLoop = soundData["isLoop"]
 				local handle = nil
@@ -32,20 +43,33 @@ function chaosSFXInit()
 				end
 
 				currentEffect.effectSFX[i] = handle
+				currentEffect.effectSFXBackup[i] = soundData
 			end
 		end
 	end
 end
 
-function chaosSpritesInit()
+function chaosSpritesInit(quickloaded)
+	quickloaded = quickloaded or false
+	
 	local loadedSprites = {}
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
+		
+		if currentEffect.effectSpritesBackup == nil then
+			currentEffect.effectSpritesBackup = {}
+		end
 
 		if #currentEffect.effectSprites > 0 then
 			for i=1, #currentEffect.effectSprites do
-				local currentSpriteData = currentEffect.effectSprites[i]
+				local currentSpriteData = nil
+				
+				if quickloaded then
+					currentSpriteData = currentEffect.effectSpritesBackup[i]
+				else
+					currentSpriteData = currentEffect.effectSprites[i]
+				end
 
 				local handle = 0
 
@@ -57,6 +81,7 @@ function chaosSpritesInit()
 				end
 
 				currentEffect.effectSprites[i] = handle
+				currentEffect.effectSpritesBackup[i] = currentSpriteData
 			end
 		end
 	end
@@ -75,9 +100,9 @@ function chaosKeysInit()
 	table.remove(chaosEffects.activeEffects, 1)
 end
 
-function loadChaosEffectData()
-	chaosSFXInit()
-	chaosSpritesInit()
+function loadChaosEffectData(quickloaded)
+	chaosSFXInit(quickloaded)
+	chaosSpritesInit(quickloaded)
 end
 
 function removeDisabledEffectKeys()

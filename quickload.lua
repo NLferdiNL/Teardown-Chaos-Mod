@@ -26,7 +26,7 @@ function UpdateQuickloadPatch()
 	end
 end
 
-local function hasQuickloaded()
+function hasQuickloaded()
 	return QL.i == nil
 end
 
