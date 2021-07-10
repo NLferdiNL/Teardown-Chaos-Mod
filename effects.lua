@@ -4060,7 +4060,7 @@ chaosEffects = {
 		},
 		
 		blind = {
-            name = "Blind", -- idear by Thunderstorm64 
+            name = "Blind",
             effectDuration = 10,
             effectLifetime = 0,
             hideTimer = false,
