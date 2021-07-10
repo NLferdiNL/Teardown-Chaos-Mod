@@ -3987,6 +3987,124 @@ chaosEffects = {
 				chaosTimer = vars.effectVariables.chaosTimerBackup
 			end,
 		},
+		
+		glitch = {
+			name = "Glitch",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { blackAndWhite = false, glitches = {},},
+			onEffectStart = function(vars) 
+				if math.random(1, 10) > 10 then
+					vars.effectVariables.blackAndWhite = true
+				end
+			end,
+			onEffectTick = function(vars)
+				local maxGlitches = 200
+				
+				function createGlitch()
+					local lifetime = math.random(5, 10) / 10
+					local red = math.random(0,100) / 100
+					local green = math.random(0,100) / 100
+					local blue = math.random(0,100) / 100
+					local alpha = math.random(0,100) / 100
+					
+					local boxW = math.random(0,10000) / 10000
+					local boxH = math.random(1, 50)
+					local boxX = math.random(0,10000) / 10000
+					local boxY = math.random(0,100) / 100
+					
+					local newGlitch = { lifetime = lifetime, 
+										r = red, 
+										g = green, 
+										b = blue, 
+										a = alpha, 
+										w = boxW, 
+										h = boxH, 
+										x = boxX, 
+										y = boxY }
+										
+					table.insert(vars.effectVariables.glitches, newGlitch)
+				end
+				
+				while #vars.effectVariables.glitches < maxGlitches do
+					createGlitch()
+				end
+				
+				for i = #vars.effectVariables.glitches, 1, -1 do
+					local currGlitch = vars.effectVariables.glitches[i]
+					currGlitch.lifetime = currGlitch.lifetime - GetChaosTimeStep()
+					table.insert(drawCallQueue, function()
+						UiPush()
+							if vars.effectVariables.blackAndWhite then
+								UiColor(currGlitch.r, currGlitch.r, currGlitch.r, currGlitch.a)
+							else
+								UiColor(currGlitch.r, currGlitch.g, currGlitch.b, currGlitch.a)
+							end
+							UiAlign("center middle")
+							UiTranslate(UiWidth() * currGlitch.x, UiHeight() * currGlitch.y)
+							UiRect(UiWidth() * currGlitch.w, currGlitch.h)
+
+						UiPop()
+					end)
+					
+					if currGlitch.lifetime <= 0 then
+						table.remove(vars.effectVariables.glitches, i, 1)
+					end
+				end
+
+				end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		blind = {
+            name = "Blind", -- idear by Thunderstorm64 
+            effectDuration = 10,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = {},
+            onEffectStart = function(vars)end,
+            onEffectTick = function(vars) 
+                table.insert(drawCallQueue, function()
+                        UiPush()
+                            UiColor(0, 0, 0, 1)
+                            UiAlign("center middle")
+                            UiTranslate(UiCenter(), UiMiddle())
+                            UiRect(UiWidth() + 10, UiHeight() + 10)
+                        UiPop()
+                end)
+            end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		blindfold  = {
+            name = "Blindfold",
+            effectDuration = 10,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = {},
+            onEffectStart = function(vars)end,
+            onEffectTick = function(vars) 
+                table.insert(drawCallQueue, function()
+                    
+                        UiPush()
+                            UiColor(0, 0, 0, 1)
+                            UiAlign("center middle")
+                            UiTranslate(UiCenter(), UiMiddle())
+                            UiRect(UiWidth() + 10, UiHeight() * 0.8)
+        
+                        UiPop()
+                    
+                end)
+            end,
+            onEffectEnd = function(vars) end,
+        },
 	},	-- EFFECTS TABLE
 }
 

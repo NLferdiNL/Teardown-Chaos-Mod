@@ -29,11 +29,15 @@ der_baumkrieger:
     Useless Information (id: randomInformation)
     Lose Something? (id: loseSomething)
     Upgrade Random Explosive (id: opExplosive)
+	Glitch (id: glitch)
+	Blind (id: blind)
 
 Snazzah:
     Github: https://github.com/Snazzah
     Steam: https://steamcommunity.com/id/Snazzah
     
+	Quickload fix
+	
     Disintegration Field (id: disintegrationField)
     SUPERTEARDOWN (id: superhot)
     Trigger Alarm (id: triggerAlarm)
