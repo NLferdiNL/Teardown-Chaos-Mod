@@ -101,10 +101,6 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	if hasQuickloaded() then
-		loadChaosEffectData(true)
-	end
-
 	quickloadTick()
 
 	-- Failsafe
@@ -161,7 +157,7 @@ function drawTimer()
 	UiPop()
 
 	UiPush()
-		if hasTheGameReloaded then
+		if chaosUnavailable() then
 			UiColor(1, 0.25, 0.25)
 		else
 			UiColor(0.25, 0.25, 1)
