@@ -12,12 +12,17 @@ currentTime = 0
 timerPaused = false
 chaosPaused = false
 hasTheGameReloaded = false
+
+-- Inside the init() these changes don't get backed up.
+-- Here they do. Allowing quickloading to be available.
+saveFileInit()
+
+removeDisabledEffectKeys()
+loadChaosEffectData()
+
 UpdateQuickloadPatch()
 
 function init()
-	saveFileInit()
-	removeDisabledEffectKeys()
-	loadChaosEffectData()
 	debugInit()
 
 	UpdateQuickloadPatch()

@@ -48,7 +48,7 @@ function chaosSpritesInit()
 			for i=1, #currentEffect.effectSprites do
 				local currentSpriteData = currentEffect.effectSprites[i]
 				
-				if type(currentSpriteData) == "table" then
+				if type(currentSpriteData) == "string" then
 					local handle = 0
 
 					if loadedSprites[currentSpriteData] ~= nil then
