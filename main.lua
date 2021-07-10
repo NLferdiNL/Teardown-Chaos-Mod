@@ -1,3 +1,4 @@
+#include "quickload.lua"
 #include "effects.lua"
 #include "utils.lua"
 #include "debug.lua"
@@ -12,17 +13,22 @@ timerPaused = false
 chaosPaused = false
 hasTheGameReloaded = false
 
+-- Inside the init() these changes don't get backed up.
+-- Here they do. Allowing quickloading to be available.
+saveFileInit()
+
+removeDisabledEffectKeys()
+loadChaosEffectData()
+
+UpdateQuickloadPatch()
+
 function init()
-	saveFileInit()
-
-	removeDisabledEffectKeys()
-
-	loadChaosEffectData()
-
 	debugInit()
+
+	UpdateQuickloadPatch()
 end
 
-function gameReloaded()
+function chaosUnavailable()
 	return chaosEffects.effectTemplate.onEffectStart == nil
 end
 
@@ -100,23 +106,20 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	if not hasTheGameReloaded and gameReloaded() then
+	quickloadTick()
+
+	-- Failsafe
+	if chaosUnavailable() then
 		chaosEffects.activeEffects = {}
 
 		local warningEffect = getCopyOfEffect("nothing")
-		warningEffect.name = "Currently the Chaos mod\ndoes not support quick loading.\nThe mod is disabled until restarting\nthe level."
-
+		warningEffect.name = "An error occurred while loading\nthe effects from a quick load.\nPlease restart the level to\nkeep using Chaos mod."
 		warningEffect.onEffectStart = function() end
 		warningEffect.onEffectTick = function() end
 		warningEffect.onEffectEnd = function() end
 
 		triggerEffect(warningEffect)
-
-		hasTheGameReloaded = true
 		currentTime = chaosTimer
-	end
-
-	if hasTheGameReloaded then
 		return
 	end
 
@@ -159,7 +162,7 @@ function drawTimer()
 	UiPop()
 
 	UiPush()
-		if hasTheGameReloaded then
+		if chaosUnavailable() then
 			UiColor(1, 0.25, 0.25)
 		else
 			UiColor(0.25, 0.25, 1)

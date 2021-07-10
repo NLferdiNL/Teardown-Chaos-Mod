@@ -17,14 +17,12 @@ local effectCount = 0
 local sortedEffectList = {}
 
 function debugInit()
-	effectCount = GetEffectCount()
-
+	debugSetupEffectsList()
+	
 	if testThisEffect ~= "" then
 		chaosTimer = chaosEffects.effects[testThisEffect].effectDuration
 		currentTime = chaosTimer * 0.98
 	end
-
-	sortedEffectList = SortEffectsTable(effectCount)
 end
 
 function debugTick()
@@ -36,8 +34,18 @@ function debugTick()
 		textboxClass_tick()
 		checkMouseScroll()
 	end
+	
+	if #sortedEffectList == 0 and debugMenuEnabled then
+		debugSetupEffectsList()
+	end
 
 	checkDebugMenuToggles()
+end
+
+function debugSetupEffectsList()
+	effectCount = GetEffectCount()
+	
+	sortedEffectList = SortEffectsTable(effectCount)
 end
 
 function debugDraw()
@@ -48,6 +56,8 @@ function debugDraw()
 	if debugMenuEnabled then
 		drawDebugMenu()
 		drawEffectList()
+		listScreenHeight = UiMiddle() - 20
+		listScreenMaxScroll = (effectCount * 30 + 2) - listScreenHeight + 15
 	end
 end
 
@@ -58,12 +68,9 @@ function checkDebugMenuToggles()
 
 	if InputDown("ctrl") and InputPressed("h") then
 		debugMenuEnabled = not debugMenuEnabled
-
+		
 		if not debugMenuEnabled then
 			mouseActive = false
-		else
-			listScreenHeight = UiMiddle() - 20
-			listScreenMaxScroll = (effectCount * 30 + 2) - listScreenHeight + 15
 		end
 	end
 end
@@ -184,8 +191,7 @@ function drawEffectList()
 			UiColor(1, 1, 1, 1)
 
 			local i = 0
-
-
+			
 			for key, uid in ipairs(sortedEffectList) do
 				local effect = chaosEffects.effects[uid]
 				UiPush()

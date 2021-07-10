@@ -5,33 +5,34 @@ function chaosSFXInit()
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
-
+		
 		if #currentEffect.effectSFX > 0 then
 			for i=1, #currentEffect.effectSFX do
-				local soundData =  currentEffect.effectSFX[i]
-				local soundPath = soundData["soundPath"]
-				local isLoop = soundData["isLoop"]
-				local handle = nil
+				local soundData = currentEffect.effectSFX[i]
+				
+				if type(soundData) == "table" then
+					local soundPath = soundData["soundPath"]
+					local isLoop = soundData["isLoop"]
+					local handle = 0
 
-				local handle = 0
-
-				if isLoop then
-					if loadedSFX.loops[soundPath] ~= nil then
-						handle = loadedSFX.loops[soundPath]
+					if isLoop then
+						if loadedSFX.loops[soundPath] ~= nil then
+							handle = loadedSFX.loops[soundPath]
+						else
+							handle = LoadLoop(soundPath)
+							loadedSFX.loops[soundPath] = handle
+						end
 					else
-						handle = LoadLoop(soundPath)
-						loadedSFX.loops[soundPath] = handle
+						if loadedSFX.regular[soundPath] ~= nil then
+							handle = loadedSFX.regular[soundPath]
+						else
+							handle = LoadSound(soundPath)
+							loadedSFX.regular[soundPath] = handle
+						end
 					end
-				else
-					if loadedSFX.regular[soundPath] ~= nil then
-						handle = loadedSFX.regular[soundPath]
-					else
-						handle = LoadSound(soundPath)
-						loadedSFX.regular[soundPath] = handle
-					end
+					
+					currentEffect.effectSFX[i] = handle
 				end
-
-				currentEffect.effectSFX[i] = handle
 			end
 		end
 	end
@@ -42,21 +43,23 @@ function chaosSpritesInit()
 
 	for key, value in ipairs(chaosEffects.effectKeys) do
 		local currentEffect = chaosEffects.effects[value]
-
+		
 		if #currentEffect.effectSprites > 0 then
 			for i=1, #currentEffect.effectSprites do
 				local currentSpriteData = currentEffect.effectSprites[i]
+				
+				if type(currentSpriteData) == "string" then
+					local handle = 0
 
-				local handle = 0
-
-				if loadedSprites[currentSpriteData] ~= nil then
-					handle = loadedSprites[currentSpriteData]
-				else
-					handle = LoadSprite(currentSpriteData)
-					loadedSprites[currentSpriteData] = handle
+					if loadedSprites[currentSpriteData] ~= nil then
+						handle = loadedSprites[currentSpriteData]
+					else
+						handle = LoadSprite(currentSpriteData)
+						loadedSprites[currentSpriteData] = handle
+					end
+					
+					currentEffect.effectSprites[i] = handle
 				end
-
-				currentEffect.effectSprites[i] = handle
 			end
 		end
 	end
