@@ -3972,8 +3972,6 @@ chaosEffects = {
 					local currEffect = chaosEffects.activeEffects[i]
 					if currEffect ~= vars then
 						currEffect.onEffectEnd(currEffect)
-					else
-						DebugPrint("It's a me")
 					end
 				end
 				
