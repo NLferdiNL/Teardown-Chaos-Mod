@@ -1,6 +1,6 @@
 Superfroggman:
+		Github: https://github.com/superfroggman
     Steam: https://steamcommunity.com/id/Superfrogman
-    Github: https://github.com/superfroggman
     
     Laser Vision (id: laserVision)
     Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
@@ -20,6 +20,7 @@ Superfroggman:
     Lets Try That Again (id: rewind)
 
 der_baumkrieger:
+		Github: https://github.com/der-baumkrieger
     Steam: https://steamcommunity.com/profiles/76561199083584422
     
     GTA 2 (id: birdPerspective)
@@ -29,8 +30,8 @@ der_baumkrieger:
     Useless Information (id: randomInformation)
     Lose Something? (id: loseSomething)
     Upgrade Random Explosive (id: opExplosive)
-	Glitch (id: glitch)
-	Blind (id: blind)
+    Glitch (id: glitch)
+    Blind (id: blind)
 
 Snazzah:
     Github: https://github.com/Snazzah
@@ -48,12 +49,12 @@ Snazzah:
     Virtual Reality (id: virtualReality)
     Flashbang (id: Flashbang)
     Move or Die (id:  moveOrDie)
-	Pause Alarm (id:  pauseAlarm)
-	Disintegrate Vehicle (id:  disintegrateVehicle)
-	Blinding Lights (id:  blindingLights)
-	Blackout (id:  blackout)
-	Binoculars (id:  binoculars)
-	My W Key is Stuck (id:  keepGoingForward)
-	Bunnyhop (id:  keepJumping)
-	Freeze Frame (id:  freezeFrame)
-	UI & Exit Denial For Speed(id: dontStopDriving)
+    Pause Alarm (id:  pauseAlarm)
+    Disintegrate Vehicle (id:  disintegrateVehicle)
+    Blinding Lights (id:  blindingLights)
+    Blackout (id:  blackout)
+    Binoculars (id:  binoculars)
+    My W Key is Stuck (id:  keepGoingForward)
+    Bunnyhop (id:  keepJumping)
+    Freeze Frame (id:  freezeFrame)
+    UI & Exit Denial For Speed(id: dontStopDriving)
