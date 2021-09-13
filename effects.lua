@@ -2914,6 +2914,11 @@ chaosEffects = {
 				function endMinigame()
 					vars.effectLifetime = vars.effectDuration
 				end
+				
+				if GetPlayerHealth() <= 0 then
+					endMinigame()
+					return
+				end
 
 				if vars.effectVariables.lives <= 0 then
 					endMinigame()
@@ -4079,7 +4084,7 @@ chaosEffects = {
             onEffectEnd = function(vars) end,
         },
 		
-		blindfold  = {
+		blindfold = {
             name = "Blindfold",
             effectDuration = 10,
             effectLifetime = 0,
@@ -4103,6 +4108,162 @@ chaosEffects = {
             end,
             onEffectEnd = function(vars) end,
         },
+		
+		notTheBees = {
+            name = "Not The Bees!",
+            effectDuration = 15,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { tickTimer = 0, maxTick = 0.85},
+            onEffectStart = function(vars)end,
+            onEffectTick = function(vars) 
+				if vars.effectVariables.tickTimer < vars.effectVariables.maxTick then
+					vars.effectVariables.tickTimer = vars.effectVariables.tickTimer + GetChaosTimeStep()
+					return
+				end
+				
+				vars.effectVariables.tickTimer = 0
+				
+				SetPlayerHealth(GetPlayerHealth() - 0.1)
+            end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		lockPlayerInsideVehicle = {
+            name = "Lock Player Inside Vehicle",
+            effectDuration = 15,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { currVehicle = 0},
+            onEffectStart = function(vars) 
+				vars.effectVariables.currVehicle = GetPlayerVehicle()
+			end,
+            onEffectTick = function(vars) 
+				if vars.effectVariables.currVehicle == 0 then
+					vars.effectVariables.currVehicle = GetPlayerVehicle()
+				else
+					SetPlayerVehicle(vars.effectVariables.currVehicle)
+				end
+            end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		unbreakableEverything = {
+			name = "Everything Is Unbreakable",
+            effectDuration = 10,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { affectedBodies = {} },
+            onEffectStart = function(vars) 
+				local range = 500
+			
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				vars.effectVariables.affectedBodies = QueryAabbBodies(minPos, maxPos)
+				
+				for i = 1, #vars.effectVariables.affectedBodies do
+					local currBody = vars.effectVariables.affectedBodies[i]
+					SetTag(currBody, "unbreakable")
+				end
+			end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) 
+				for i = 1, #vars.effectVariables.affectedBodies do
+					local currBody = vars.effectVariables.affectedBodies[i]
+					RemoveTag(currBody, "unbreakable")
+				end
+			end,
+		},
+		
+		forcefield = {
+			name = "Forcefield",
+            effectDuration = 15,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = {},
+            onEffectStart = function(vars) end,
+            onEffectTick = function(vars) 
+				local range = 20
+				local forceStrength = 3
+			
+				local playerPos = GetPlayerTransform().pos
+	
+				local rangeVec = Vec(range / 2, range / 2, range / 2)
+				
+				local minPos = VecAdd(playerPos, VecScale(rangeVec, -1))
+				local maxPos = VecAdd(playerPos, rangeVec)
+				
+				local bodies = QueryAabbBodies(minPos, maxPos)
+				
+				local playerVehicle = GetPlayerVehicle()
+				
+				for i = 1, #bodies do
+					local body = bodies[i]
+					
+					local vehicleHandle = GetBodyVehicle(body)
+					
+					if IsBodyDynamic(body) and (vehicleHandle ~= playerVehicle or playerVehicle == 0) then
+						local bodyTransform = GetBodyTransform(body)
+						local directionFromPlayer = dirVec(playerPos, bodyTransform.pos)
+						
+						local mass = GetBodyMass(body)
+						
+						local distanceStrength = range - VecDist(playerPos, bodyTransform.pos)
+						
+						local strengthAdjustedDirectionVector = VecScale(directionFromPlayer, forceStrength * mass + distanceStrength * 2)
+						
+						ApplyBodyImpulse(body, bodyTransform.pos, strengthAdjustedDirectionVector)
+					end
+				end
+			end,
+            onEffectEnd = function(vars) end,
+		},
+		
+		beyblades = {
+			name = "Beyblades",
+            effectDuration = 10,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { vehicles = {} },
+            onEffectStart = function(vars)
+				local range = 500
+				local minPos = Vec(-range, -range, -range)
+				local maxPos = Vec(range, range, range)
+				local nearbyShapes = QueryAabbShapes(minPos, maxPos)
+
+				for i = 1, #nearbyShapes do
+					local currentShape = nearbyShapes[i]
+					local shapeBody = GetShapeBody(currentShape)
+
+					if GetBodyVehicle(shapeBody) ~= 0 then
+						local vehicleHandle = GetBodyVehicle(shapeBody)
+
+						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = vehicleHandle
+					end
+				end
+			end,
+			onEffectTick = function(vars)
+				local vel = Vec(0, 5, 0)
+			
+				for i = 1, #vars.effectVariables.vehicles do
+					local currVehicle = vars.effectVariables.vehicles[i]
+					local vehicleBody = GetVehicleBody(currVehicle)
+					
+					SetBodyAngularVelocity(vehicleBody, vel)
+				end
+			end,
+            onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 
