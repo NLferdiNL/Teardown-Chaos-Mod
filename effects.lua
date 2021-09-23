@@ -2227,7 +2227,7 @@ chaosEffects = {
 
 		lowgravity = {
 			name = "Low Gravity",
-			effectDuration = 15,
+			effectDuration = 20,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
@@ -2739,7 +2739,7 @@ chaosEffects = {
 
 						UiFont("regular.ttf", 26)
 
-						UiText("Keep " .. forcedInput.message.. "!")
+						UiText("Hold " .. forcedInput.message.. " key!")
 					UiPop()
 				end)
 
@@ -2839,7 +2839,6 @@ chaosEffects = {
 						local vehicleTransform = GetVehicleTransform(vehicleData.handle)
 						local vehicleBody = GetBodyTransform(vehicleTransform)
 
-						DrawBodyOutline(vehicleBody)
 						vehicleData.jumpTimer = vehicleData.jumpTimer - GetChaosTimeStep()
 					end
 				end
@@ -4239,14 +4238,14 @@ chaosEffects = {
 				local range = 500
 				local minPos = Vec(-range, -range, -range)
 				local maxPos = Vec(range, range, range)
-				local nearbyShapes = QueryAabbShapes(minPos, maxPos)
+				local nearbyBodies = QueryAabbBodies(minPos, maxPos)
 
-				for i = 1, #nearbyShapes do
-					local currentShape = nearbyShapes[i]
-					local shapeBody = GetShapeBody(currentShape)
+				for i = 1, #nearbyBodies do
+					local currentBody = nearbyBodies[i]
+					local vehicleBody = GetBodyVehicle(currentBody)
 
-					if GetBodyVehicle(shapeBody) ~= 0 then
-						local vehicleHandle = GetBodyVehicle(shapeBody)
+					if vehicleBody ~= 0 then
+						local vehicleHandle = GetBodyVehicle(currentBody)
 
 						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = vehicleHandle
 					end
@@ -4257,12 +4256,142 @@ chaosEffects = {
 			
 				for i = 1, #vars.effectVariables.vehicles do
 					local currVehicle = vars.effectVariables.vehicles[i]
-					local vehicleBody = GetVehicleBody(currVehicle)
 					
-					SetBodyAngularVelocity(vehicleBody, vel)
+					
+					if GetPlayerVehicle() ~= currVehicle then
+						local vehicleBody = GetVehicleBody(currVehicle)
+						SetBodyAngularVelocity(vehicleBody, vel)
+					end
 				end
 			end,
             onEffectEnd = function(vars) end,
+		},
+		
+		allVehiclesInvulnerable = {
+			name = "All Vehicles Are Invulnerable",
+            effectDuration = 20,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { vehicles = {} },
+            onEffectStart = function(vars)
+				local range = 500
+				local minPos = Vec(-range, -range, -range)
+				local maxPos = Vec(range, range, range)
+				local nearbyBodies = QueryAabbBodies(minPos, maxPos)
+
+				for i = 1, #nearbyBodies do
+					local currentBody = nearbyBodies[i]
+					local vehicleBody = GetBodyVehicle(currentBody)
+
+					if vehicleBody ~= 0 then
+						local vehicleHandle = GetBodyVehicle(currentBody)
+
+						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = vehicleHandle
+						
+						SetTag(currentBody, "unbreakable")
+					end
+				end
+			end,
+			onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) 
+				for i = 1, #vars.effectVariables.vehicles do
+					local currVehicle = vars.effectVariables.vehicles[i]
+					local vehicleBody = GetVehicleBody(currVehicle)
+					
+					RemoveTag(vehicleBody, "unbreakable")
+				end
+			end,
+		},
+		
+		highgravity = {
+			name = "High Gravity",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { affectedBodies = {}},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				local playerPos = GetPlayerTransform().pos
+				local range = 50
+
+				local tempVec = GetPlayerVelocity()
+				tempVec[2] = -2
+				SetPlayerVelocity(tempVec)
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local shapeList = QueryAabbBodies(minPos, maxPos)
+
+				for i = 1, #shapeList do
+					local shapeBody = shapeList[i]
+
+					if IsBodyDynamic(shapeBody) then
+
+						if vars.effectVariables.affectedBodies[shapeBody] == nil then
+							vars.effectVariables.affectedBodies[shapeBody] = "hit"
+						end
+
+						local bodyVelocity = GetBodyVelocity(shapeBody)
+
+						bodyVelocity[2] = -2
+
+						SetBodyVelocity(shapeBody, bodyVelocity)
+					end
+				end
+			end,
+			onEffectEnd = function(vars)
+				for shapeBody, value in pairs(vars.effectVariables.affectedBodies) do
+					local shapeTransform = GetBodyTransform(shapeBody)
+					ApplyBodyImpulse(shapeBody, shapeTransform.pos, Vec(0, -1, 0))
+				end
+			end,
+		},
+		
+		phonesringing = {
+			name = "Whose Phone Is It?",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { tick = 0.75, maxTick = 0.75, lastSfx = 0},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local tick = vars.effectVariables.tick
+				local sounds = {"MOD/sfx/phonesringing/phone01.ogg", 
+								"MOD/sfx/phonesringing/phone02.ogg", 
+								"MOD/sfx/phonesringing/phone03.ogg",
+								"MOD/sfx/phonesringing/phone04.ogg",
+								"MOD/sfx/phonesringing/phone05.ogg",
+								"MOD/sfx/phonesringing/phone06.ogg"}
+				
+				tick = tick - GetChaosTimeStep()
+				
+				if tick <= 0 then
+					tick = vars.effectVariables.maxTick
+					local randomNum = math.random(1, #sounds)
+					
+					if randomNum == vars.effectVariables.lastSfx then
+						randomNum = randomNum + 1
+						if randomNum > #sounds then
+							randomNum = 1
+						end
+					end
+					
+					local sfxPath = sounds[randomNum]
+					
+					UiSound(sfxPath)
+					
+					vars.effectVariables.lastSfx = randomNum
+				end
+				
+				vars.effectVariables.tick = tick
+			end,
+			onEffectEnd = function(vars) end,
 		},
 	},	-- EFFECTS TABLE
 }
