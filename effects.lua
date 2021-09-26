@@ -4288,7 +4288,7 @@ chaosEffects = {
 					if vehicleBody ~= 0 then
 						local vehicleHandle = GetBodyVehicle(currentBody)
 
-						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = vehicleHandle
+						vars.effectVariables.vehicles[#vars.effectVariables.vehicles + 1] = currentBody
 						
 						SetTag(currentBody, "unbreakable")
 					end
@@ -4297,10 +4297,9 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
             onEffectEnd = function(vars) 
 				for i = 1, #vars.effectVariables.vehicles do
-					local currVehicle = vars.effectVariables.vehicles[i]
-					local vehicleBody = GetVehicleBody(currVehicle)
+					local currVehicleBody = vars.effectVariables.vehicles[i]
 					
-					RemoveTag(vehicleBody, "unbreakable")
+					RemoveTag(currVehicleBody, "unbreakable")
 				end
 			end,
 		},
