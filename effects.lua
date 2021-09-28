@@ -4400,11 +4400,17 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { resolution = 50, },
+			effectVariables = { resolution = 100, odd = false, savedPixels = {}},
 			onEffectStart = function(vars) 
 				local resolutions = {30, 40, 50}
-				
 				--vars.effectVariables.resolution = resolutions[math.random(1, #resolutions)]
+				for x = 1, vars.effectVariables.resolution do
+					vars.effectVariables.savedPixels[x] = {}
+					for y = 1, vars.effectVariables.resolution do
+						vars.effectVariables.savedPixels[x][y] = {0, 0.75, 1}
+					end
+				end
+				
 			end,
 			onEffectTick = function(vars) 
 				local resolution = vars.effectVariables.resolution
@@ -4416,41 +4422,68 @@ chaosEffects = {
 				local fovWPerRes = widthMax / resolution
 				local fovHPerRes = heightMax / resolution
 				
+				local ray = false
+				
 				function drawAt(x, y, pixelWidth, pixelHeight)
 					UiPush()
-					
-						local xDir = fovWPerRes * x - widthMax / 2
-						local yDir = fovHPerRes * (resolution - y) - heightMax / 2
+						local color = vars.effectVariables.savedPixels[x + 1][y + 1]
 						
-						local localRayDir = Vec(xDir, yDir, -1)
-						local rayDir = TransformToParentVec(rayOrigTransform, localRayDir)
+						local isOdd = vars.effectVariables.odd
 						
-						local hit, hitPoint, distance, normal, shape = raycast(rayOrigTransform.pos, rayDir, 250, 0, true)
+						if (isOdd and x % 2 == 0) or (not isOdd and x % 2 == 1) then
+							local xDir = fovWPerRes * x - widthMax / 2
+							local yDir = fovHPerRes * (resolution - y) - heightMax / 2
+							
+							local localRayDir = Vec(xDir, yDir, -1)
+							local rayDir = TransformToParentVec(rayOrigTransform, localRayDir)
 						
-						local color = {0, 0.75, 1}
-						
-						if hit then
-							local mat, r, g, b, a = GetShapeMaterialAtPosition(shape, hitPoint)
-							color[1] = r
-							color[2] = g
-							color[3] = b
+							local hit, hitPoint, distance, normal, shape = raycast(rayOrigTransform.pos, rayDir, 250, 0, true)
+							
+							ray = true
+							
+							if hit then
+								local mat, r, g, b, a = GetShapeMaterialAtPosition(shape, hitPoint)
+								color[1] = r
+								color[2] = g
+								color[3] = b
+							else
+								color = {0, 0.75, 1}
+							end
+							
+							vars.effectVariables.savedPixels[x + 1][y + 1] = color
 						end
 						
 						UiColor(color[1], color[2], color[3], 1)
 						UiTranslate(x * pixelWidth, y * pixelHeight)
 						UiRect(pixelWidth, pixelHeight)
 					UiPop()
+					
+					return ray
 				end
 				
 				table.insert(drawCallQueue, function()
 					local UiWidthPerPixel = math.ceil(UiWidth() / resolution)
 					local UiHeightPerPixel = math.ceil(UiHeight() / resolution)
+					
+					local start = 0
+					
+					vars.effectVariables.odd = not vars.effectVariables.odd
+					
+					local test = 0
+					
 					for x = 0, resolution - 1 do
 						for y = 0, resolution - 1 do
-							drawAt(x, y, UiWidthPerPixel, UiHeightPerPixel)
+							local ray = drawAt(x, y, UiWidthPerPixel, UiHeightPerPixel)
+							if ray then
+								test = test + 1
+							end
 						end
 					end
+					
+					DebugWatch("t", test)
 				end)
+				
+				
 			end,
 			onEffectEnd = function(vars) end,
 		},
