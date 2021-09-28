@@ -4392,6 +4392,68 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		pixelatedScreen = {
+			name = "Pixelated",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { resolution = 50, },
+			onEffectStart = function(vars) 
+				local resolutions = {30, 40, 50}
+				
+				--vars.effectVariables.resolution = resolutions[math.random(1, #resolutions)]
+			end,
+			onEffectTick = function(vars) 
+				local resolution = vars.effectVariables.resolution
+				local rayOrigTransform = GetCameraTransform()
+				
+				local widthMax = 1.75
+				local heightMax = 1
+				
+				local fovWPerRes = widthMax / resolution
+				local fovHPerRes = heightMax / resolution
+				
+				function drawAt(x, y, pixelWidth, pixelHeight)
+					UiPush()
+					
+						local xDir = fovWPerRes * x - widthMax / 2
+						local yDir = fovHPerRes * (resolution - y) - heightMax / 2
+						
+						local localRayDir = Vec(xDir, yDir, -1)
+						local rayDir = TransformToParentVec(rayOrigTransform, localRayDir)
+						
+						local hit, hitPoint, distance, normal, shape = raycast(rayOrigTransform.pos, rayDir, 250, 0, true)
+						
+						local color = {0, 0.75, 1}
+						
+						if hit then
+							local mat, r, g, b, a = GetShapeMaterialAtPosition(shape, hitPoint)
+							color[1] = r
+							color[2] = g
+							color[3] = b
+						end
+						
+						UiColor(color[1], color[2], color[3], 1)
+						UiTranslate(x * pixelWidth, y * pixelHeight)
+						UiRect(pixelWidth, pixelHeight)
+					UiPop()
+				end
+				
+				table.insert(drawCallQueue, function()
+					local UiWidthPerPixel = math.ceil(UiWidth() / resolution)
+					local UiHeightPerPixel = math.ceil(UiHeight() / resolution)
+					for x = 0, resolution - 1 do
+						for y = 0, resolution - 1 do
+							drawAt(x, y, UiWidthPerPixel, UiHeightPerPixel)
+						end
+					end
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 
