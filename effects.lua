@@ -4429,9 +4429,20 @@ chaosEffects = {
 						
 						if hit then
 							local mat, r, g, b, a = GetShapeMaterialAtPosition(shape, hitPoint)
+							
+							local inWater = IsPointInWater(hitPoint)
+							
 							color[1] = r
 							color[2] = g
 							color[3] = b
+							
+							if inWater then
+								color[3] = color[3] + 0.25
+								
+								if color[3] > 1 then 
+									color[3] = 1
+								end
+							end
 						end
 						
 						UiColor(color[1], color[2], color[3], 1)
