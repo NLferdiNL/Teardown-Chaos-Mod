@@ -4402,14 +4402,14 @@ chaosEffects = {
 			effectSprites = {},
 			effectVariables = { resolution = 50, },
 			onEffectStart = function(vars) 
-				local resolutions = {30, 40, 50}
+				--local resolutions = {30, 40, 50}
 				--vars.effectVariables.resolution = resolutions[math.random(1, #resolutions)]
 			end,
 			onEffectTick = function(vars) 
 				local resolution = vars.effectVariables.resolution
 				local rayOrigTransform = GetCameraTransform()
 				
-				local widthMax = 1.75
+				local widthMax = 2
 				local heightMax = 1
 				
 				local fovWPerRes = widthMax / resolution
@@ -4423,7 +4423,7 @@ chaosEffects = {
 						local yDir = fovHPerRes * (resolution - y) - heightMax / 2
 						
 						local localRayDir = Vec(xDir, yDir, -1)
-						local rayDir = TransformToParentVec(rayOrigTransform, localRayDir)
+						local rayDir = dirVec(rayOrigTransform.pos, TransformToParentPoint(rayOrigTransform, localRayDir))
 					
 						local hit, hitPoint, distance, normal, shape = raycast(rayOrigTransform.pos, rayDir, 250, 0, true)
 						
