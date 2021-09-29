@@ -4453,6 +4453,41 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		--[[fakeCrash = {
+			name = "Fake Crash",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { nameBackup = "", revealTimer = 10, chaosTimerBackup = 0, playerTransform = nil},
+			onEffectStart = function(vars) 
+				vars.effectVariables.chaosTimerBackup = chaosTimer
+				vars.effectVariables.nameBackup = vars.name
+				vars.name = ""
+				
+				vars.effectVariables.playerTransform = TransformCopy(GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) 
+				chaosTimer = vars.effectVariables.chaosTimerBackup
+				SetPlayerTransform(vars.effectVariables.playerTransform, true)
+				
+				table.insert(drawCallQueue, function()
+					local extraMargin = 20
+				
+					UiPush()
+						UiMakeInteractive()
+						UiTranslate(-extraMargin, -extraMargin)
+						
+						UiColor(1, 1, 1, 0.5)
+						
+						UiRect(UiWidth() + extraMargin * 2, UiHeight() * extraMargin * 2)
+					UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
 	},	-- EFFECTS TABLE
 }
 
