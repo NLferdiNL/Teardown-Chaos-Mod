@@ -2739,7 +2739,7 @@ chaosEffects = {
 
 						UiFont("regular.ttf", 26)
 
-						UiText("Hold " .. forcedInput.message.. " key!")
+						UiText("Press and hold the  " .. forcedInput.message.. " key!")
 					UiPop()
 				end)
 
@@ -4465,40 +4465,193 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
-		--[[fakeCrash = {
-			name = "Fake Crash",
-			effectDuration = 20,
+		lightHurts = {
+			name = "Stay In The Dark/Light",
+			effectDuration = 30,
 			effectLifetime = 0,
-			hideTimer = true,
+			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { nameBackup = "", revealTimer = 10, chaosTimerBackup = 0, playerTransform = nil},
+			effectVariables = {avoidLight = true, allLights = {}, damageTick = 0.25, maxTick = 0.25, skybox = "", skyboxbrightness = 0, ambient = 0, sunBrightness = 0, exposure = 0, skyboxtint = {0, 0, 0}, fogColor = {0, 0, 0}, fogParams = {0, 0, 0, 0}},
 			onEffectStart = function(vars) 
-				vars.effectVariables.chaosTimerBackup = chaosTimer
-				vars.effectVariables.nameBackup = vars.name
-				vars.name = ""
+				if math.random(1,10) > 5 or true then
+					vars.effectVariables.avoidLight = false
+					vars.name = "Stay In The Light"
+				else
+					vars.name = "Stay In The Dark"
+				end
+			
+				vars.effectVariables.skybox = GetEnvironmentProperty("skybox")
+				vars.effectVariables.skyboxbrightness = GetEnvironmentProperty("skyboxbrightness")
+				vars.effectVariables.ambient = GetEnvironmentProperty("ambient")
+				vars.effectVariables.sunBrightness = GetEnvironmentProperty("sunBrightness")
+				vars.effectVariables.exposure = GetEnvironmentProperty("exposure")
 				
-				vars.effectVariables.playerTransform = TransformCopy(GetPlayerTransform())
+				local skyTint1, skyTint2, skyTint3 = GetEnvironmentProperty("skyboxtint")
+				vars.effectVariables.skyboxtint = {skyTint1, skyTint2, skyTint3}
+				
+				local fogColor1, fogColor2, fogColor3 = GetEnvironmentProperty("fogColor")
+				vars.effectVariables.fogColor = {fogColor1, fogColor2, fogColor3}
+				
+				local fogParam1, fogParam2, fogParam3, fogParam4 = GetEnvironmentProperty("fogParams")
+				vars.effectVariables.fogParams = {fogParam1, fogParam2, fogParam3, fogParam4}
+				
+				SetEnvironmentProperty("skybox", "night_clear.dds")
+				SetEnvironmentProperty("skyboxbrightness", 0.05)
+				SetEnvironmentProperty("ambient", 0)
+				SetEnvironmentProperty("sunBrightness", 0)
+				SetEnvironmentProperty("exposure", 1.5)
+				SetEnvironmentProperty("skyboxtint", 1, 1, 1)
+				SetEnvironmentProperty("fogColor", 0.02, 0.02, 0.024)
+				SetEnvironmentProperty("fogParams", 20, 120, 0.9, 2)
+				
+				local shapes = QueryAabbShapes(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
+				for i=1, #shapes do
+					local lights = GetShapeLights(shapes[i])
+					for j=1, #lights do
+						if not HasTag(lights[j], "alarm") then
+							table.insert(vars.effectVariables.allLights, lights[j])
+						end
+					end
+				end
 			end,
 			onEffectTick = function(vars) 
-				chaosTimer = vars.effectVariables.chaosTimerBackup
-				SetPlayerTransform(vars.effectVariables.playerTransform, true)
+				local playerHeight = 1.8
 				
-				table.insert(drawCallQueue, function()
-					local extraMargin = 20
+				if InputDown("crouch") then
+					playerHealth = 0.9
+				end
+			
+				local playerPos = VecAdd(GetPlayerTransform().pos, Vec(0, playerHeight, 0))
+				local damageTick = vars.effectVariables.damageTick
+				local avoidLight = vars.effectVariables.avoidLight
 				
-					UiPush()
-						UiMakeInteractive()
-						UiTranslate(-extraMargin, -extraMargin)
+				function hittingPlayer(light)
+					if not IsLightActive(light) then
+						return false
+					end
+					
+					if not IsPointAffectedByLight(light, playerPos) then
+						return false
+					end
+					
+					local lightTransform = GetLightTransform(light)
+					
+					local rayOrig = lightTransform.pos
+					local rayDir = dirVec(rayOrig, playerPos)
+					local rayDist = VecDist(rayOrig, playerPos)
+					
+					QueryRejectShape(GetLightShape(light))
+					local hit = raycast(rayOrig, rayDir, rayDist)
+					
+					if hit then
+						return false
+					end
+					
+					return true
+				end
+				
+				local damageTickHappened = false
+				local inLight = false
+			
+				for i = 1, #vars.effectVariables.allLights do
+					local light = vars.effectVariables.allLights[i]
+					if hittingPlayer(light) then
+						if avoidLight then
+							SetLightColor(light, 1, 0, 0)
 						
-						UiColor(1, 1, 1, 0.5)
+							if not damageTickHappened then
+								damageTick = damageTick - GetChaosTimeStep()
+								
+								if damageTick < 0 then
+									damageTick = vars.effectVariables.maxTick
+									local playerHealth = GetPlayerHealth()
+									
+									SetPlayerHealth(playerHealth - 0.05)
+								end
+								
+								damageTickHappened = true
+							end
+						else
+							inLight = true
+						end
+					elseif avoidLight then
+						SetLightColor(light, 1, 1, 1)
+					end
+				end
+				
+				if not inLight and not avoidLight then
+					damageTick = damageTick - GetChaosTimeStep()
+					
+					if damageTick < 0 then
+						damageTick = vars.effectVariables.maxTick
+						local playerHealth = GetPlayerHealth()
 						
-						UiRect(UiWidth() + extraMargin * 2, UiHeight() * extraMargin * 2)
-					UiPop()
-				end)
+						SetPlayerHealth(playerHealth - 0.05)
+					end
+				end
+				
+				vars.effectVariables.damageTick = damageTick
 			end,
-			onEffectEnd = function(vars) end,
-		},]]--
+			onEffectEnd = function(vars) 
+				SetEnvironmentProperty("skybox", vars.effectVariables.skybox)
+				SetEnvironmentProperty("skyboxbrightness", vars.effectVariables.skyboxbrightness)
+				SetEnvironmentProperty("ambient", vars.effectVariables.ambient)
+				SetEnvironmentProperty("sunBrightness", vars.effectVariables.sunBrightness)
+				SetEnvironmentProperty("exposure", vars.effectVariables.exposure)
+				SetEnvironmentProperty("skyboxtint", vars.effectVariables.skyboxtint[1], vars.effectVariables.skyboxtint[2], vars.effectVariables.skyboxtint[3])
+				
+				SetEnvironmentProperty("fogColor", vars.effectVariables.fogColor[1], vars.effectVariables.fogColor[2], vars.effectVariables.fogColor[3])
+				SetEnvironmentProperty("fogParams", vars.effectVariables.fogParams[1], vars.effectVariables.fogParams[2], vars.effectVariables.fogParams[3], vars.effectVariables.fogParams[4])
+			end,
+		},
+		
+		nightTime = {
+			name = "Night Time",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {skybox = "", skyboxbrightness = 0, ambient = 0, sunBrightness = 0, exposure = 0, skyboxtint = {0, 0, 0}, fogColor = {0, 0, 0}, fogParams = {0, 0, 0, 0}},
+			onEffectStart = function(vars) 
+				vars.effectVariables.skybox = GetEnvironmentProperty("skybox")
+				vars.effectVariables.skyboxbrightness = GetEnvironmentProperty("skyboxbrightness")
+				vars.effectVariables.ambient = GetEnvironmentProperty("ambient")
+				vars.effectVariables.sunBrightness = GetEnvironmentProperty("sunBrightness")
+				vars.effectVariables.exposure = GetEnvironmentProperty("exposure")
+				
+				local skyTint1, skyTint2, skyTint3 = GetEnvironmentProperty("skyboxtint")
+				vars.effectVariables.skyboxtint = {skyTint1, skyTint2, skyTint3}
+				
+				local fogColor1, fogColor2, fogColor3 = GetEnvironmentProperty("fogColor")
+				vars.effectVariables.fogColor = {fogColor1, fogColor2, fogColor3}
+				
+				local fogParam1, fogParam2, fogParam3, fogParam4 = GetEnvironmentProperty("fogParams")
+				vars.effectVariables.fogParams = {fogParam1, fogParam2, fogParam3, fogParam4}
+				
+				SetEnvironmentProperty("skybox", "night_clear.dds")
+				SetEnvironmentProperty("skyboxbrightness", 0.05)
+				SetEnvironmentProperty("ambient", 0)
+				SetEnvironmentProperty("sunBrightness", 0)
+				SetEnvironmentProperty("exposure", 1.5)
+				SetEnvironmentProperty("skyboxtint", 1, 1, 1)
+				SetEnvironmentProperty("fogColor", 0.02, 0.02, 0.024)
+				SetEnvironmentProperty("fogParams", 20, 120, 0.9, 2)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				SetEnvironmentProperty("skybox", vars.effectVariables.skybox)
+				SetEnvironmentProperty("skyboxbrightness", vars.effectVariables.skyboxbrightness)
+				SetEnvironmentProperty("ambient", vars.effectVariables.ambient)
+				SetEnvironmentProperty("sunBrightness", vars.effectVariables.sunBrightness)
+				SetEnvironmentProperty("exposure", vars.effectVariables.exposure)
+				SetEnvironmentProperty("skyboxtint", vars.effectVariables.skyboxtint[1], vars.effectVariables.skyboxtint[2], vars.effectVariables.skyboxtint[3])
+				
+				SetEnvironmentProperty("fogColor", vars.effectVariables.fogColor[1], vars.effectVariables.fogColor[2], vars.effectVariables.fogColor[3])
+				SetEnvironmentProperty("fogParams", vars.effectVariables.fogParams[1], vars.effectVariables.fogParams[2], vars.effectVariables.fogParams[3], vars.effectVariables.fogParams[4])
+			end,
+		},
 	},	-- EFFECTS TABLE
 }
 
