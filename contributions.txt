@@ -1,5 +1,5 @@
 Superfroggman:
-		Github: https://github.com/superfroggman
+	Github: https://github.com/superfroggman
     Steam: https://steamcommunity.com/id/Superfrogman
     
     Laser Vision (id: laserVision)
@@ -20,7 +20,7 @@ Superfroggman:
     Lets Try That Again (id: rewind)
 
 der_baumkrieger:
-		Github: https://github.com/der-baumkrieger
+	Github: https://github.com/der-baumkrieger
     Steam: https://steamcommunity.com/profiles/76561199083584422
     
     GTA 2 (id: birdPerspective)
