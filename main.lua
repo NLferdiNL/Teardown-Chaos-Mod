@@ -106,7 +106,10 @@ function GetChaosTimeStep()
 end
 
 function tick(dt)
-	quickloadTick()
+	if quickloadTick() then
+		-- Has quickloaded
+		chaosTimer = chaosTimerBackup
+	end
 
 	-- Failsafe
 	if chaosUnavailable() then

@@ -4,12 +4,15 @@ function saveFileInit()
 	saveVersion = GetInt(moddataPrefix .. "Version")
 	chaosTimer = GetInt(moddataPrefix .. "ChaosTimer")
 	chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+	
+	chaosTimerBackup = chaosTimer
 
 	if saveVersion < 1 then
 		saveVersion = 1
 		SetInt(moddataPrefix .. "Version", 1)
 
 		chaosTimer = 10
+		chaosTimerBackup = chaosTimer
 		SetInt(moddataPrefix .. "ChaosTimer", chaosTimer)
 	end
 
@@ -31,7 +34,7 @@ function saveFileInit()
 			chaosEffects.disabledEffects["fakeDeleteVehicle"] = "disabled"
 		end
 
-		DebugPrint(chaosEffects.effects.fakeDeleteVehicle.name .. " is disabled by default now. Use the options to reenable.")
+		DebugPrint(chaosEffects.effects.fakeDeleteVehicle.name .. " is disabled by default now. You can reenable them in the options menu.")
 		DebugPrint("Until it is fixed for multi part vehicles.")
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end
@@ -64,6 +67,26 @@ function saveFileInit()
 			DebugPrint("Quake FOV enabled, because it now works with tools.")
 			DebugPrint("This reset will only occur once.")
 		end
+
+		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
+	end
+	
+	if saveVersion < 6 then
+		saveVersion = 6
+		SetInt(moddataPrefix .. "Version", 6)
+
+		chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+
+		if chaosEffects.disabledEffects["unbreakableEverything"] == nil then
+			chaosEffects.disabledEffects["unbreakableEverything"] = "disabled"
+		end
+		
+		if chaosEffects.disabledEffects["allVehiclesInvulnerable"] == nil then
+			chaosEffects.disabledEffects["allVehiclesInvulnerable"] = "disabled"
+		end
+		
+		DebugPrint(chaosEffects.effects.unbreakableEverything.name .. " and " .. chaosEffects.effects.allVehiclesInvulnerable.name .. " are disabled by default now.")
+		DebugPrint("This is due to their effects carrying over cross quick saves and becoming permanent. You can reenable them in the options menu.")
 
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
 	end

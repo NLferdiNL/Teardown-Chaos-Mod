@@ -2149,7 +2149,19 @@ chaosEffects = {
 
 					SetPlayerVehicle(0)
 
+					local bodyShapes = GetBodyShapes(vehicleBody)
+					
+					for i = 1, #bodyShapes do
+						local currentShape = bodyShapes[i]
+						local localTransform = TransformCopy(GetShapeLocalTransform(currentShape))
+						
+						localTransform.pos = VecAdd(localTransform.pos, Vec(0, 10000, 0))
+						
+						SetShapeLocalTransform(currentShape, localTransform)
+					end
+					
 					SetBodyTransform(vehicleBody, bodyTransform) -- Just get the vehicle out of there
+					
 					SetBodyVelocity(vehicleBody, Vec(0, 0, 0))
 				else
 					return
@@ -2169,7 +2181,18 @@ chaosEffects = {
 
 					if vehicle ~= 0 then
 						local vehicleBody = GetVehicleBody(vehicle)
-
+						
+						local bodyShapes = GetBodyShapes(vehicleBody)
+					
+						for i = 1, #bodyShapes do
+							local currentShape = bodyShapes[i]
+							local localTransform = TransformCopy(GetShapeLocalTransform(currentShape))
+							
+							localTransform.pos = VecAdd(localTransform.pos, Vec(0, -10000, 0))
+							
+							SetShapeLocalTransform(currentShape, localTransform)
+						end
+						
 						SetBodyTransform(vehicleBody, vars.effectVariables.transform)
 
 						SetBodyVelocity(vehicleBody, Vec(0, 0, 0))
@@ -3800,16 +3823,34 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { playerPos = nil, offset = nil},
+			effectVariables = { playerPos = nil, offset = nil, lastPlayerVehicle = 0},
 			onEffectStart = function(vars)
-				local cameraTransform = GetCameraTransform()
+				local cameraTransform = GetPlayerCameraTransform()
 				local playerTransform = GetPlayerTransform()
 				
 				vars.effectVariables.playerPos = playerTransform.pos
 				
 				vars.effectVariables.offset = VecSub(cameraTransform.pos, playerTransform.pos)
+				
+				vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
 			end,
 			onEffectTick = function(vars)
+				if GetPlayerVehicle() ~= 0 then
+					vars.effectVariables.lastPlayerVehicle = GetPlayerVehicle()
+					return
+				end
+				
+				local cameraTransform = GetPlayerCameraTransform()
+				local playerTransform = GetPlayerTransform()
+				
+				if vars.effectVariables.lastPlayerVehicle ~= 0 then
+					vars.effectVariables.lastPlayerVehicle = 0
+					
+					vars.effectVariables.playerPos = playerTransform.pos
+					
+					--vars.effectVariables.offset = VecSub(cameraTransform.pos, playerTransform.pos)
+				end
+				
 				table.insert(drawCallQueue, function()
 					UiPush()
 						UiAlign("center middle")
@@ -3856,8 +3897,6 @@ chaosEffects = {
 					movementSpeed = movementSpeed * 2
 				end
 				
-				local cameraTransform = GetCameraTransform()
-				local playerTransform = GetPlayerTransform()
 				local playerPos = vars.effectVariables.playerPos 
 				
 				if xMovement ~= 0 or yMovement ~= 0 or zMovement ~= 0 then

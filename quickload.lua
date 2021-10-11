@@ -39,6 +39,9 @@ end
 function quickloadTick()
 	if hasQuickloaded() then
 		quickloadfix()
+		return true
 	end
+	
+	return false
 end
 
