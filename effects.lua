@@ -2726,23 +2726,26 @@ chaosEffects = {
 		},
 
 		simonSays = {
-			name = "Gordon Says",
+			name = "1 Gordon Says",
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { activeDelay = 2, forcedInput = {key = "up", message = "moving forward"}},
+			effectVariables = { activeDelay = 2, forcedInput = nil, avoid = false},
 			onEffectStart = function(vars)
-				local possibleInputs = {{key = "up", message = "moving forwards"},
-										{key = "down", message = "moving backwards"},
-										{key = "left", message = "moving left"},
-										{key = "right", message = "moving right"}}
+				local possibleInputs = {{key = "up", message = "forwards"},
+										{key = "down", message = "backwards"},
+										{key = "left", message = "left"},
+										{key = "right", message = "right"}}
 
 				local selectedInput = possibleInputs[math.random(1, #possibleInputs)]
 
 				vars.effectVariables.forcedInput = selectedInput
-
+				
+				if math.random(1, 10) > 5 then
+					vars.effectVariables.avoid = true
+				end
 			end,
 			onEffectTick = function(vars)
 				local forcedInput = vars.effectVariables.forcedInput
@@ -2761,8 +2764,33 @@ chaosEffects = {
 						UiTranslate(0, 40)
 
 						UiFont("regular.ttf", 26)
-
-						UiText("Press and hold the  " .. forcedInput.message.. " key!")
+						
+						if vars.effectVariables.avoid then
+							UiText("Don't press the " .. forcedInput.message.. " movement key!")
+						else
+							UiText("Press and hold the " .. forcedInput.message.. " movement key!")
+						end
+						
+						UiPush()
+							if vars.effectVariables.activeDelay > 0 then
+								UiTranslate(-50, 20)
+								
+								UiColor(0, 0, 0, 0.25)
+								
+								UiAlign("left middle")
+								
+								UiRect(100, 5)
+								
+								local color = 0.75 / 2 * vars.effectVariables.activeDelay
+								
+								UiColor(1, color, color, 0.5)
+								
+								local barWidth = 100 / 2 * vars.effectVariables.activeDelay
+								
+								UiRect(barWidth, 5)
+							end
+						UiPop()
+						
 					UiPop()
 				end)
 
@@ -2771,7 +2799,7 @@ chaosEffects = {
 					return
 				end
 
-				if not InputDown(forcedInput.key) then
+				if (not InputDown(forcedInput.key) and not vars.effectVariables.avoid) or (InputDown(forcedInput.key) and vars.effectVariables.avoid) then
 					local playerPos = GetPlayerTransform().pos
 					Explosion(playerPos, 3)
 					SetPlayerHealth(0)
@@ -4690,6 +4718,90 @@ chaosEffects = {
 				SetEnvironmentProperty("fogColor", vars.effectVariables.fogColor[1], vars.effectVariables.fogColor[2], vars.effectVariables.fogColor[3])
 				SetEnvironmentProperty("fogParams", vars.effectVariables.fogParams[1], vars.effectVariables.fogParams[2], vars.effectVariables.fogParams[3], vars.effectVariables.fogParams[4])
 			end,
+		},
+		
+		drunkfov = {
+			name = "Drunk FOV",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { fov = 1, goingBack = false},
+			onEffectStart = function(vars) 
+				vars.effectVariables.fov = GetInt("options.gfx.fov")
+			end,
+			onEffectTick = function(vars) 
+				local changeSpeed = 50
+				
+				if vars.effectVariables.goingBack then
+					vars.effectVariables.fov = vars.effectVariables.fov - GetChaosTimeStep() * changeSpeed
+					
+					if vars.effectVariables.fov < 60 then
+						vars.effectVariables.goingBack = false
+					end
+				else
+					vars.effectVariables.fov = vars.effectVariables.fov + GetChaosTimeStep() * changeSpeed
+					
+					if vars.effectVariables.fov > 120 then
+						vars.effectVariables.goingBack = true
+					end
+				end
+			
+				SetCameraFov(vars.effectVariables.fov)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		tunnelfov = {
+			name = "Tunnel FOV",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { currFov = 120 },
+			onEffectStart = function(vars) 
+				local maxDist = 100
+				local maxFov = 150
+			
+				local hit, hitPoint, distance = raycast(orig, dir, maxDist)
+				
+				if distance == nil then
+					distance = maxDist
+				end
+				
+				local targetFov = maxFov - maxFov / maxDist * distance
+				
+				vars.effectVariables.currFov = targetFov
+			end,
+			onEffectTick = function(vars) 
+				local cameraTransform = GetCameraTransform()
+				
+				local orig = cameraTransform.pos
+				local dir = TransformToParentVec(cameraTransform, Vec(0, 0, -1))
+				
+				local maxDist = 100
+				local maxFov = 150
+				local lerpSpeed = 2.5
+				
+				local hit, hitPoint, distance = raycast(orig, dir, maxDist)
+				
+				if distance == nil then
+					distance = maxDist
+				end
+				
+				local currFov = vars.effectVariables.currFov
+				
+				local targetFov = maxFov - maxFov / maxDist * distance
+				
+				currFov = lerp(currFov, targetFov, GetChaosTimeStep() * lerpSpeed)
+				
+				vars.effectVariables.currFov = currFov
+				
+				SetCameraFov(currFov)
+			end,
+			onEffectEnd = function(vars) end,
 		},
 	},	-- EFFECTS TABLE
 }

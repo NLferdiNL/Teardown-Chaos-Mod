@@ -297,3 +297,7 @@ function deepcopy(orig)
     end
     return copy
 end
+
+function lerp(a, b, i)
+	return (a + i*(b - a));
+end
