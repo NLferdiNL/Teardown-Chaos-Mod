@@ -1,0 +1,45 @@
+<prefab version="0.9.5">
+	<group id_="1458396032" open_="true" pos="68.3 5.1 46.0">
+		<script id_="833144512" name="Alarm Bot" pos="0.1 0.6 0.0" rot="0 -90 0" file="robot.lua" param0="heardist=20" param1="type=nooutline investigate chase alarm" param2="viewdist=20" param3="speed=3">
+			<body id_="314067680" tags="body stepsound=s" rot="0 180 0" dynamic="true">
+				<vox id_="180562704" tags="unbreakable" rot="0 180 0" density="2.5" file="MOD/spawn/alarm.vox" object="body">
+					<rope id_="257637744" pos="0.55 1 -0.55" color="0.75 0.35 0.1">
+						<location id_="1075314816"/>
+						<location id_="608735552" pos="0.1 -0.55 0.55"/>
+					</rope>
+					<rope id_="1052179136" pos="-0.45 1 -0.55" color="0.75 0.35 0.1">
+						<location id_="1540976512"/>
+						<location id_="987949952" pos="-0.1 -0.55 0.55"/>
+					</rope>
+				</vox>
+			</body>
+			<body id_="1198071168" tags="heardist=25 head" pos="0 0.7 0.5" rot="0 180 0" dynamic="true">
+				<vox id_="2115631232" tags="unbreakable" rot="0 180 0" file="MOD/spawn/alarm.vox" object="head">
+					<light id_="2041767680" tags="eye viewdist=18" pos="0.05 0.25 0.1" type="cone" color="1 0.4 0.2" scale="5" angle="60" reach="8" unshadowed="0.1" fogscale="5" sound=" " glare="0.3"/>
+					<joint id_="1251814016" tags="head" pos="0.05 0.25 -0.1" rot="-90 -90 0" type="hinge" limits="-20 20"/>
+				</vox>
+			</body>
+			<body id_="1688965760" tags="leg" pos="0.4 -0.1 0" rot="0 180 0" dynamic="true">
+				<vox id_="675324160" tags="unbreakable" pos="-0.1 0.2 -0.2" rot="0 180 0" density="0.5" file="MOD/spawn/alarm.vox" object="let_tl">
+					<joint id_="1068629696" pos="-0.1 0.35 -0.15" rot="0 90 -90" type="hinge" limits="-90 45"/>
+				</vox>
+			</body>
+			<body id_="1282748928" tags="foot" pos="0.5 -0.5 0.1" rot="0 180 0" dynamic="true">
+				<vox id_="2144665472" tags="unbreakable" rot="0 180 0" density="1.5" file="MOD/spawn/alarm.vox" object="let_bl">
+					<joint id_="535855040" pos="0 0.7 0.2" rot="0 90 -90" type="hinge" rotspring="0" limits="-60 10"/>
+				</vox>
+			</body>
+			<body id_="2070015360" tags="leg" pos="-0.2 -0.2 0" rot="0 180 0" dynamic="true">
+				<vox id_="912841152" tags="unbreakable" pos="0.3 0.3 -0.2" rot="0 180 0" density="0.5" file="MOD/spawn/alarm.vox" object="let_tr">
+					<joint id_="1530686720" pos="0.2 0.35 -0.15" rot="0 90 -90" type="hinge" limits="-90 45"/>
+				</vox>
+			</body>
+			<body id_="1898890368" tags="foot" pos="-0.4 -0.5 0.1" rot="0 180 0" dynamic="true">
+				<vox id_="1334001152" tags="unbreakable" rot="0 180 0" density="1.5" file="MOD/spawn/alarm.vox" object="let_br">
+					<joint id_="196423376" pos="0 0.7 0.2" rot="0 90 -90" type="hinge" rotspring="0" limits="-60 10"/>
+				</vox>
+			</body>
+		</script>
+	</group>
+</prefab>
+

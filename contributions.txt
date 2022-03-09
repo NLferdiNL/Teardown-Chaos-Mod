@@ -58,3 +58,13 @@ Snazzah:
     Bunnyhop (id:  keepJumping)
     Freeze Frame (id:  freezeFrame)
     UI & Exit Denial For Speed(id: dontStopDriving)
+
+The Mafia:
+	Steam: https://steamcommunity.com/profiles/76561198044940820/
+	
+	Spawn A Tank (id: spawnTank)
+	Spawn A Crane Truck (id: spawnCrane)
+	Spawn Griefer Robot (id: spawnAlarm)
+	Spawn Extreme Griefer Robot (id: spawnSpider)
+	Spawn Dock Handler (id: spawnDockHandler)
+	Spawn Terrorbyt (id: spawnTerrorbyte)

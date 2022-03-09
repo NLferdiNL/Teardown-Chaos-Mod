@@ -1,0 +1,45 @@
+<prefab version="0.9.3">
+	<group id_="427189728" open_="true" name="Dock Handler" pos="13.3 0.3 -5.1">
+		<vehicle id_="1417892352" open_="true" name="Dock Handler" tags="forklift reversebeep crane" pos="1.19 -0.1 0.99998" rot="0.0 50.0 0.0" sound="frontloader" spring="0.8" damping="0.8" topspeed="30" acceleration="1" strength="2" antispin="0" antiroll="0.2" difflock="0.5" steerassist="0.0" friction="2">
+			<body id_="1934609664" open_="true" pos="-0.05 0.6 -0.25" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="936435520" pos="0.06 0.17 0.25" rot="0.0 0.0 0.0" density="8" strength="2" file="MOD/spawn/dock_handler.vox" object="body">
+					<light id_="487093280" pos="-0.8 1.0 3.1" rot="0.0 0.0 0.0" type="area" color="0.49 0.03 0.03" size="0.2 0.2" unshadowed="0.3"/>
+					<light id_="1423725440" pos="0.60125 1.05 3.1" rot="0.0 0.0 0.0" type="area" size="0.2 0.1" unshadowed="0.3"/>
+					<light id_="937484160" pos="-1.22 1.04 -2.92" rot="0.0 180.0 0.0" type="cone" color="1.0 1.0 1.0" scale="30" angle="90" penumbra="30" size="0.1" unshadowed="0.2" glare="0.35"/>
+					<light id_="1820832256" pos="1.18 1.04 -2.91" rot="0.0 180.0 0.0" type="cone" color="1.0 1.0 1.0" scale="30" angle="90" penumbra="30" size="0.1" unshadowed="0.2" glare="0.35"/>
+					<location id_="2111895424" tags="exhaust" pos="-0.44 0.08 2.88" rot="0.0 0.0 0.0"/>
+					<location id_="581339776" tags="vital" pos="0.05 0.55 1.84171" rot="0.0 0.0 0.0"/>
+					<location id_="902551360" tags="player" pos="-0.02632 3.61996 0.66491" rot="0.0 180.0 0.0"/>
+					<light id_="337596544" pos="0.80029 1.0 3.1" rot="0.0 0.0 0.0" type="area" color="0.49 0.03 0.03" size="0.2 0.2" unshadowed="0.3"/>
+					<light id_="491287840" pos="-0.60134 1.05 3.1" rot="0.0 0.0 0.0" type="area" size="0.2 0.1" unshadowed="0.3"/>
+					<light id_="319900736" pos="-0.97962 3.26348 -0.22019" rot="0.0 180.0 0.0" type="cone" color="1.0 1.0 1.0" scale="30" angle="90" penumbra="30" size="0.1" unshadowed="0.2" glare="0.35"/>
+					<light id_="1154945920" pos="0.95145 3.26348 -0.21019" rot="0.0 180.0 0.0" type="cone" color="1.0 1.0 1.0" scale="30" angle="90" penumbra="30" size="0.1" unshadowed="0.2" glare="0.35"/>
+				</vox>
+				<wheel id_="1632994688" name="fl" pos="-1.58 0.31 -1.6" rot="0.0 0.0 0.0" drive="1" steer="0" travel="0">
+					<vox id_="1961218944" pos="0.07 -0.75 0.05" rot="0" file="MOD/spawn/dock_handler.vox" object="wheel_fl"/>
+				</wheel>
+				<wheel id_="1137315584" name="br" pos="1.0 0.31 2.29" rot="0.0 0.0 0.0" drive="1" steer="-1" travel="0">
+					<vox id_="743354688" pos="0.1 -0.74 0.06" rot="0.0 0.0 0.0" file="MOD/spawn/dock_handler.vox" object="wheel_br"/>
+				</wheel>
+				<wheel id_="1565685120" name="fl" pos="-1.12 0.31 -1.61" rot="0.0 0.0 0.0" drive="1" steer="0" travel="0">
+					<vox id_="201535504" pos="0.0 -0.74 0.06" rot="0" file="MOD/spawn/dock_handler.vox" object="wheel_fl"/>
+				</wheel>
+				<wheel id_="1986845056" name="fr" pos="0.98 0.31 -1.59" rot="0.0 0.0 0.0" drive="1" steer="0" travel="0">
+					<vox id_="1621721728" pos="0.1 -0.74 0.05" rot="0" file="MOD/spawn/dock_handler.vox" object="wheel_fr"/>
+				</wheel>
+				<wheel id_="1053031168" name="bl" pos="-0.98 0.31 2.3" rot="0.0 0.0 0.0" drive="1" steer="-1" travel="0">
+					<vox id_="1114311040" pos="-0.1 -0.73 0.04" rot="0.0 0.0 0.0" file="MOD/spawn/dock_handler.vox" object="wheel_bl"/>
+				</wheel>
+				<wheel id_="1077739776" name="fr" pos="1.37 0.31 -1.59" rot="0.0 0.0 0.0" drive="1" steer="0" travel="0">
+					<vox id_="1147670912" pos="0.1 -0.74 0.05" rot="0" file="MOD/spawn/dock_handler.vox" object="wheel_fr"/>
+				</wheel>
+				<body id_="926145728" tags="hook" pos="-0.04465 1.17721 -4.33703" dynamic="true">
+					<vox id_="945086784" strength="3" file="MOD/spawn/dock_handler.vox" object="crane"/>
+					<joint id_="1645906048" pos="-0.7 0.0 1.5" rot="-90 0 0" type="prismatic" rotstrength="0" rotspring="0" limits="-2 4" sound="true"/>
+					<vox id_="1883422976" tags="hook" pos="0.0 0.5 -0.2" file="MOD/spawn/dock_handler.vox" object="magnet"/>
+				</body>
+			</body>
+		</vehicle>
+	</group>
+</prefab>
+

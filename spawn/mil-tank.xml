@@ -1,0 +1,90 @@
+<prefab version="0.9.2">
+	<group id_="1997921408" open_="true" name="instance=MOD/spawn/mil-tank.xml" pos="42.5 0.1 1.2" rot="0.0 0.0 0.0">
+		<group id_="2031477888" open_="true" pos="0.0 -0.1 -1.3" prop0="texture=8 0.66">
+			<script id_="945414528" pos="0.0 0.0 0.3" file="tank.lua">
+				<vehicle id_="276054464" tags="tank" pos="0.0 0.0 1.1" sound="tank2" spring="0.6" damping="0.6" topspeed="90" acceleration="0.5" strength="30" antispin="1" antiroll="0.5" difflock="1" steerassist="0.3" friction="3">
+					<body id_="703244224" open_="true" tags="body" pos="0.0 0.55 -0.4" rot="0.0 -180.0 0.0" dynamic="true">
+						<vox id_="1840559872" open_="true" pos="0.0 -0.05 1.0" rot="0.0 0.0 0.0" density="5" file="MOD/spawn/mil-tank.vox" object="body">
+							<group id_="1392069632" name="lights" pos="0.0 0.0 4.6" rot="0 180">
+								<light id_="1513646336" name="reverse right" pos="1.45 1.45 8.1" rot="0.0 0.0 0.0" type="area" color="1 .1 .1" size="0.1 0.1" unshadowed="0.6"/>
+								<light id_="466054944" name="reverse left" pos="-1.45 1.45 8.1" rot="0.0 0.0 0.0" type="area" color="1 .1 .1" size="0.1 0.1" unshadowed="0.6"/>
+								<light id_="677486976" name="brake right" pos="1.45 1.05 8.6" rot="0.0 0.0 0.0" type="area" color="1 .1 .1" size="0.1 0.1" unshadowed="0.6" glare="0.2"/>
+								<light id_="1226974336" name="brake left" pos="-1.5 1.05 8.6" rot="0.0 0.0 0.0" type="area" color="1 .1 .1" size="0.2 0.1" unshadowed="0.6" glare="0.2"/>
+								<light id_="602705856" name="headlight right" pos="1.45 1.05 2.4" rot="0.0 180.0 0.0" type="cone" color="1 .9 .8" scale="20" angle="90" penumbra="30" size="0.1" unshadowed="0.6" glare="0.3"/>
+								<light id_="1784457600" name="headlight left" pos="-1.45 1.05 2.4" rot="0.0 180.0 0.0" type="cone" color="1 .9 .8" scale="20" angle="90" penumbra="30" size="0.1" unshadowed="0.6" glare="0.3"/>
+							</group>
+							<group id_="684696384" name="locations">
+								<location id_="899798656" name="vital" tags="vital" pos="0.0 0.85 1.65" rot="-90.0 180.0 0.0"/>
+								<location id_="2119301376" name="player" tags="player" pos="0.45 1.2 -0.05" rot="0.0 -180.0 0.0"/>
+								<location id_="1069809408" name="camera" tags="camera" pos="0.45 1.6 -0.05" rot="0.0 -180.0 0.0"/>
+								<location id_="773568640" name="exhaust" tags="exhaust" pos="0.8 1.6 -2.9" rot="-90.0 0.0 0.0"/>
+								<location id_="2070867328" name="exhaust" tags="exhaust" pos="-0.8 1.6 -2.9" rot="-90.0 0.0 0.0"/>
+							</group>
+						</vox>
+						<group id_="555189312" open_="true" name="wheels" pos="0.0 -0.05 0.6" rot="0.0 0.0 0.0" prop0="drive=1" prop1="travel=-0.1 0.4">
+							<vox id_="1905837696" pos="-1.4 0.2 -2.8" rot="0.0 0.0 0.0" file="MOD/spawn/mil-tank.vox" object="medium-wheel"/>
+							<vox id_="1217077760" pos="-1.4 0.2 1.6" rot="0.0 0.0 0.0" file="MOD/spawn/mil-tank.vox" object="small-wheel"/>
+							<wheel id_="1002237696" open_="true" name="right 1" pos="-1.2 0.1 -1.9" rot="0.0 -180.0 0.0" steer="-0.5">
+								<vox id_="2043143936" pos="0.2 -0.4 0.0" rot="0.0 -180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_right_4th"/>
+							</wheel>
+							<wheel id_="2020204928" open_="true" name="right 2" pos="-1.2 0.1 -1.0" rot="0.0 -180.0 0.0" steer="-0.25">
+								<vox id_="403857472" pos="0.2 -0.4 0.0" rot="0.0 -180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_right_2nd"/>
+							</wheel>
+							<wheel id_="878498176" open_="true" name="right 3" pos="-1.2 0.1 -0.1" rot="0.0 -180.0 0.0" steer="0.25">
+								<vox id_="1512532096" pos="0.2 -0.4 0.0" rot="0.0 -180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_right_3rd"/>
+							</wheel>
+							<wheel id_="369514528" open_="true" name="right 4" pos="-1.2 0.1 0.8" rot="0.0 -180.0 0.0" steer="0.5">
+								<vox id_="896914880" pos="0.2 -0.4 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_right_4th"/>
+							</wheel>
+							<vox id_="1379551488" pos="1.4 0.2 -2.8" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="medium-wheel"/>
+							<vox id_="1386433152" pos="1.4 0.2 1.6" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="small-wheel"/>
+							<wheel id_="506165408" open_="true" name="left 1" pos="1.2 0.1 -1.9" rot="0.0 -180.0 0.0" steer="-0.5">
+								<vox id_="1044379904" pos="-0.1 -0.4 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_left_1st"/>
+							</wheel>
+							<wheel id_="946069888" open_="true" name="left 2" pos="1.2 0.1 -1.0" rot="0.0 -180.0 0.0" steer="-0.25">
+								<vox id_="1704957568" pos="-0.1 -0.4 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_left_2nd"/>
+							</wheel>
+							<wheel id_="374888800" open_="true" name="left 3" pos="1.2 0.1 -0.1" rot="0.0 -180.0 0.0" steer="0.25">
+								<vox id_="1502176768" pos="-0.1 -0.4 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_left_3rd"/>
+							</wheel>
+							<wheel id_="804831232" open_="true" name="left 4" pos="1.2 0.1 0.8" rot="0.0 -180.0 0.0" steer="0.5">
+								<vox id_="165750656" pos="-0.1 -0.4 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/mil-tank.vox" object="wheel_left_4th"/>
+							</wheel>
+						</group>
+						<vox id_="740733056" pos="-1.3 -0.45 0.0" rot="0.0 0.0 0.0" collide="false" file="MOD/spawn/mil-tank.vox" object="tracks_right"/>
+						<vox id_="1374701440" pos="1.3 -0.45 0.0" rot="0.0 0.0 0.0" collide="false" file="MOD/spawn/mil-tank.vox" object="tracks_left"/>
+						<group id_="1793043328" open_="true" name="sideflaps right" pos="-1.7 0.1 -0.2">
+							<vox id_="40700340" open_="true" pos="0.0 0.05 -1.2" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-right-1">
+								<joint id_="648452736" pos="0.1 0.7 0.2" rot="0.0 -180.0 0.0" type="hinge" size="0.15" limits="0 45"/>
+							</vox>
+							<vox id_="806469696" open_="true" pos="0.0 0.05 -0.3" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-right-2">
+								<joint id_="1185815168" pos="0.1 0.7 0.1" rot="0.0 -180.0 0.0" type="hinge" size="0.15" limits="0 45"/>
+							</vox>
+							<vox id_="330780384" open_="true" pos="0.0 0.05 0.5" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-right-3">
+								<joint id_="500004672" pos="0.0 0.7 0.0" rot="0.0 -180.0 0.0" type="hinge" limits="0 45"/>
+							</vox>
+							<vox id_="1839642240" open_="true" pos="0.0 0.05 1.3" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-right-4">
+								<joint id_="1413501184" pos="0.0 0.7 0.0" rot="0.0 -180.0 0.0" type="hinge" limits="0 45"/>
+							</vox>
+						</group>
+						<group id_="321211552" open_="true" name="sideflaps left" pos="1.7 0.1 -0.2">
+							<vox id_="858246272" open_="true" pos="0.0 0.05 -1.2" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-left-1">
+								<joint id_="917822144" pos="-0.1 0.7 0.2" rot="0.0 0.0 0.0" type="hinge" size="0.15" limits="0 45"/>
+							</vox>
+							<vox id_="268451840" open_="true" pos="0.0 0.05 -0.3" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-left-2">
+								<joint id_="1815261440" pos="-0.1 0.7 0.1" rot="0.0 0.0 0.0" type="hinge" size="0.15" limits="0 45"/>
+							</vox>
+							<vox id_="596938304" open_="true" pos="0.0 0.05 0.5" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-left-3">
+								<joint id_="1291400192" pos="0.0 0.7 0.0" rot="0.0 0.0 0.0" type="hinge" limits="0 45"/>
+							</vox>
+							<vox id_="131342160" open_="true" pos="0.0 0.05 1.3" prop="true" file="MOD/spawn/mil-tank.vox" object="sideflaps-left-4">
+								<joint id_="18547820" pos="0.0 0.7 0.0" rot="0.0 0.0 0.0" type="hinge" limits="0 45"/>
+							</vox>
+						</group>
+					</body>
+				</vehicle>
+			</script>
+		</group>
+	</group>
+</prefab>
+

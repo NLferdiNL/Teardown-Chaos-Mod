@@ -4803,6 +4803,96 @@ chaosEffects = {
 			end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		spawnTank = {
+			name = "Spawn A Tank",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/mil-tank.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		spawnCrane = {
+			name = "Spawn A Crane Truck",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/crane_truck.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},	
+		
+		spawnAlarm = {
+			name = "Spawn Griefer Robot",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/alarm.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},	
+
+		spawnSpider = {
+			name = "Spawn Extreme Griefer Robot",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/spider.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},			
+
+		spawnDockHandler = {
+			name = "Spawn Dock Handler",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/dock_handler.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},	
+		
+		spawnTerrorbyte = {
+			name = "Spawn Terrorbyte",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/terrorbyte.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 

@@ -1,4 +1,4 @@
 name = Chaos Mod
-author = NLferdiNL, Superfroggman, der_baumkrieger, Snazzah
+author = NLferdiNL, Superfroggman, der_baumkrieger, Snazzah, The Maffia
 description = [noupload]Chaos mod based on the ones from the GTA series.
 tags = Gameplay

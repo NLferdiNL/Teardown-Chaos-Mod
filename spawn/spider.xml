@@ -1,0 +1,88 @@
+<prefab version="0.9.5">
+	<group id_="778680768" open_="true" pos="67.4 5.1 29.0">
+		<script id_="669884352" name="Spider Robot" pos="1.1 0.1 0.0" rot="0 -90 0" file="robot.lua" param0="turnspeed=1" param1="speed=3" param2="type=nooutline investigate chase">
+			<body id_="1514170624" tags="stepsound=l body" pos="0 1.2 0" rot="0 -180 0" dynamic="true">
+				<vox id_="880202176" tags="unbreakable" rot="0 180 0" density="5" file="MOD/spawn/spider.vox" object="body">
+					<light id_="1400327680" tags="eye" pos="0.05 0.35 0.1" rot="15 0 0" type="cone" color="1 0.8 0.6" scale="10" angle="60" penumbra="15" fogscale="2" sound=" "/>
+					<light id_="704358400" tags="eye" pos="0.05 0.95 0.6" type="area" color="0.25 0.6 1" scale="3" angle="60" penumbra="14" size="0.5 0.1" fogscale="3" sound=" " glare="0.25"/>
+					<joint id_="378755648" tags="head" pos="0.05 1.2 0.05" rot="-90 -90 0" type="hinge" rotspring="0" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="541425920" tags="head" pos="0 2.4 -0.1" rot="0 -180 0" dynamic="true">
+				<vox id_="1962005504" tags="unbreakable" rot="0 180 0" density="0.4" file="MOD/spawn/spider.vox" object="head">
+					<light id_="1092355200" tags="eye" pos="0.05 0.85 1" type="area" color="1 0.8 0.6" scale="5" size="0.5 0.1" fogscale="2" sound=" "/>
+				</vox>
+			</body>
+			<body id_="1606844160" open_="true" tags="aim" pos="0 3.6 0.9" rot="0 -180 0" dynamic="true">
+				<vox id_="355947744" open_="true" tags="unbreakable" rot="0 -180 0" density="0.5" file="MOD/spawn/spider.vox" object="aim_top">
+					<location id_="800898816" tags="weapon=rocket strength=0.05 idle=3.0 charge=1.5" pos="0.05 0.15 0.2" rot="0 -180 0"/>
+					<joint id_="571574336" pos="0.05 0 -0.05" rotstrength="0.0005" rotspring="0"/>
+				</vox>
+			</body>
+			<body id_="1847310464" open_="true" tags="aim" pos="0 2.5 0.9" rot="0 -180 0" dynamic="true">
+				<vox id_="651533120" open_="true" tags="unbreakable" rot="0 -180 0" density="0.5" file="MOD/spawn/spider.vox" object="aim_bottom">
+					<location id_="1414680960" tags="weapon=fire strength=0.1" pos="0.05 0.15 0.1" rot="0 -180 0"/>
+					<joint id_="2051205376" pos="0.05 0.15 -0.2" rotstrength="0.0005" rotspring="0"/>
+				</vox>
+			</body>
+			<rope id_="485848032" pos="1.4 2.3 1.8" color="0.7 0.05 0.05">
+				<location id_="1480614144" pos="-0.45 -0.55 -0.8"/>
+				<location id_="1499489664"/>
+			</rope>
+			<body id_="628266432" tags="foot force=8,5" pos="1.95 0 2.5" rot="0 -150 0" dynamic="true">
+				<vox id_="1502832256" tags="unbreakable" rot="0 180 0" density="0.6" file="MOD/spawn/spider.vox" object="leg_bl">
+					<joint id_="538214464" pos="-0.1 1.85 -0.15" rot="0 -90 -90" type="hinge" rotspring="0" limits="-45 45"/>
+				</vox>
+			</body>
+			<body id_="1612480640" open_="true" pos="1.3 1.7 1.5" rot="0 -150 0" dynamic="true">
+				<vox id_="1892991872" open_="true" tags="unbreakable" rot="0 180 0" density="0.2" file="MOD/spawn/spider.vox" object="leg_tl">
+					<joint id_="1777903616" pos="-0.1 0.45 -1.2"/>
+				</vox>
+			</body>
+			<body id_="1670614656" pos="-1 1.7 1.7" rot="0 160 0" dynamic="true">
+				<vox id_="1389841280" tags="unbreakable" rot="0 180 0" density="0.2" file="MOD/spawn/spider.vox" object="leg_tr">
+					<joint id_="255540464" pos="0.1 0.45 -1.2"/>
+				</vox>
+			</body>
+			<rope id_="539525312" pos="-1.1 2.3 2.05" rot="0 -50 0" color="0.7 0.05 0.05">
+				<location id_="754955264" pos="-0.5 -0.55 -0.85"/>
+				<location id_="1372997504"/>
+			</rope>
+			<body id_="582322880" tags="foot force=8,5" pos="-1.35 0 2.85" rot="0 160 0" dynamic="true">
+				<vox id_="1302083200" tags="unbreakable" pos="0.3 0 0" rot="0 180 0" density="0.6" file="MOD/spawn/spider.vox" object="leg_br">
+					<joint id_="558335232" pos="0.2 1.85 -0.15" rot="0 -90 -90" type="hinge" rotspring="0" limits="-45 45"/>
+				</vox>
+			</body>
+			<rope id_="1650362752" pos="-1.3 2.3 -1.7" rot="0 -180 0" color="0.7 0.05 0.05">
+				<location id_="2134768896" pos="-0.45 -0.55 -0.8"/>
+				<location id_="183184304"/>
+			</rope>
+			<body id_="2028462976" tags="foot force=8,5" pos="-1.85 0 -2.4" rot="0 30 0" dynamic="true">
+				<vox id_="336416832" tags="unbreakable" rot="0 180 0" density="0.6" file="MOD/spawn/spider.vox" object="leg_bl">
+					<joint id_="180562704" pos="-0.1 1.85 -0.15" rot="0 -90 -90" type="hinge" rotspring="0" limits="-45 45"/>
+				</vox>
+			</body>
+			<body id_="667983680" pos="-1.2 1.7 -1.4" rot="0 30 0" dynamic="true">
+				<vox id_="524320" tags="unbreakable" rot="0 180 0" density="0.2" file="MOD/spawn/spider.vox" object="leg_tl">
+					<joint id_="275857856" pos="-0.1 0.45 -1.2"/>
+				</vox>
+			</body>
+			<body id_="1585084928" pos="1.1 1.7 -1.6" rot="0 -20 0" dynamic="true">
+				<vox id_="1464884608" tags="unbreakable" rot="0 180 0" density="0.2" file="MOD/spawn/spider.vox" object="leg_tr">
+					<joint id_="1643153408" pos="0.1 0.45 -1.2"/>
+				</vox>
+			</body>
+			<rope id_="1221862272" pos="1.2 2.3 -1.95" rot="0 130 0" color="0.7 0.05 0.05">
+				<location id_="222967088" pos="-0.5 -0.55 -0.85"/>
+				<location id_="1815064704"/>
+			</rope>
+			<body id_="1133973120" tags="foot force=8,5" pos="1.45 0 -2.75" rot="0 -20 0" dynamic="true">
+				<vox id_="911530304" tags="unbreakable" pos="0.3 0 0" rot="0 180 0" density="0.6" file="MOD/spawn/spider.vox" object="leg_br">
+					<joint id_="866766528" pos="0.2 1.85 -0.15" rot="0 -90 -90" type="hinge" rotspring="0" limits="-45 45"/>
+				</vox>
+			</body>
+			<location id_="967567040" tags="patrol" pos="0 0 5"/>
+		</script>
+	</group>
+</prefab>
+

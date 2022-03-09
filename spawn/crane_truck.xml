@@ -1,0 +1,90 @@
+<prefab version="0.9.2">
+	<group name="instance=MOD/prefab/crane_truck.xml">
+		<vehicle name="Crane Truck" tags="reversebeep dumptruck cranebottom" sound="dumptruck 0.9" spring="1.2" topspeed="20" acceleration="0.5" strength="4" antiroll="0.1" difflock="1" friction="1.5">
+			<body pos="0 0.8 -1" dynamic="true">
+				<vox pos="0 -0.3 0.9" density="3" file="MOD/spawn/crane_truck.vox" object="body">
+					<light pos="-0.9 0.6 -5.3" rot="0 180 0" type="area" color="1 0.8 0.6" scale="15" size="0.4 0.2" sound=" " glare="0.5"/>
+					<light pos="0.9 0.6 -5.3" rot="0 180 0" type="area" color="1 0.8 0.6" scale="15" size="0.4 0.2" sound=" " glare="0.5"/>
+					<light pos="0.95 0.4 5.1" type="area" color="1 0.3 0.1" size="0.3 0.2" sound=" " glare="0.1"/>
+					<light pos="-0.95 0.4 5.1" type="area" color="1 0.3 0.1" size="0.3 0.2" sound=" " glare="0.1"/>
+					<location tags="player" pos="-0.5 1.4 -4.3"/>
+					<location tags="vital" pos="0 1.5 -3"/>
+					<location tags="exhaust" pos="0.7 0.5 0.3"/>
+				</vox>
+				<wheel name="fr1" pos="1.1 -0.1 -1.6" drive="1" steer="1" travel="-0.2 0.1">
+					<vox pos="0.1 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_fr1"/>
+				</wheel>
+				<wheel name="fr2" pos="1.1 -0.1 0.1" drive="1" steer="0.5" travel="-0.2 0.1">
+					<vox pos="0.1 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_fr2"/>
+				</wheel>
+				<wheel name="br1" pos="1.1 -0.1 2.2" drive="1" travel="-0.2 0.1">
+					<vox pos="0.1 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_br1"/>
+				</wheel>
+				<wheel name="br2" pos="1.1 -0.1 3.9" drive="1" travel="-0.2 0.1">
+					<vox pos="0.1 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_br2"/>
+				</wheel>
+				<wheel name="fl1" pos="-1 -0.1 -1.6" drive="1" steer="1" travel="-0.2 0.1">
+					<vox pos="-0.2 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_fl1"/>
+				</wheel>
+				<wheel name="fl2" pos="-1 -0.1 0.1" drive="1" steer="0.5" travel="-0.2 0.1">
+					<vox pos="-0.2 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_fl2"/>
+				</wheel>
+				<wheel name="bl1" pos="-1.1 -0.1 2.2" drive="1" travel="-0.2 0.1">
+					<vox pos="-0.2 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_bl1"/>
+				</wheel>
+				<wheel name="bl2" pos="-1.1 -0.1 3.9" drive="1" travel="-0.2 0.1">
+					<vox pos="-0.2 -0.7 0" file="MOD/spawn/crane_truck.vox" object="wheel_bl2"/>
+				</wheel>
+			</body>
+			<body pos="1.2 0.7 -3.6" rot="0 30 70" dynamic="true">
+				<vox pos="1 -0.5 0" density="40" strength="20" file="MOD/spawn/crane_truck.vox" object="support">
+					<joint pos="-0.85 0.55 -0.1" rot="0 0 -20" type="hinge" size="0.2" limits="-100 20"/>
+				</vox>
+			</body>
+			<body pos="1.2 0.7 4.3" rot="0 -30 70" dynamic="true">
+				<vox pos="1 -0.5 0" density="40" strength="20" file="MOD/spawn/crane_truck.vox" object="support">
+					<joint pos="-0.85 0.55 0.1" rot="0 0 -20" type="hinge" size="0.2" limits="-100 20"/>
+				</vox>
+			</body>
+			<body pos="-1.2 0.7 4.3" rot="0 -150 70" dynamic="true">
+				<vox pos="1 -0.5 0" density="40" strength="20" file="MOD/spawn/crane_truck.vox" object="support">
+					<joint pos="-0.85 0.55 -0.1" rot="0 0 -20" type="hinge" size="0.2" limits="-100 20"/>
+				</vox>
+			</body>
+			<body pos="-1.2 0.7 -3.6" rot="0 150 70" dynamic="true">
+				<vox pos="1.1 -0.5 0" density="40" strength="20" file="MOD/spawn/crane_truck.vox" object="support">
+					<joint pos="-0.85 0.55 0.1" rot="0 0 -20" type="hinge" size="0.2" limits="-100 20"/>
+				</vox>
+			</body>
+			<vehicle name="Crane Top" tags="crane passive cranetop" pos="-0.1 1.6 -2" sound="dumptruck 1.1">
+				<body pos="0 0 4" dynamic="true">
+					<vox pos="0.1 0.1 0" density="3" file="MOD/spawn/crane_truck.vox" object="cabin">
+						<light pos="-0.9 2 -1.5" rot="0 180 0" type="area" color="1 0.8 0.6" scale="25" size="0.8 0.2" sound=" " glare="0.5"/>
+						<joint tags="turn" rot="-90 0 0" type="hinge"/>
+						<location tags="player" pos="-0.9 1.3 -1"/>
+						<location tags="vital" pos="-0.9 0.9 0.1"/>
+						<location tags="exhaust" pos="-0.9 1.4 0.1"/>
+					</vox>
+				</body>
+				<body pos="0.1 1.3 1.3" dynamic="true">
+					<vox pos="0 -0.5 -0.9" density="3" strength="10" file="MOD/spawn/crane_truck.vox" object="arm_1">
+						<joint pos="0 0.65 5.15" rot="0 90 0" type="hinge" limits="0 80"/>
+					</vox>
+				</body>
+				<body pos="0.1 1.2 -2.2" dynamic="true">
+					<vox pos="0 -0.3 0.8" density="2" strength="10" file="MOD/spawn/crane_truck.vox" object="arm_2">
+						<rope pos="0 0.15 -4.4" strength="200">
+							<location/>
+							<location pos="0 -0.9 0"/>
+						</rope>
+						<joint tags="extend" pos="0 0.3 0.7" type="prismatic" rotspring="0" limits="-7 0"/>
+					</vox>
+				</body>
+				<body tags="unbreakable hook" pos="0.1 -0.2 -5.8" dynamic="true">
+					<vox tags="hook" pos="-0.05 -0.45 0" density="6" file="MOD/spawn/crane_truck.vox" object="hook"/>
+				</body>
+			</vehicle>
+		</vehicle>
+	</group>
+</prefab>
+

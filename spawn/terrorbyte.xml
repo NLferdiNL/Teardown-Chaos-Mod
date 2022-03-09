@@ -1,0 +1,71 @@
+<prefab version="0.9.3">
+	<group id_="1144066304" open_="true" name="Terrorbyte" pos="0.3 0.2 -14.3">
+		<vehicle id_="978118976" name="Terrorbyte" tags="reversebeep" pos="-0.9 0.4 -0.8" rot="0.0 50.0 0.0" driven="false" sound="tank1" spring="0.8" damping="0.8" topspeed="50" acceleration="2" strength="5" antispin="0" antiroll="0.2" difflock="0.5" steerassist="0.0" friction="1.3">
+			<body id_="569804736" pos="-0.1 0.8 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1432966528" pos="0.06 -0.6 1.35" rot="0.0 0.0 0.0" density="2" strength="7" file="MOD/spawn/terrorbyte.vox" object="body">
+					<location id_="1790225152" tags="exhaust" pos="0.8 0.15 5.25951" rot="0.0 -180.0 0.0"/>
+					<location id_="253246560" tags="vital" pos="0.0 1.05 -4.94999" rot="0.0 0.0 0.0"/>
+					<location id_="1535536640" tags="player" pos="-0.55 1.7 -3.65" rot="0.0 0.0 0.0"/>
+					<light id_="467627904" pos="-0.75 0.5 5.4" type="area" color="0.97 0.43 0.04" size="0.1 0.2"/>
+					<light id_="1038088064" pos="-0.65 0.5 5.4" type="area" color="0.9 0.16 0.16" size="0.1 0.2"/>
+					<light id_="933158528" pos="-0.55 0.5 5.4" type="area" size="0.1 0.2"/>
+					<light id_="966583936" pos="0.55 0.5 5.4" type="area" size="0.1 0.2"/>
+					<light id_="1406685056" pos="0.65 0.5 5.4" type="area" color="0.9 0.16 0.16" size="0.1 0.2"/>
+					<light id_="374167872" pos="0.75 0.5 5.4" type="area" color="0.97 0.43 0.04" size="0.1 0.2"/>
+					<light id_="1920387584" pos="-1.1 0.55 5.15" rot="0.0 -90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.1 0.3"/>
+					<light id_="736604032" pos="-1.1 0.65 4.2" rot="0.0 -90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.2 0.1"/>
+					<light id_="1199644160" pos="-1.1 0.6 0.25" rot="0.0 -90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.1 0.2"/>
+					<light id_="524123392" pos="1.1 0.6 -2.05" rot="0.0 90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.1 0.2"/>
+					<light id_="725658880" pos="1.1 0.65 1.4" rot="0.0 90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.2 0.1"/>
+					<light id_="298272544" pos="1.1 0.65 4.2" rot="0.0 90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.2 0.1"/>
+					<light id_="988408768" pos="1.1 0.55 5.15" rot="0.0 90.0 0.0" type="area" color="0.97 0.43 0.04" size="0.1 0.3"/>
+					<vox id_="2034754816" pos="1.0 0.2 4.7" prop="true" file="MOD/spawn/terrorbyte.vox" object="Door1">
+						<joint id_="1311389824" pos="0.0 1.25 -0.3" rot="-90.0 -90.0 0.0" type="hinge" limits="0 110"/>
+						<joint id_="1554215552" pos="0.0 0.3 -0.3" rot="-90.0 -90.0 0.0" type="hinge" limits="0 110"/>
+					</vox>
+					<vox id_="729394688" pos="1.0 0.2 -0.0" prop="true" file="MOD/spawn/terrorbyte.vox" object="Door2">
+						<joint id_="576162112" pos="0.0 1.65 0.3" rot="-90.0 -90.0 0.0" type="hinge" limits="0 110"/>
+						<joint id_="1271148288" pos="0.0 0.3 0.3" rot="-90.0 -90.0 0.0" type="hinge" limits="0 110"/>
+					</vox>
+					<light id_="98310000" pos="-0.6 2.45 -0.95"/>
+					<light id_="1200037376" pos="-0.6 2.45 1.6"/>
+					<light id_="1451514368" pos="-0.6 2.45 4.55"/>
+					<light id_="446524032" pos="0.6 2.45 1.6"/>
+					<light id_="556958912" pos="0.6 2.45 -0.95"/>
+					<light id_="1013051776" pos="-1.1 0.75 -5.7" rot="0.0 -180.0 0.0" type="cone"/>
+					<light id_="1961415552" pos="1.1 0.75 -5.7" rot="0.0 -180.0 0.0" type="cone"/>
+					<light id_="2116876416" pos="-0.65 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+					<light id_="1412255872" pos="-0.85 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+					<light id_="202518592" pos="-1.05 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 0.48 0.05" size="0.1 0.1"/>
+					<light id_="1722653312" pos="1.05 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 0.48 0.05" size="0.1 0.1"/>
+					<light id_="1870249472" pos="0.85 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+					<light id_="300500896" pos="0.65 0.35 -5.9" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+					<light id_="1649576320" pos="-0.0 3.0 -3.7" rot="0.0 -180.0 0.0" type="cone"/>
+					<light id_="1147539840" pos="-0.6 2.65 -3.8" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.2 0.1"/>
+					<light id_="89003320" pos="0.6 2.65 -3.8" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.2 0.1"/>
+					<light id_="1139150720" pos="0.35 2.65 -3.8" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+					<light id_="1132858880" pos="-0.35 2.65 -3.8" rot="0.0 180.0 0.0" type="area" color="1.0 1.0 1.0" size="0.1 0.1"/>
+				</vox>
+				<wheel id_="977856768" name="fl" pos="1.15 -0.55 -3.2" drive="1" steer="1" travel="-0.1 0.2">
+					<vox id_="758232256" pos="0.0 -0.55 -0.05" rot="0.0 -180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_fl"/>
+				</wheel>
+				<wheel id_="765638272" name="fr" pos="-0.95 -0.55 -3.2" rot="0.0 0.0 0.0" drive="1" steer="1" travel="-0.1 0.2">
+					<vox id_="566134528" pos="0.0 -0.55 -0.05" rot="0.0 180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_fr"/>
+				</wheel>
+				<wheel id_="575768896" name="bl" pos="0.9 -0.55 3.6" rot="0.0 0.0 0.0" drive="1" travel="-0.1 0.2">
+					<vox id_="307317056" pos="0.25 -0.55 -0.05" rot="0.0 180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_bl"/>
+				</wheel>
+				<wheel id_="332681024" name="br" pos="-1.2 -0.55 4.8" rot="0.0 0.0 0.0" drive="1" travel="-0.1 0.2">
+					<vox id_="1723177728" pos="0.25 -0.55 -0.05" rot="0.0 180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_br"/>
+				</wheel>
+				<wheel id_="1141575680" name="bl" pos="0.9 -0.55 4.8" rot="0.0 0.0 0.0" drive="1" travel="-0.1 0.2">
+					<vox id_="1436309120" pos="0.25 -0.55 -0.05" rot="0.0 180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_bl"/>
+				</wheel>
+				<wheel id_="1641908096" name="br" pos="-1.2 -0.55 3.6" rot="0.0 0.0 0.0" drive="1" travel="-0.1 0.2">
+					<vox id_="19596460" pos="0.25 -0.55 -0.05" rot="0.0 180.0 0.0" file="MOD/spawn/terrorbyte.vox" object="wheel_br"/>
+				</wheel>
+			</body>
+		</vehicle>
+	</group>
+</prefab>
+
