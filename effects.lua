@@ -4893,6 +4893,70 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		randomSpawning = {
+			name = "Spawn Random Object",
+			effectDuration = 0,
+			effectLifetime = 0, 
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local gSpawnList = {}	
+				function trim(s)
+					local n = string.find(s,"%S")
+					return n and string.match(s, ".*%S", n) or ""
+				end
+				local mods = ListKeys("spawn")
+				local types = {}
+				for m=1, #mods do
+					local mod = mods[m]
+					if HasKey("mods.available." .. mod) then
+						local ids = ListKeys("spawn." .. mod)
+						for i=1, #ids do
+							local tmp = "spawn." .. mod .. "." .. ids[i]
+							local n = GetString(tmp)
+							local p = GetString(tmp .. ".path")
+							local t = "Other"
+							local s = string.find(n, "/", 1, true)
+							if s and s > 1 then
+								t = string.sub(n, 1, s-1)
+								n = string.sub(n, s+1, string.len(n))
+							end
+							if n == "" then 
+								n = "Unnamed"
+							end
+							t = trim(t)
+							local found = false
+							for j=1, #types do
+								if string.lower(types[j]) == string.lower(t) then
+									t = types[j]
+									found = true
+									break
+								end
+							end
+							if not found then
+								types[#types+1] = t
+							end
+							
+							local item = {}
+							item.name = n
+							item.type = t
+							item.path = p
+							item.mod = mod
+							gSpawnList[#gSpawnList+1] = item
+							
+						end
+					end
+				end
+				
+				local randomIndex = math.random(1,#gSpawnList)
+				Spawn((gSpawnList[randomIndex].path), GetPlayerTransform())
+			end,
+			onEffectTick = function(vars)end,
+			onEffectEnd = function(vars) end,
+		},
 	},	-- EFFECTS TABLE
 }
 

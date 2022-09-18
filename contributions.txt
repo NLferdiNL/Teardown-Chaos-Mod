@@ -32,6 +32,7 @@ der_baumkrieger:
     Upgrade Random Explosive (id: opExplosive)
     Glitch (id: glitch)
     Blind (id: blind)
+	Spawn Random Object (id: randomSpawning)
 
 Snazzah:
     Github: https://github.com/Snazzah
