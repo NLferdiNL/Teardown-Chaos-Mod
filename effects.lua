@@ -5054,6 +5054,91 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
+		popups = {
+			name = "Annoying Popups",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { activePopups = {} },
+			onEffectStart = function(vars) 
+				vars.effectVariables.activePopups[1] = { "Wanna buy Hammer Enlargement Pixels?", UiCenter(), UiMiddle() }
+			end,
+			onEffectTick = function(vars) 
+				local textLines = {"Wanna buy Hammer Enlargement Pixels?", "Gordon Woo hates them with\nthis one simple trick!", 
+								   "Dear ${user}, you've won!\nClick here to collect your prize.", "You are the one millionth demolitionist!",
+								   "You're using a pop up blocker!", "              BlueTide\nThe drink for winners!", "Sick of the pop-ups? Get Quilez VPN now,\nand you'll receive 20% off your first year!",
+								   "Keep an eye on that timer!\nIt's still counting!"}
+			
+				if math.random(1, 100) > 99 then
+					local randomX = math.random(200, UiWidth() - 200)
+					local randomY = math.random(75, UiHeight() - 75)
+					
+					local randomLine = textLines[math.random(1, #textLines)]
+					
+					vars.effectVariables.activePopups[#vars.effectVariables.activePopups + 1] = {randomLine, randomX, randomY}
+				end
+			
+				if #vars.effectVariables.activePopups <= 0 then
+					return
+				end
+				
+				table.insert(drawCallQueue, function()
+					UiMakeInteractive()
+					
+					local popupWidth = 400
+					local popupHeight = 150
+					local titleBarHeight = 20
+				
+					for i = #vars.effectVariables.activePopups, 1, -1 do
+						local currPopup = vars.effectVariables.activePopups[i]
+						UiPush()
+							UiAlign("center middle")
+							
+							UiTranslate(currPopup[2], currPopup[3])
+							
+							UiColor(0.25, 0.25, 0.25)
+							UiRect(popupWidth, popupHeight)
+							
+							UiColor(1, 1, 1)
+							UiFont("regular.ttf", 24)
+							
+							UiTranslate(0, -20)
+							
+							UiText(currPopup[1])
+							
+							UiTranslate(0, 60)
+							
+							UiColor(0.25, 0.25, 0.75)
+							
+							UiRect(100, 30)
+							
+							UiColor(1, 1, 1)
+							UiText("Close")
+							
+							if UiBlankButton(100, 30) then
+								table.remove(vars.effectVariables.activePopups, i)
+							end
+							
+							UiTranslate(0, -20)
+							
+							UiPush()
+								UiTranslate(0, -popupHeight / 2 - titleBarHeight / 2)
+								UiColor(0.25, 0.25, 0.75)
+								UiRect(popupWidth, titleBarHeight)
+								
+								UiFont("bold.ttf", 24)
+								UiColor(1, 1, 1)
+								UiText("Warning!")
+							UiPop()
+						UiPop()
+					end
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
 	},	-- EFFECTS TABLE
 }
 
