@@ -14,6 +14,8 @@ local listScreenHeight = 0
 local listScreenMaxScroll = 0
 local effectCount = 0
 
+local scrollbarDown = false
+
 local sortedEffectList = {}
 
 function debugInit()
@@ -57,7 +59,7 @@ function debugDraw()
 		drawDebugMenu()
 		drawEffectList()
 		listScreenHeight = UiMiddle() - 20
-		listScreenMaxScroll = (effectCount * 30 + 2) - listScreenHeight + 15
+		listScreenMaxScroll = (effectCount * 30) - listScreenHeight + 15
 	end
 end
 
@@ -219,8 +221,31 @@ function drawEffectList()
 			end
 
 			UiAlign("right middle")
-
+			
+			--TODO: Fix scrollbar going half off.
+			
+			local mX, mY = UiGetMousePos()
+			
 			UiTranslate(350, (effectListScrollPosition / listScreenMaxScroll) * 2 * UiMiddle())
+			
+			if UiIsMouseInRect(20, 40) and InputDown("lmb") and not scrollbarDown then
+				scrollbarDown = true
+			elseif scrollbarDown and not InputDown("lmb") then
+				scrollbarDown = false
+			end
+			
+			if scrollbarDown then
+				mY = mY / UiMiddle() / 2
+			
+				if mY < 0 then
+					mY = 0
+				elseif mY > 1 then
+					mY = 1
+				end
+				
+				effectListScrollPosition = mY * listScreenMaxScroll
+				
+			end
 
 			UiRect(20, 40)
 		UiPop()
@@ -260,9 +285,10 @@ function drawDebugMenu()
 
 		UiColor(1, 1, 1, 1)
 		-- TODO: Remove this text eventually.
+		-- Mayhaps not.
 		UiText("(While this menu is open)\nPress H to toggle mouse input.")
 
-		UiTranslate(0, 50)
+		UiTranslate(0, 55)
 
 		UiText("Current time: " .. roundToTwoDecimals(currentTime) .. "/" .. chaosTimer)
 
