@@ -4957,6 +4957,103 @@ chaosEffects = {
 			onEffectTick = function(vars)end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		tunnelVision = {
+			name = "Tunnel Vision",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { currSize = 15 },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if vars.effectVariables.currSize > 1.1 then
+					vars.effectVariables.currSize = vars.effectVariables.currSize - GetChaosTimeStep() * 5
+				elseif vars.effectVariables.currSize ~= 1 then
+					vars.effectVariables.currSize = 1
+				end
+			
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiAlign("center middle")
+					
+					UiTranslate(UiCenter(), UiMiddle())
+					
+					UiImageBox("MOD/sprites/tunnelvision.png", vars.effectVariables.currSize * UiWidth(), vars.effectVariables.currSize * UiHeight(), 0, 0)
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		blindSpot = {
+			name = "Blind Spot",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { currSize = 0 },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if vars.effectVariables.currSize < 3.9 then
+					vars.effectVariables.currSize = vars.effectVariables.currSize + GetChaosTimeStep() * 2.5
+				elseif vars.effectVariables.currSize ~= 4 then
+					vars.effectVariables.currSize = 4
+				end
+			
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiAlign("center middle")
+					
+					UiTranslate(UiCenter(), UiMiddle())
+					
+					UiImageBox("MOD/sprites/blindspot.png", vars.effectVariables.currSize * UiWidth(), vars.effectVariables.currSize * UiHeight(), 0, 0)
+				UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		lightTrail = {
+			name = "Light Trail",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { timestep = 0 },
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				if vars.effectVariables.timestep < .1 then
+					vars.effectVariables.timestep = vars.effectVariables.timestep + GetChaosTimeStep()
+					return
+				end
+				
+				vars.effectVariables.timestep = 0
+				
+				local redValue = math.random(0, 100) / 100
+				local greenValue = math.random(0, 100) / 100
+				local blueValue = math.random(0, 100) / 100
+				
+				local lightXML = "<voxbox size='2 2 2' prop='true' material='glass' tags='nocull'><light pos='0 0 0' type='sphere' color='" .. redValue ..  " " .. greenValue .. " " .. blueValue .. "' scale='1.00' unshadowed='0.05'/></voxbox>"
+				
+				local playerTransform = GetPlayerTransform()
+				
+				local playerCameraTransform = GetPlayerCameraTransform()
+				local cameraForward = Vec(0, 0, 2)
+				local cameraForwardWorldSpace = TransformToParentPoint(playerCameraTransform, cameraForward)
+				
+				cameraForwardWorldSpace[2] = playerTransform.pos[2] + 0.1
+				
+				playerTransform.pos = cameraForwardWorldSpace
+				
+				Spawn(lightXML, playerTransform, true, false)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
 	},	-- EFFECTS TABLE
 }
 
