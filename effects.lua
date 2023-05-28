@@ -1543,7 +1543,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
-		quakefov = { -- Disables tool functionality, unsure how to fix yet.
+		quakefov = {
 			name = "Quake FOV",
 			effectDuration = 20,
 			effectLifetime = 0,
@@ -1571,7 +1571,7 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 
-		turtlemode = {
+		turtlemode = {-- Disables tool functionality, unsure how to fix yet.
 			name = "Turtle Mode",
 			effectDuration = 20,
 			effectLifetime = 0,
@@ -2267,23 +2267,23 @@ chaosEffects = {
 
 				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
 				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				
+				QueryRequire("dynamic")
+				
 				local shapeList = QueryAabbBodies(minPos, maxPos)
 
 				for i = 1, #shapeList do
 					local shapeBody = shapeList[i]
 
-					if IsBodyDynamic(shapeBody) then
-
-						if vars.effectVariables.affectedBodies[shapeBody] == nil then
-							vars.effectVariables.affectedBodies[shapeBody] = "hit"
-						end
-
-						local bodyVelocity = GetBodyVelocity(shapeBody)
-
-						bodyVelocity[2] = 0.5
-
-						SetBodyVelocity(shapeBody, bodyVelocity)
+					if vars.effectVariables.affectedBodies[shapeBody] == nil then
+						vars.effectVariables.affectedBodies[shapeBody] = "hit"
 					end
+
+					local bodyVelocity = GetBodyVelocity(shapeBody)
+
+					bodyVelocity[2] = 0.5
+
+					SetBodyVelocity(shapeBody, bodyVelocity)
 				end
 			end,
 			onEffectEnd = function(vars)
@@ -2726,7 +2726,7 @@ chaosEffects = {
 		},
 
 		simonSays = {
-			name = "1 Gordon Says",
+			name = "Gordon Says",
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
@@ -4479,8 +4479,8 @@ chaosEffects = {
 				local widthMax = 2
 				local heightMax = 1
 				
-				local fovWPerRes = widthMax / resolution
-				local fovHPerRes = heightMax / resolution
+				local fovWPerRes = widthMax / resolution * 1.1
+				local fovHPerRes = heightMax / resolution * 1.1
 				
 				function drawAt(x, y, pixelWidth, pixelHeight)
 					UiPush()
@@ -5069,7 +5069,7 @@ chaosEffects = {
 				local textLines = {"Wanna buy Hammer Enlargement Pixels?", "Gordon Woo hates them with\nthis one simple trick!", 
 								   "Dear ${user}, you've won!\nClick here to collect your prize.", "You are the one millionth demolitionist!",
 								   "You're using a pop up blocker!", "              BlueTide\nThe drink for winners!", "Sick of the pop-ups? Get Quilez VPN now,\nand you'll receive 20% off your first year!",
-								   "Keep an eye on that timer!\nIt's still counting!"}
+								   "Keep an eye on that timer!\nIt's still counting!", "What a good day for chaos!", "Löckelle Teardown Services\nFor all your legally questionable requests!"}
 			
 				if math.random(1, 100) > 99 then
 					local randomX = math.random(200, UiWidth() - 200)
@@ -5089,7 +5089,7 @@ chaosEffects = {
 					
 					local popupWidth = 400
 					local popupHeight = 150
-					local titleBarHeight = 20
+					local titleBarHeight = 25
 				
 					for i = #vars.effectVariables.activePopups, 1, -1 do
 						local currPopup = vars.effectVariables.activePopups[i]
@@ -5130,12 +5130,243 @@ chaosEffects = {
 								
 								UiFont("bold.ttf", 24)
 								UiColor(1, 1, 1)
-								UiText("Warning!")
+								UiText("Info")
 							UiPop()
 						UiPop()
 					end
 				end)
 			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		outlines = {
+			name = "Outlines",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {"MOD/sprites/square.png"},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerPos = GetPlayerTransform().pos
+				local range = 50
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local shapeList = QueryAabbBodies(minPos, maxPos)
+				
+				for i = 1, #shapeList do
+					local shapeBody = shapeList[i]
+					
+					DrawBodyOutline(shapeBody, 1, 1, 1, 1)
+					--DrawBodyHighlight(shapeBody, 1)
+				end
+				
+				local playerCamera = GetPlayerCameraTransform()
+				
+				local localForwardPos = Vec(0, 0, -2)
+				local globalForwardPos = TransformToParentPoint(playerCamera, localForwardPos)
+				
+				local spriteRot = QuatLookAt(globalForwardPos, playerCamera.pos)
+				
+				DrawSprite(vars.effectSprites[1], Transform(globalForwardPos, spriteRot), 10, 10, 0, 0, 0, 1, false, false)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		metaDoubleEffects = {
+			name = "(Meta) Double Effects",
+			effectDuration = 40,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { recentTrigger = false},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				if currentTime <= 0 and not vars.effectVariables.recentTrigger then
+					triggerChaos()
+					removeChaosLogOverflow()
+					vars.effectVariables.recentTrigger = true
+				elseif vars.effectVariables.recentTrigger then
+					vars.effectVariables.recentTrigger = false
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		rotatePlayer = {
+			name = "Rotate Player",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				
+				local rX, rY, rZ = GetQuatEuler(playerTransform.rot)
+				
+				rY = rY + 180
+				
+				playerTransform.rot = QuatEuler(rX, rY, rZ)
+				
+				SetPlayerTransform(playerTransform, true)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		strongPunch = {
+			name = "Strong Punch",
+			effectDuration = 17.5,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				if InputPressed("usetool") then
+					local cameraTransform = GetCameraTransform()
+					local rayDirection = TransformToParentVec(cameraTransform, {0, 0, -1})
+
+					local hit, hitPoint, distance = raycast(cameraTransform.pos, rayDirection, 3)
+
+					if hit == false then
+						return
+					end
+
+					MakeHole(hitPoint, 3, 2, 1)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		throwObjectAtPlayer = {
+			name = "Who threw that?",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) 
+				local cameraTransform = GetCameraTransform()
+				local playerPos = GetPlayerTransform().pos
+				local range = 15
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				
+				QueryRequire("dynamic")
+				
+				local bodyList = QueryAabbBodies(minPos, maxPos)
+				
+				if #bodyList <= 0 then
+					--Spawn Shape
+				end
+				
+				local thrownObjects = 5
+				
+				if #bodyList < thrownObjects then
+					thrownObjects = #bodyList
+				end
+				
+				local playerVehicle = GetPlayerVehicle()
+				
+				local targetPos = cameraTransform.pos
+				
+				if playerVehicle > 0 then
+					targetPos = playerPos
+				end
+				
+				for i = 1, thrownObjects do
+					local thrownBody = bodyList[math.random(1, #bodyList)]
+					
+					local bodyVehicle = GetBodyVehicle(thrownBody)
+					
+					local thrownBodyTransform = GetBodyTransform(thrownBody)
+					
+					local dirToPlayer = dirVec(thrownBodyTransform.pos, targetPos)
+					
+					dirToPlayer = VecScale(dirToPlayer, 25)
+
+					if bodyVehicle ~= playerVehicle then
+						SetBodyVelocity(thrownBody, dirToPlayer)
+					end
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		}, 
+		
+		pauseAlarmTimer = {
+			name = "Alarm Paused",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { timerState = 0 },
+			onEffectStart = function(vars) 
+				vars.effectVariables.timerState = GetFloat("level.alarmtimer")
+			end,
+			onEffectTick = function(vars)
+				SetFloat("level.alarmtimer", vars.effectVariables.timerState)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		extraAlarmTime = {
+			name = "Extra Alarm Time",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				SetFloat("level.alarmtimer", GetFloat("level.alarmtimer") + 20)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		resetAlarm = {
+			name = "Reset Alarm Time",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				if GetFloat("level.alarmtimer") < 60 then
+					SetFloat("level.alarmtimer", 60)
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		metaFiveEffects = {
+			name = "(Meta) Five Effects",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				removeChaosLogOverflow()
+				for i = 1, 5 do
+					triggerChaos()
+				end
+			end,
+			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
 		
