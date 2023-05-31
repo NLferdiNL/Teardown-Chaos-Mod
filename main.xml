@@ -1,0 +1,17 @@
+<scene version="1.3.0" shadowVolume="200 20 200">
+	<group name="Scene">
+		<group name="Ground" pos="-0.00001 0.0 -0.0">
+			<voxbox name="Unbrakable ground" pos="-100.0 0.0 -100.0" rot="0.0 0.0 0.0" texture="1" size="2000 1 2000" color=".5 .5 .5"/>
+		</group>
+	</group>
+	<environment name="Environment" template="sunset"/>
+	<spawnpoint name="Player spawn" pos="0.0 0.0 3.3" rot="0.0 180.0 0.0"/>
+	<boundary name="Boundary" pos="0.0 -6.1 0.0" rot="0.0 0.0 0.0">
+		<vertex pos="-100.0 -99.9"/>
+		<vertex pos="100.0 -100.0"/>
+		<vertex pos="100.0 100.0"/>
+		<vertex pos="-100.0 99.9"/>
+	</boundary>
+	<instance pos="2.9 0.0 0.0" rot="0.0 180.0 0.0" file="MOD/spawn/vending.xml"/>
+</scene>
+

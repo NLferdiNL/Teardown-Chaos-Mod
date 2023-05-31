@@ -1774,20 +1774,6 @@ chaosEffects = {
 				playerVel[1] = 0
 				playerVel[3] = 0
 
-				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
-
-				if vars.effectVariables.jumpNextFrame then
-					vars.effectVariables.jumpNextFrame = false
-
-					playerVel[2] = 5
-
-					SetPlayerVelocity(playerVel)
-				end
-
-				if InputPressed("space") and isTouchingGround then
-					vars.effectVariables.jumpNextFrame = true
-				end
-
 				local forwardMovement = 1
 				local rightMovement = 0
 
@@ -2078,9 +2064,27 @@ chaosEffects = {
 						end
 					end
 				end
+				
+				
 
 				if GetPlayerVehicle() == 0 then
-					DrawBodyOutline(GetVehicleBody(closetVehicleIndex), 1, 1, 1, 0.75)
+					local vehicleBody = GetVehicleBody(closetVehicleIndex)
+					local vehicleTransform = GetBodyTransform(vehicleBody)
+					
+					DrawBodyOutline(vehicleBody, 1, 1, 1, 0.75)
+					
+					table.insert(drawCallQueue, function()
+						UiPush()
+							local vX, vY, dist = UiWorldToPixel(vehicleTransform.pos)
+							
+							if dist >= 0 then
+								UiTranslate(vX, vY)
+								
+								UiFont("regular.ttf", 26)
+								UiText("[E] Enter Vehicle")
+							end
+						UiPop()
+					end)
 				end
 
 				if InputPressed("e") then
@@ -2088,10 +2092,8 @@ chaosEffects = {
 				end
 
 				vars.effectVariables.playerVehicleLastFrame = GetPlayerVehicle()
-
+				
 				-- End Enter Vehicle
-
-				-- TODO: Render enter vehicle on top of closest vehicle.
 			end,
 			onEffectEnd = function(vars) end,
 		},
@@ -2630,7 +2632,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { jumpNextFrame = false },
+			effectVariables = { jumpNextFrame = false, runSpeed = 25, jumpStrength = 15, touchingGroundLast = false},
 			onEffectStart = function(vars) end,
 			onEffectTick = function(vars)
 				local playerVel = VecCopy(GetPlayerVelocity())
@@ -2643,14 +2645,14 @@ chaosEffects = {
 				if vars.effectVariables.jumpNextFrame then
 					vars.effectVariables.jumpNextFrame = false
 
-					playerVel[2] = 15
-
-					SetPlayerVelocity(playerVel)
+					playerVel[2] = vars.effectVariables.jumpStrength
 				end
 
-				if InputPressed("jump") and isTouchingGround then
+				if InputPressed("jump") and vars.effectVariables.touchingGroundLast then
 					vars.effectVariables.jumpNextFrame = true
 				end
+				
+				vars.effectVariables.touchingGroundLast = isTouchingGround
 
 				local forwardMovement = 0
 				local rightMovement = 0
@@ -2671,8 +2673,8 @@ chaosEffects = {
 					rightMovement = rightMovement + 1
 				end
 
-				forwardMovement = forwardMovement * 25
-				rightMovement = rightMovement * 25
+				forwardMovement = forwardMovement * vars.effectVariables.runSpeed
+				rightMovement = rightMovement * vars.effectVariables.runSpeed
 
 				local playerTransform = GetPlayerTransform()
 
@@ -2683,9 +2685,7 @@ chaosEffects = {
 				local rightDirectionStrength = VecScale(rightInWorldSpace, rightMovement)
 
 				playerVel = VecAdd(VecAdd(playerVel, forwardDirectionStrength), rightDirectionStrength)
-
-				playerVel = playerVel
-
+				
 				SetPlayerVelocity(playerVel)
 			end,
 			onEffectEnd = function(vars) end,
@@ -4980,6 +4980,8 @@ chaosEffects = {
 					
 					UiTranslate(UiCenter(), UiMiddle())
 					
+					UiColor(0, 0, 0, 1)
+					
 					UiImageBox("MOD/sprites/tunnelvision.png", vars.effectVariables.currSize * UiWidth(), vars.effectVariables.currSize * UiHeight(), 0, 0)
 				UiPop()
 				end)
@@ -5303,23 +5305,6 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		}, 
 		
-		pauseAlarmTimer = {
-			name = "Alarm Paused",
-			effectDuration = 15,
-			effectLifetime = 0,
-			hideTimer = false,
-			effectSFX = {},
-			effectSprites = {},
-			effectVariables = { timerState = 0 },
-			onEffectStart = function(vars) 
-				vars.effectVariables.timerState = GetFloat("level.alarmtimer")
-			end,
-			onEffectTick = function(vars)
-				SetFloat("level.alarmtimer", vars.effectVariables.timerState)
-			end,
-			onEffectEnd = function(vars) end,
-		},
-		
 		extraAlarmTime = {
 			name = "Extra Alarm Time",
 			effectDuration = 0,
@@ -5370,6 +5355,114 @@ chaosEffects = {
 			onEffectEnd = function(vars) end,
 		},
 		
+		quickbluetidebreak = {
+			name = "Quick BlueTide Break",
+			effectDuration = 7.5,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { vignetteSize = 15, jumpNextFrame = false, runSpeed = 10, jumpStrength = 10, touchingGroundLast = false},
+			onEffectStart = function(vars)
+				local playerTransform = GetPlayerTransform()
+				
+				local vendingMachinePosition = TransformToParentPoint(playerTransform, Vec(0, 0, -1.5))
+				
+				Spawn("MOD/spawn/vending.xml", Transform(vendingMachinePosition, QuatLookAt(vendingMachinePosition, playerTransform.pos)))
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectLifetime <= 2.5 then
+					if GetPlayerVehicle() ~= 0 then
+						SetPlayerVehicle(0)
+					end
+					
+					local playerVel = GetPlayerVelocity()
+				
+					SetPlayerVelocity(Vec(0, playerVel[2], 0))
+					return
+				end
+				
+				if vars.effectVariables.vignetteSize >= 3.1 then
+					vars.effectVariables.vignetteSize = vars.effectVariables.vignetteSize - GetChaosTimeStep() * 5
+				elseif vars.effectVariables.vignetteSize <= 3.1 then
+					vars.effectVariables.vignetteSize = 3
+				end
+				
+				table.insert(drawCallQueue, function()
+				UiPush()
+					UiAlign("center middle")
+					
+					UiTranslate(UiCenter(), UiMiddle())
+					
+					UiColor(0.25, 0.25, 0.5, 1)
+					
+					UiImageBox("MOD/sprites/tunnelvision.png", vars.effectVariables.vignetteSize * UiWidth(), vars.effectVariables.vignetteSize * UiHeight(), 0, 0)
+				UiPop()
+				
+				chaosEffects.effects["superWalkJump"].onEffectTick(vars)
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		sugarCraving = {
+			name = "Sugar Craving",
+			effectDuration = 30,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {stoppedAddiction = false},
+			onEffectStart = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				
+				local vendingMachinePosition = TransformToParentPoint(playerTransform, Vec(0, 0, -3))
+				
+				Spawn("MOD/spawn/vending.xml", Transform(vendingMachinePosition, QuatLookAt(vendingMachinePosition, playerTransform.pos)))
+				
+				local shapes = FindShapes("bottle", true)
+				
+				for i=1, #shapes do
+					local shape = shapes[i]
+					SetTag(shape, "interact", "Satisfy the cravings.")
+				end
+			end,
+			onEffectTick = function(vars)
+				--[[local pickShape = GetPlayerPickShape()
+				if pickShape ~= 0 and HasTag(pickShape, "bottle") then
+					DrawShapeOutline(pickShape, 0, 1, 0, 1)
+				elseif pickShape ~= 0 then
+					DrawShapeOutline(pickShape, 1, 0, 0, 1)
+				end]]--
+				
+				if InputPressed("interact") then
+					local shape = GetPlayerInteractShape()
+					
+					if shape ~= 0 and HasTag(shape, "bottle") then
+						Delete(shape)
+						vars.effectVariables.stoppedAddiction = true
+					end
+				end
+				
+				if vars.effectVariables.stoppedAddiction ~= true then
+					SetPlayerHealth(1 - vars.effectLifetime / vars.effectDuration)
+				else
+					vars.effectLifetime = vars.effectDuration
+				end
+ 
+			end,
+			onEffectEnd = function(vars) 
+				if vars.effectVariables.stoppedAddiction ~= true then
+					SetPlayerHealth(0) -- might change that if its to opExplosive
+				end
+				
+				local shapes = FindShapes("bottle")
+				for i=1, #shapes do
+					local shape = shapes[i]
+					RemoveTag(shape, "interact")
+				end
+			end,
+		},
 	},	-- EFFECTS TABLE
 }
 

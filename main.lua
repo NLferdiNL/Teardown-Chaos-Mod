@@ -24,6 +24,8 @@ UpdateQuickloadPatch()
 
 function init()
 	debugInit()
+	
+	DebugPrint(#chaosEffects.effectKeys)
 
 	UpdateQuickloadPatch()
 end

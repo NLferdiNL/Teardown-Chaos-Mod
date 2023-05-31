@@ -1,0 +1,54 @@
+<group name="vending machine" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0">
+	<body name="body" pos="0.0 1.2 0.0" rot="0 180 0" dynamic="true">
+		<vox pos="0.0 -1.1 -0.1" file="MOD/spawn/supervending machine.vox" object="basevending"/>
+		<vox pos="0.0 -1.0 0.4" texture="4 0.3" file="MOD/spawn/supervending machine.vox" object="door" color="1.0 1.0 1.0 " pbr="0.3 0.2 0.6 0"/>
+		<vox pos="0.0 -0.5 0.4" file="MOD/spawn/supervending machine.vox" object="glass" color="0.56 0.88 0.96 0.001"/>
+	</body>
+	<body name="bottles" pos="0.44 2.0 0.07" rot="0 180 90" dynamic="true">
+		<group name="first" pos="0.0 -1.2 0.0">
+			<group name="fistrow" pos="0.0 0.0 -0.1">
+				<vox pos="-0.0 1.1 0.0" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="-0.0 0.8 0.0" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.55 0.0" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="-0.0 0.27 0.0" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="-0.0 0.0 0.0" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+			<group name="secondrow" pos="0.0 0.0 0.1">
+				<vox pos="0.0 1.2 0.1" rot="5 2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.98 0.1" rot="2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.65 0.1" rot="-2 5 " prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.37 0.1" rot="-2 1 1" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.14 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+		</group>
+		<group name="secondshell" pos="-0.5 -1.2 0.0">
+			<group name="fistrow" pos="0.0 0.0 -0.1">
+				<vox pos="0.0 1.2 0.1" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.92 0.1" rot="2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.67 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.37 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.11 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+			<group name="secondrow" pos="0.0 0.0 0.1">
+				<vox pos="0.0 1.2 0.1" rot="5 2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.98 0.1" rot="2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.69 0.1" rot="2 5 " prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.47 0.1" rot="-2 1 1" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.14 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+		</group>
+		<group name="last" pos="-1.0 -1.2 0.0">
+			<group name="fistrow" pos="0.0 0.0 -0.1">
+				<vox pos="0.0 1.2 0.1" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.92 0.1" rot="2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.37 0.1" rot="-2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+			<group name="secondrow" pos="0.0 0.0 0.1">
+				<vox pos="0.0 1.2 0.1" rot="5 2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.78 0.1" rot="2" prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+				<vox pos="0.0 0.55 0.1" rot="-2 5 " prop="true" file="MOD/spawn/supervending machine.vox" object="bottle" tags="bottle"/>
+			</group>
+		</group>
+	</body>
+</group>
+

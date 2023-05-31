@@ -19,7 +19,7 @@ Superfroggman:
     Enter Nearby Vehicle (id: setPlayerIntoRandomVehicle)
     Lets Try That Again (id: rewind)
 
-der_baumkrieger:
+der_baumkrieger/MutatedOnion:
 	Github: https://github.com/der-baumkrieger
     Steam: https://steamcommunity.com/profiles/76561199083584422
     
@@ -33,6 +33,7 @@ der_baumkrieger:
     Glitch (id: glitch)
     Blind (id: blind)
 	Spawn Random Object (id: randomSpawning)
+	Sugar Craving (id: sugarCraving) (And the vending machine vox for this)
 
 Snazzah:
     Github: https://github.com/Snazzah
