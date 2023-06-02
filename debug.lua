@@ -338,6 +338,18 @@ function drawDebugMenu()
 		if UiTextButton("Clear effects", 220, 30) then
 			chaosEffects.activeEffects = {}
 		end
+		
+		UiTranslate(230, 0)
+		
+		if UiTextButton("Close Effects", 220, 30) then
+			local vars = {effectVariables = { chaosTimerBackup = 12 }}
+			chaosEffects.effects["metaNoChaos"].onEffectStart(vars)
+			chaosEffects.effects["metaNoChaos"].onEffectEnd(vars)
+		
+			chaosEffects.activeEffects = {}
+		end
+		
+		UiTranslate(-230, 0)
 
 		UiTranslate(0, 40)
 

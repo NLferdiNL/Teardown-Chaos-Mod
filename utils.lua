@@ -332,3 +332,70 @@ function hslToRgb(h, s, l)
     if not a then a = 1 end
     return r * 255, g * 255, b * 255, a * 255
 end
+
+function trim(s)
+	local n = string.find(s,"%S")
+	return n and string.match(s, ".*%S", n) or ""
+end
+
+--local lastListSpawn = nil
+--local lastIndexedSpawnList = nil
+
+function IndexSpawnables()
+	local gSpawnList = {}
+	local mods = ListKeys("spawn")
+	
+	--[[if mods == lastListSpawn then
+		return lastIndexedSpawnList
+	end]]--
+	
+	local types = {}
+	for m=1, #mods do
+		local mod = mods[m]
+		if HasKey("mods.available." .. mod) then
+			local ids = ListKeys("spawn." .. mod)
+			for i=1, #ids do
+				local tmp = "spawn." .. mod .. "." .. ids[i]
+				local n = GetString(tmp)
+				local p = GetString(tmp .. ".path")
+				local t = "Other"
+				local s = string.find(n, "/", 1, true)
+				
+				if s and s > 1 then
+					t = string.sub(n, 1, s-1)
+					n = string.sub(n, s+1, string.len(n))
+				end
+				
+				if n == "" then 
+					n = "Unnamed"
+				end
+				
+				t = trim(t)
+				local found = false
+				for j=1, #types do
+					if string.lower(types[j]) == string.lower(t) then
+						t = types[j]
+						found = true
+						break
+					end
+				end
+				
+				if not found then
+					types[#types+1] = t
+				end
+
+				local item = {}
+				item.name = n
+				item.type = t
+				item.path = p
+				item.mod = mod
+				gSpawnList[#gSpawnList+1] = item
+			end
+		end
+	end
+	
+	--lastListSpawn = mods
+	--lastIndexedSpawnList = gSpawnList
+	
+	return gSpawnList
+end

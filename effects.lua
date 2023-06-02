@@ -1478,14 +1478,17 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { x = 0, y = 0, px = true, py = true},
+			effectVariables = { x = 0, y = 0, px = true, py = true, middleSize = 0},
 			onEffectStart = function(vars)
-				vars.effectVariables.x = UiCenter()
-				vars.effectVariables.y = UiMiddle()
+				table.insert(drawCallQueue, function()
+					vars.effectVariables.x = UiCenter()
+					vars.effectVariables.y = UiMiddle()
+					vars.effectVariables.middleSize = UiHeight() / 5
+				end)
 			end,
 			onEffectTick = function(vars)
 				local speed = 5
-				local middleSize = UiHeight() / 5
+				local middleSize = vars.effectVariables.middleSize
 
 				if vars.effectVariables.px then
 					vars.effectVariables.x = vars.effectVariables.x + speed
@@ -4903,54 +4906,7 @@ chaosEffects = {
 			effectSprites = {},
 			effectVariables = {},
 			onEffectStart = function(vars) 
-				local gSpawnList = {}	
-				function trim(s)
-					local n = string.find(s,"%S")
-					return n and string.match(s, ".*%S", n) or ""
-				end
-				local mods = ListKeys("spawn")
-				local types = {}
-				for m=1, #mods do
-					local mod = mods[m]
-					if HasKey("mods.available." .. mod) then
-						local ids = ListKeys("spawn." .. mod)
-						for i=1, #ids do
-							local tmp = "spawn." .. mod .. "." .. ids[i]
-							local n = GetString(tmp)
-							local p = GetString(tmp .. ".path")
-							local t = "Other"
-							local s = string.find(n, "/", 1, true)
-							if s and s > 1 then
-								t = string.sub(n, 1, s-1)
-								n = string.sub(n, s+1, string.len(n))
-							end
-							if n == "" then 
-								n = "Unnamed"
-							end
-							t = trim(t)
-							local found = false
-							for j=1, #types do
-								if string.lower(types[j]) == string.lower(t) then
-									t = types[j]
-									found = true
-									break
-								end
-							end
-							if not found then
-								types[#types+1] = t
-							end
-							
-							local item = {}
-							item.name = n
-							item.type = t
-							item.path = p
-							item.mod = mod
-							gSpawnList[#gSpawnList+1] = item
-							
-						end
-					end
-				end
-				
+				local gSpawnList = IndexSpawnables()
 				local randomIndex = math.random(1,#gSpawnList)
 				Spawn((gSpawnList[randomIndex].path), GetPlayerTransform())
 			end,
@@ -5066,16 +5022,29 @@ chaosEffects = {
 			effectVariables = { activePopups = {} },
 			onEffectStart = function(vars) 
 				vars.effectVariables.activePopups[1] = { "Wanna buy Hammer Enlargement Pixels?", UiCenter(), UiMiddle() }
+				
+				for i = 1, #chaosEffects.activeEffects do
+					local currEffect = chaosEffects.activeEffects[i]
+					if currEffect.name == chaosEffects.effects["dvdScreensaver"].name then
+						table.remove(chaosEffects.activeEffects, i)
+						
+						table.insert(chaosEffects.activeEffects, 1, currEffect)
+					end
+				end
 			end,
 			onEffectTick = function(vars) 
+				local popupWidth = 400
+				local popupHeight = 150
+				local titleBarHeight = 25
+			
 				local textLines = {"Wanna buy Hammer Enlargement Pixels?", "Gordon Woo hates them with\nthis one simple trick!", 
 								   "Dear ${user}, you've won!\nClick here to collect your prize.", "You are the one millionth demolitionist!",
 								   "You're using a pop up blocker!", "              BlueTide\nThe drink for winners!", "Sick of the pop-ups? Get Quilez VPN now,\nand you'll receive 20% off your first year!",
 								   "Keep an eye on that timer!\nIt's still counting!", "What a good day for chaos!", "Löckelle Teardown Services\nFor all your legally questionable requests!"}
 			
 				if math.random(1, 100) > 99 then
-					local randomX = math.random(200, UiWidth() - 200)
-					local randomY = math.random(75, UiHeight() - 75)
+					local randomX = math.random(popupWidth / 2, UiWidth() - popupWidth / 2)
+					local randomY = math.random(popupHeight / 2, UiHeight() - popupHeight / 2)
 					
 					local randomLine = textLines[math.random(1, #textLines)]
 					
@@ -5089,10 +5058,6 @@ chaosEffects = {
 				table.insert(drawCallQueue, function()
 					UiMakeInteractive()
 					
-					local popupWidth = 400
-					local popupHeight = 150
-					local titleBarHeight = 25
-				
 					for i = #vars.effectVariables.activePopups, 1, -1 do
 						local currPopup = vars.effectVariables.activePopups[i]
 						UiPush()
@@ -5267,11 +5232,45 @@ chaosEffects = {
 				
 				local bodyList = QueryAabbBodies(minPos, maxPos)
 				
-				if #bodyList <= 0 then
-					--Spawn Shape
-				end
+				--[[if #bodyList <= 0 or true then
+					local gSpawnList = IndexSpawnables()
+					
+					for i = 1, math.random(1, 5) do
+						local randomPos = rndVec(10)
+						
+						randomPos = VecAdd(playerPos, randomPos)
+						
+						randomPos[2] = playerPos[2] + 5
+						
+						local randomIndex = math.random(1,#gSpawnList)
+						local spawnedObject = Spawn((gSpawnList[randomIndex].path), Transform(randomPos))[1]
+						local objectType = GetEntityType(spawnedObject)
+						
+						if objectType == "shape" then
+							spawnedObject = GetShapeBody(spawnedObject)
+						elseif objectType == "vehicle" then
+							spawnedObject = GetVehicleBody(spawnedObject)
+						elseif objectType == "script" then
+							Delete(spawnedObject)
+						end
+						
+						local minSize, maxSize = GetBodyBounds(spawnedObject)
+						
+						DebugPrint(VecDist(minSize, maxSize))
+						if VecDist(minSize, maxSize) > 50 then
+						
+						end
+						
+						bodyList[#bodyList + 1] = spawnedObject
+						--DebugPrint(objectType)
+						--DebugPrint(GetEntityType(spawnedObject))
+						
+					end
+				end]]--
 				
 				local thrownObjects = 5
+				
+				DebugPrint(#bodyList)
 				
 				if #bodyList < thrownObjects then
 					thrownObjects = #bodyList
@@ -5286,7 +5285,13 @@ chaosEffects = {
 				end
 				
 				for i = 1, thrownObjects do
-					local thrownBody = bodyList[math.random(1, #bodyList)]
+					local index = i
+					
+					if #bodyList > thrownObjects then
+						index = math.random(1, #bodyList)
+					end
+				
+					local thrownBody = bodyList[index]
 					
 					local bodyVehicle = GetBodyVehicle(thrownBody)
 					
@@ -5295,8 +5300,8 @@ chaosEffects = {
 					local dirToPlayer = dirVec(thrownBodyTransform.pos, targetPos)
 					
 					dirToPlayer = VecScale(dirToPlayer, 25)
-
-					if bodyVehicle ~= playerVehicle then
+					
+					if (bodyVehicle ~= playerVehicle and bodyVehicle > 0) or bodyVehicle <= 0 then
 						SetBodyVelocity(thrownBody, dirToPlayer)
 					end
 				end
@@ -5412,7 +5417,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {stoppedAddiction = false},
+			effectVariables = {stoppedAddiction = false, startingHealth = 1},
 			onEffectStart = function(vars) 
 				local playerTransform = GetPlayerTransform()
 				
@@ -5426,6 +5431,8 @@ chaosEffects = {
 					local shape = shapes[i]
 					SetTag(shape, "interact", "Satisfy the cravings.")
 				end
+				
+				vars.effectVariables.startingHealth = GetPlayerHealth()
 			end,
 			onEffectTick = function(vars)
 				--[[local pickShape = GetPlayerPickShape()
@@ -5445,7 +5452,7 @@ chaosEffects = {
 				end
 				
 				if vars.effectVariables.stoppedAddiction ~= true then
-					SetPlayerHealth(1 - vars.effectLifetime / vars.effectDuration)
+					SetPlayerHealth((1 - vars.effectLifetime / vars.effectDuration) * vars.effectVariables.startingHealth)
 				else
 					vars.effectLifetime = vars.effectDuration
 				end
@@ -5463,6 +5470,230 @@ chaosEffects = {
 				end
 			end,
 		},
+		
+		--[[invertedMovement = {
+			name = "Inverted Movement",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { jumpnextframe = false, runSpeed = 6.5, jumpStrength = 4, touchinggroundlast = false},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				-- Add collision detection. Causes crashes walking into things.
+			
+				local playerVel = VecCopy(GetPlayerVelocity())
+
+				playerVel[1] = 0
+				playerVel[3] = 0
+
+				local isTouchingGround = playerVel[2] >= -0.00001 and playerVel[2] <= 0.00001
+
+				if vars.effectVariables.jumpNextFrame then
+					vars.effectVariables.jumpNextFrame = false
+
+					playerVel[2] = vars.effectVariables.jumpStrength
+				end
+
+				if InputPressed("jump") and vars.effectVariables.touchingGroundLast then
+					vars.effectVariables.jumpNextFrame = true
+				end
+				
+				vars.effectVariables.touchingGroundLast = isTouchingGround
+
+				local forwardMovement = 0
+				local rightMovement = 0
+
+				if InputDown("up") then
+					forwardMovement = forwardMovement - 1
+				end
+
+				if InputDown("down") then
+					forwardMovement = forwardMovement + 1
+				end
+
+				if InputDown("left") then
+					rightMovement = rightMovement + 1
+				end
+
+				if InputDown("right") then
+					rightMovement = rightMovement - 1
+				end
+
+				--forwardMovement = forwardMovement * vars.effectVariables.runSpeed
+				--rightMovement = rightMovement * vars.effectVariables.runSpeed
+
+				local playerTransform = GetPlayerTransform()
+
+				local forwardInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(0, 0, -1))
+				local rightInWorldSpace = TransformToParentVec(GetPlayerTransform(), Vec(1, 0, 0))
+
+				local forwardDirectionStrength = VecScale(forwardInWorldSpace, forwardMovement)
+				local rightDirectionStrength = VecScale(rightInWorldSpace, rightMovement)
+
+				playerVel = VecAdd(VecAdd(playerVel, forwardDirectionStrength), rightDirectionStrength)
+				playerVel = VecScale(playerVel, vars.effectVariables.runSpeed)
+				
+				DebugWatch("ve", playerVel)
+				
+				SetPlayerVelocity(playerVel)
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
+		
+		metaHideEffects = {
+			name = "(Meta) Mysterious Chaos",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars)
+				for i = 1, #chaosEffects.activeEffects do
+					local currEffect = chaosEffects.activeEffects[i]
+
+					if currEffect.effectVariables["metaHidden"] == nil then
+						currEffect.effectVariables.metaHidden = true
+						currEffect.name = ""
+						currEffect.hideTimer = true
+					end
+
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		giftFromTheSky = {
+            name = "Gift From The Sky",
+            effectDuration = 0,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {{isLoop = false, soundPath = "MOD/sfx/giftfromthesky/drop0.ogg"}},
+            effectSprites = {},
+            effectVariables = {},
+            onEffectStart = function(vars)
+				local playerTransform = GetPlayerTransform()
+				local rndPos = GetPlayerTransform().pos
+				
+				PlaySound(vars.effectSFX[1], playerTransform.pos, 0.25)
+
+				rndPos[2] = rndPos[2] + 150
+
+				rndPos[1] = rndPos[1] + math.random(-50, 50)
+				rndPos[3] = rndPos[3] + math.random(-50, 50)
+				
+				if math.random(1,2) == 2 then
+					Spawn("MOD/spawn/mil-tank.xml", Transform(rndPos, playerTransform.rot))
+				else
+					Spawn("MOD/spawn/atomic_bomb.xml", Transform(rndPos, playerTransform.rot))
+				end
+            end,
+            onEffectTick = function(vars)end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		liftOff = {
+            name = "Liftoff",
+            effectDuration = 5,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {{isLoop = true, soundPath = "tools/booster-loop.ogg"}},
+            effectSprites = {},
+            effectVariables = {},
+            onEffectStart = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				
+				playerTransform.pos[2] = playerTransform.pos[2] + 0.25
+				
+				SetPlayerTransform(playerTransform, true)
+			end,
+            onEffectTick = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				local playerVel = GetPlayerVelocity()
+				
+				playerVel[2] = 5
+				
+				local holeSize = 1.5
+				
+				SetPlayerVelocity(playerVel)
+				
+				local hit, hitPoint, distance, normal, shape = raycast(playerTransform.pos, Vec(0, 1, 0), 2)
+				
+				PlayLoop(vars.effectSFX[1], playerTransform.pos, 0.25)
+				
+				ParticleReset()
+				ParticleColor(1, 0.25, 0, 0.25, 0.25, 0.25)
+				ParticleTile(5)
+				ParticleCollide(0, 1)
+				ParticleType("smoke")
+				ParticleRadius(0.25, 0.5, "easein")
+				ParticleAlpha(1, 0, "easein")
+				ParticleDrag(0, 1)
+				ParticleEmissive(1, 0, "easeout")
+				ParticleRadius(0.1, 3, "easeout")
+				ParticleGravity(-5)
+				for i = 1, 10 do
+					SpawnParticle(playerTransform.pos, Vec(0, -10, 0), 2)
+				end
+				
+				ParticleReset()
+				ParticleColor(0.1, 0.1, 0.1)
+				ParticleTile(0)
+				ParticleCollide(0, 1)
+				ParticleType("smoke")
+				ParticleRadius(0, 0.5, "easein")
+				ParticleAlpha(0, 1, "easein")
+				ParticleDrag(0, 1)
+				ParticleEmissive(1, 0, "easeout")
+				ParticleRadius(0.1, 3, "easeout")
+				ParticleGravity(-5)
+				for i = 1, 10 do
+					SpawnParticle(playerTransform.pos, Vec(0, -10, 0), 2)
+				end
+				
+				if hit then
+					MakeHole(hitPoint, holeSize, holeSize, holeSize)
+				end
+			end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		speedFOV = {
+            name = "Speed FOV",
+            effectDuration = 15,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { currFOV = 90},
+            onEffectStart = function(vars) 
+				
+			end,
+            onEffectTick = function(vars) 
+				local playerVel = GetPlayerVelocity()
+				local currFOV = vars.effectVariables.currFOV
+				
+				local speedFOV = VecDist(playerVel) / 10
+				
+				if GetPlayerVehicle() ~= 0 then
+					speedFOV = VecDist(playerVel) / 40
+				end
+				
+				local targetFOV = 90 + speedFOV * 90
+				
+				DebugWatch("dist", (targetFOV - currFOV))
+				
+				local nextFOV = currFOV + (targetFOV - currFOV) * (GetChaosTimeStep() * 5)
+				
+				vars.effectVariables.currFOV = nextFOV
+				
+				SetCameraFov(nextFOV)
+			end,
+            onEffectEnd = function(vars) end,
+        },
 	},	-- EFFECTS TABLE
 }
 

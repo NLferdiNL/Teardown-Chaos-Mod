@@ -1,0 +1,9 @@
+<prefab version="1.3.0">
+	<group name="bomb" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0">
+		<body name="body" pos="0.0 1.2 0.0" dynamic="true">
+			<vox tags="explosive=10" pos="0.0 1.2 0.1" rot="90.0 0.0 0.0" prop="true" file="MOD/spawn/atomic_bomb_vox.vox"/>
+		</body>
+		
+	</group>
+</prefab>
+
