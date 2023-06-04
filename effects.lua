@@ -1224,12 +1224,13 @@ chaosEffects = {
 			hideTimer = true,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = { deathTimer = 5, nameBackup = "", playerTransform = nil},
+			effectVariables = { deathTimer = 5, nameBackup = "", playerTransform = nil, playerCameraTransform = nil},
 			onEffectStart = function(vars)
 				if GetPlayerVehicle() ~= 0 then
 					SetPlayerVehicle(0)
 				end
-
+				
+				vars.effectVariables.playerCameraTransform = GetPlayerCameraTransform()
 				vars.effectVariables.playerTransform = GetPlayerTransform()
 				vars.effectVariables.nameBackup = vars.name -- In case I decide on a new name
 				vars.name = chaosEffects.effects["instantDeath"].name
@@ -1242,7 +1243,7 @@ chaosEffects = {
 				else
 					SetPlayerHealth(1)
 
-					local playerCamera = GetPlayerCameraTransform()
+					local playerCamera = vars.effectVariables.playerCameraTransform 
 					local playerCameraPos = playerCamera.pos
 
 					SetCameraTransform(Transform(VecAdd(playerCameraPos, Vec(0, -1, 0)), QuatEuler(-5, 0, 45)))
@@ -5694,6 +5695,155 @@ chaosEffects = {
 			end,
             onEffectEnd = function(vars) end,
         },
+		
+		notAlone = {
+			name = "You're not alone",
+			effectDuration = 50,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/notalone/ambient0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/chase0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/egg.ogg"}},
+			effectSprites = {"MOD/sprites/notalone/theEntity0.png", "MOD/sprites/notalone/theEntity1.png", "MOD/sprites/notalone/theEntity2.png", "MOD/sprites/notalone/theEntity3.png",},
+			effectVariables = { entityPos = Vec(), entityVisible = false, recentStateChangeTimer = 0, recentSoundTimer = 0},
+			onEffectStart = function(vars) 
+				local playerTransform = GetPlayerCameraTransform()
+				
+				local rndDir = Vec(math.random(-100, 100), 0, math.random(-100, 100))
+				vars.effectVariables.entityPos = VecAdd(playerTransform.pos, rndDir)
+			end,
+			onEffectTick = function(vars) 
+				local playerCameraTransform = GetPlayerCameraTransform()
+			
+				local stalkSpeed = 5.0
+				local chaseSpeed = 6.6
+				local walkSpeed = stalkSpeed
+				local entityPos = vars.effectVariables.entityPos
+				local entityVisible = vars.effectVariables.entityVisible
+				
+				if math.floor(GetTime()) % 6 == 0 and vars.effectVariables.recentStateChangeTimer <= 0 then
+					if entityVisible then
+						local travelDist = 20
+					
+						-- Turning invisible, back off slightly.
+						local rndDir = Vec(math.random(-travelDist, travelDist), 0, math.random(-travelDist, travelDist))
+						vars.effectVariables.entityPos = VecAdd(entityPos, rndDir)
+						entityPos = vars.effectVariables.entityPos
+					end
+					
+					vars.effectVariables.recentStateChangeTimer = 3
+				
+					vars.effectVariables.entityVisible = not vars.effectVariables.entityVisible
+					entityVisible = vars.effectVariables.entityVisible
+				end
+				
+				if vars.effectVariables.recentStateChangeTimer > 0 then
+					vars.effectVariables.recentStateChangeTimer = vars.effectVariables.recentStateChangeTimer - GetChaosTimeStep() * 2
+				end
+				
+				if vars.effectVariables.recentSoundTimer > 0 then
+					vars.effectVariables.recentSoundTimer = vars.effectVariables.recentSoundTimer - GetChaosTimeStep() * 2
+				end
+				
+				if entityVisible then
+					walkSpeed = chaseSpeed
+				end
+				
+				local entityDir = VecNormalize(VecSub(playerCameraTransform.pos, entityPos))
+				local entityMovedDist = VecScale(entityDir, walkSpeed * GetChaosTimeStep())
+				
+				vars.effectVariables.entityPos = VecAdd(vars.effectVariables.entityPos, entityMovedDist)
+				entityPos = vars.effectVariables.entityPos
+				
+				local soundPlayed = -1
+				
+				if entityVisible then -- Show itself, play aggro sounds.
+					soundPlayed = vars.effectSFX[1]
+					
+					DrawSprite(vars.effectSprites[math.floor(GetTime() * 8) % 4 + 1], Transform(entityPos, QuatLookAt(entityPos, playerCameraTransform.pos)), 2, 2, 1, 1, 1, 0.5, true, false)
+					
+					ParticleReset()
+					ParticleColor(0, 0, 0)
+					ParticleTile(5)
+					ParticleCollide(0, 1)
+					ParticleType("smoke")
+					ParticleRadius(0.25, 0.5, "easein")
+					ParticleAlpha(0.5, 0, "easein")
+					ParticleDrag(0, 1)
+					ParticleEmissive(1, 0, "easeout")
+					ParticleRadius(0.1, 3, "easeout")
+					ParticleGravity(-5)
+					for i = 1, 10 do
+						SpawnParticle(VecAdd(entityPos, Vec(0, 1, 0)), Vec(0, -5, 0), 1)
+					end
+				elseif not entityVisible then -- Play ambient sounds
+					soundPlayed = vars.effectSFX[2]
+				end
+				
+				if soundPlayed > -1 and math.floor(GetTime()) % 7 == 0 and vars.effectVariables.recentSoundTimer <= 0 then
+					if math.random(1, 200) == 200 then
+						soundPlayed = vars.effectSFX[3]
+					end
+					
+					local halfwayPoint = VecSub(playerCameraTransform.pos, entityPos)
+					
+					vars.effectVariables.recentSoundTimer = 3
+					PlaySound(soundPlayed, halfwayPoint, 5)
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		extremeNightTime = {
+			name = "Extreme Night Time",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {skybox = "", skyboxbrightness = 0, ambient = 0, sunBrightness = 0, exposure = 0, skyboxtint = {0, 0, 0}, fogColor = {0, 0, 0}, fogParams = {0, 0, 0, 0}},
+			onEffectStart = function(vars) 
+				vars.effectVariables.skybox = GetEnvironmentProperty("skybox")
+				vars.effectVariables.skyboxbrightness = GetEnvironmentProperty("skyboxbrightness")
+				vars.effectVariables.ambient = GetEnvironmentProperty("ambient")
+				vars.effectVariables.sunBrightness = GetEnvironmentProperty("sunBrightness")
+				vars.effectVariables.exposure = GetEnvironmentProperty("exposure")
+				
+				local skyTint1, skyTint2, skyTint3 = GetEnvironmentProperty("skyboxtint")
+				vars.effectVariables.skyboxtint = {skyTint1, skyTint2, skyTint3}
+				
+				local fogColor1, fogColor2, fogColor3 = GetEnvironmentProperty("fogColor")
+				vars.effectVariables.fogColor = {fogColor1, fogColor2, fogColor3}
+				
+				local fogParam1, fogParam2, fogParam3, fogParam4 = GetEnvironmentProperty("fogParams")
+				vars.effectVariables.fogParams = {fogParam1, fogParam2, fogParam3, fogParam4}
+				
+				SetEnvironmentProperty("skybox", "night_clear.dds")
+				SetEnvironmentProperty("skyboxbrightness", 0.05)
+				SetEnvironmentProperty("ambient", 0)
+				SetEnvironmentProperty("sunBrightness", 0)
+				SetEnvironmentProperty("exposure", 0.01)
+				SetEnvironmentProperty("skyboxtint", 0, 0, 0)
+				SetEnvironmentProperty("fogColor", 0.0, 0.0, 0.0)
+				SetEnvironmentProperty("fogParams", 20, 120, 0.9, 2)
+				
+				if math.random(1,2) == 2 then
+					local notAloneCopy = getCopyOfEffect["notAlone"]
+					triggerEffect(notAloneCopy)
+					vars.effectDuration = notAloneCopy.effectDuration
+				end
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) 
+				SetEnvironmentProperty("skybox", vars.effectVariables.skybox)
+				SetEnvironmentProperty("skyboxbrightness", vars.effectVariables.skyboxbrightness)
+				SetEnvironmentProperty("ambient", vars.effectVariables.ambient)
+				SetEnvironmentProperty("sunBrightness", vars.effectVariables.sunBrightness)
+				SetEnvironmentProperty("exposure", vars.effectVariables.exposure)
+				SetEnvironmentProperty("skyboxtint", vars.effectVariables.skyboxtint[1], vars.effectVariables.skyboxtint[2], vars.effectVariables.skyboxtint[3])
+				
+				SetEnvironmentProperty("fogColor", vars.effectVariables.fogColor[1], vars.effectVariables.fogColor[2], vars.effectVariables.fogColor[3])
+				SetEnvironmentProperty("fogParams", vars.effectVariables.fogParams[1], vars.effectVariables.fogParams[2], vars.effectVariables.fogParams[3], vars.effectVariables.fogParams[4])
+			end,
+		},
 	},	-- EFFECTS TABLE
 }
 

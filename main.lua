@@ -6,12 +6,13 @@
 -- Globals
 drawCallQueue = {}
 timeScale = 1 -- This one is required to keep chaos time flowing normally.
-testThisEffect = "" -- Leave empty to let RNG grab effects.
+testThisEffect = "notAlone" -- Leave empty to let RNG grab effects.
 lastEffectKey = ""
 currentTime = 0
 timerPaused = false
 chaosPaused = false
 hasTheGameReloaded = false
+chaosTimerColor = { r = 0.25, g = 0.25, b = 1.0 }
 
 -- Inside the init() these changes don't get backed up.
 -- Here they do. Allowing quickloading to be available.
@@ -168,7 +169,7 @@ function drawTimer()
 		if chaosUnavailable() then
 			UiColor(1, 0.25, 0.25)
 		else
-			UiColor(0.25, 0.25, 1)
+			UiColor(chaosTimerColor.r, chaosTimerColor.g, chaosTimerColor.b)
 		end
 		UiTranslate(UiCenter() * currentTimePercenage, 0)
 		UiRect(UiWidth() * currentTimePercenage, UiHeight() * 0.05)
