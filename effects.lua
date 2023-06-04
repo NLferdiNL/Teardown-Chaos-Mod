@@ -5702,8 +5702,8 @@ chaosEffects = {
 			effectLifetime = 0,
 			hideTimer = false,
 			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/notalone/ambient0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/chase0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/egg.ogg"}},
-			effectSprites = {"MOD/sprites/notalone/theEntity0.png", "MOD/sprites/notalone/theEntity1.png", "MOD/sprites/notalone/theEntity2.png", "MOD/sprites/notalone/theEntity3.png",},
-			effectVariables = { entityPos = Vec(), entityVisible = false, recentStateChangeTimer = 0, recentSoundTimer = 0},
+			effectSprites = {"MOD/sprites/notalone/theEntity.png"},
+			effectVariables = { entityPos = Vec(), entityVisible = false, recentStateChangeTimer = 0, recentSoundTimer = 0, recentThrowTimer = 0},
 			onEffectStart = function(vars) 
 				local playerTransform = GetPlayerCameraTransform()
 				
@@ -5714,7 +5714,7 @@ chaosEffects = {
 				local playerCameraTransform = GetPlayerCameraTransform()
 			
 				local stalkSpeed = 5.0
-				local chaseSpeed = 6.6
+				local chaseSpeed = 6.8
 				local walkSpeed = stalkSpeed
 				local entityPos = vars.effectVariables.entityPos
 				local entityVisible = vars.effectVariables.entityVisible
@@ -5743,6 +5743,10 @@ chaosEffects = {
 					vars.effectVariables.recentSoundTimer = vars.effectVariables.recentSoundTimer - GetChaosTimeStep() * 2
 				end
 				
+				if vars.effectVariables.recentThrowTimer > 0 then
+					vars.effectVariables.recentThrowTimer = vars.effectVariables.recentThrowTimer - GetChaosTimeStep() * 2
+				end
+				
 				if entityVisible then
 					walkSpeed = chaseSpeed
 				end
@@ -5758,7 +5762,10 @@ chaosEffects = {
 				if entityVisible then -- Show itself, play aggro sounds.
 					soundPlayed = vars.effectSFX[1]
 					
-					DrawSprite(vars.effectSprites[math.floor(GetTime() * 8) % 4 + 1], Transform(entityPos, QuatLookAt(entityPos, playerCameraTransform.pos)), 2, 2, 1, 1, 1, 0.5, true, false)
+					--for i = 1, 5 do
+						--DrawSprite(vars.effectSprites[1], Transform(entityPos, QuatLookAt(VecSub(entityPos, entityDir), playerCameraTransform.pos)), 2, 2, 1, 1, 0, 0.5, false, true)
+						DrawSprite(vars.effectSprites[1], Transform(entityPos, QuatLookAt(entityPos, playerCameraTransform.pos)), 2, 2, 1, 0, 0, 1, true, false)
+					--end
 					
 					ParticleReset()
 					ParticleColor(0, 0, 0)
@@ -5773,6 +5780,26 @@ chaosEffects = {
 					ParticleGravity(-5)
 					for i = 1, 10 do
 						SpawnParticle(VecAdd(entityPos, Vec(0, 1, 0)), Vec(0, -5, 0), 1)
+					end
+					
+					DebugWatch("dist", VecDist(entityPos, GetPlayerTransform().pos))
+					
+					if VecDist(entityPos, GetPlayerTransform().pos) <= 2 and vars.effectVariables.recentThrowTimer <= 0 then
+						local currentVehicleHandle = GetPlayerVehicle()
+						local velocity = rndVec(30)
+						
+						vars.effectVariables.recentThrowTimer = 1
+						
+						SetPlayerHealth(GetPlayerHealth() - 0.05)
+						
+						velocity[2] = math.abs(velocity[2])
+						if currentVehicleHandle ~= 0 then
+							local currentVehicleBody = GetVehicleBody(currentVehicleHandle)
+
+							SetBodyVelocity(currentVehicleBody, velocity)
+						else
+							SetPlayerVelocity(velocity)
+						end
 					end
 				elseif not entityVisible then -- Play ambient sounds
 					soundPlayed = vars.effectSFX[2]
@@ -5818,15 +5845,15 @@ chaosEffects = {
 				
 				SetEnvironmentProperty("skybox", "night_clear.dds")
 				SetEnvironmentProperty("skyboxbrightness", 0.05)
-				SetEnvironmentProperty("ambient", 0)
+				SetEnvironmentProperty("ambient", 0.1)
 				SetEnvironmentProperty("sunBrightness", 0)
-				SetEnvironmentProperty("exposure", 0.01)
+				SetEnvironmentProperty("exposure", 0.5)
 				SetEnvironmentProperty("skyboxtint", 0, 0, 0)
 				SetEnvironmentProperty("fogColor", 0.0, 0.0, 0.0)
 				SetEnvironmentProperty("fogParams", 20, 120, 0.9, 2)
 				
 				if math.random(1,2) == 2 then
-					local notAloneCopy = getCopyOfEffect["notAlone"]
+					local notAloneCopy = getCopyOfEffect("notAlone")
 					triggerEffect(notAloneCopy)
 					vars.effectDuration = notAloneCopy.effectDuration
 				end
