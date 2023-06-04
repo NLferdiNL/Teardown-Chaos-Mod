@@ -1,0 +1,163 @@
+<body id_="1625195392" name="House" pos="3.1 0.1 -17.1" prop0="texture=4 0.33">
+	<group id_="589008000" name="Walls" pos="-0.03 0.2 -0.96">
+		<voxbox id_="1093600384" name="wall" pos="-7.9 0.0 -3.9" rot="0.0 0.0 0.0" size="159 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="wall"/>
+		<voxbox id_="1887355392" name="wall" pos="-7.9 0.0 3.6" rot="0.0 0.0 0.0" size="159 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="wall"/>
+		<compound id_="1579841664" name="wall" pos="-8.2 -0.1 0.0" rot="0.0 0.0 0.0">
+			<voxbox id_="433088320" pos="-0.3 0.1 4.2" rot="0.0 90.0 0.0" size="6 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="corner"/>
+			<voxbox id_="848022080" pos="0.3 0.1 -3.3" rot="0.0 -90.0 0.0" size="69 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="wall"/>
+			<voxbox id_="943317248" pos="-0.3 0.1 -3.9" rot="0.0 0.0 0.0" size="6 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="corner"/>
+		</compound>
+		<compound id_="1589738240" name="wall" pos="8.3 -0.1 0.0" rot="0.0 0.0 0.0">
+			<voxbox id_="250297264" pos="0.2 0.1 -3.9" rot="0.0 -90.0 0.0" size="6 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="corner"/>
+			<voxbox id_="1943719808" pos="0.2 0.1 -3.3" rot="0.0 -90.0 0.0" size="69 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="wall"/>
+			<voxbox id_="45157060" pos="0.2 0.1 4.2" rot="0.0 180.0 0.0" size="6 53 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="corner"/>
+		</compound>
+		<compound id_="57544120" name="inner wall" pos="-3.0 0.0 -3.3">
+			<voxbox id_="114957160" pos="0.3 0.0 3.59999" rot="0.0 90.0 0.0" size="36 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+			<voxbox id_="56626560" pos="0.1 0.0 3.80002" rot="0.0 90.0 0.0" size="38 53 2" brush="MOD/spawn/freerealestate/brush/wood_framework.vox" object="framework"/>
+			<voxbox id_="1919076736" pos="0.00001 0.0 3.9" rot="0.0 90.0 0.0" size="39 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+		</compound>
+		<compound id_="1288975232" name="inner wall" pos="0.6 0.0 -3.30004">
+			<voxbox id_="126754360" pos="0.3 0.0 3.89999" rot="0.0 90.0 0.0" size="39 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+			<voxbox id_="2011029376" pos="0.1 0.0 3.80002" rot="0.0 90.0 0.0" size="38 53 2" brush="MOD/spawn/freerealestate/brush/wood_framework.vox" object="framework"/>
+			<voxbox id_="157296000" pos="0.00001 0.0 3.5" rot="0.0 90.0 0.0" size="35 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+		</compound>
+		<compound id_="565610176" name="inner wall" pos="0.89999 0.0 0.19996" rot="0.0 -90.0 0.0">
+			<voxbox id_="1434473984" pos="0.3 0.0 3.89999" rot="0.0 90.0 0.0" size="39 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+			<voxbox id_="1500997120" pos="0.1 0.0 3.6" rot="0.0 90.0 0.0" size="34 53 2" brush="MOD/spawn/freerealestate/brush/wood_framework.vox" object="framework" offset="2"/>
+			<voxbox id_="1854585344" pos="0.0 0.0 3.5" rot="0.0 90.0 0.0" size="33 53 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="plaster"/>
+		</compound>
+		<group id_="261897840" name="Windows and doors" pos="0.0 0.0 3.8">
+			<compound id_="32573380" pos="-5.4 0.0 0.0" rot="0.0 0.0 0.0">
+				<voxbox id_="116595664" name="hole" pos="-2.0 0.0 -0.2" size="40 40 6" brush="hole">
+					<voxbox id_="232273760" name="glass" pos="0.1 0.1 0.39997" rot="0.0 0.0 0.0" size="38 38 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="glass1"/>
+					<voxbox id_="2040194688" name="metal frame" pos="-0.0 0.0 0.0" rot="0.0 0.0 0.0" size="40 1 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="779532736" name="metal frame" pos="0.0 3.9 0.0" rot="0.0 0.0 0.0" size="40 1 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="2066607232" name="metal frame" pos="0.0 0.1 0.0" rot="0.0 0.0 0.0" size="1 38 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="404119648" name="metal frame" pos="3.9 0.1 0.0" rot="0.0 0.0 0.0" size="1 38 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+				</voxbox>
+			</compound>
+			<compound id_="694658432" pos="5.4 0.0 0.0" rot="0.0 0.0 0.0">
+				<voxbox id_="699770560" name="hole" pos="-2.0 0.0 -0.2" size="40 40 6" brush="hole">
+					<voxbox id_="113122040" name="glass" pos="0.1 0.1 0.39997" rot="0.0 0.0 0.0" size="38 38 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="glass1"/>
+					<voxbox id_="632919808" name="metal frame" pos="-0.0 0.0 0.0" rot="0.0 0.0 0.0" size="40 1 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="1991695104" name="metal frame" pos="0.0 3.9 0.0" rot="0.0 0.0 0.0" size="40 1 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="1231693184" name="metal frame" pos="0.0 0.1 0.0" rot="0.0 0.0 0.0" size="1 38 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="1375946752" name="metal frame" pos="3.9 0.1 0.0" rot="0.0 0.0 0.0" size="1 38 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+				</voxbox>
+			</compound>
+			<group id_="17171480" name="Glass door" pos="0.0 0.0 0.1" rot="0.0 0.0 0.0" prop0="rotstrength=0.025" prop1="rotspring=0.1">
+				<voxbox id_="2026038016" name="glass door hole" pos="-1.6 0.0 -0.3" rot="0.0 0.0 0.0" size="33 30 6" brush="hole"/>
+				<compound id_="632133312" pos="0.6 0.0 0.0">
+					<voxbox id_="994110720" name="metal frame" pos="-2.2 0.0 -0.3" rot="0.0 0.0 0.0" size="33 1 7" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="1534684672" name="metal frame" pos="-2.1 2.9 -0.3" rot="0.0 0.0 0.0" size="31 1 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="1982519424" name="metal frame" pos="-2.2 0.1 -0.3" rot="0.0 0.0 0.0" size="1 29 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+					<voxbox id_="427189728" name="metal frame" pos="1.0 0.1 -0.3" rot="0.0 0.0 0.0" size="1 29 6" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+				</compound>
+				<body id_="1696633984" pos="-1.575 0.0 -0.3" dynamic="true">
+					<compound id_="1919338880" pos="0.9 0.1 0.4">
+						<voxbox id_="117382144" name="metal frame" pos="-0.8 0.0 -0.1" rot="0.0 0.0 0.0" size="15 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="744599936" name="metal frame" pos="-0.8 2.7 -0.1" rot="0.0 0.0 0.0" size="15 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="157296000" name="metal frame" pos="-0.8 0.1 -0.1" rot="0.0 0.0 0.0" size="1 26 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="1725995904" name="metal frame" pos="0.6 0.1 -0.1" rot="0.0 0.0 0.0" size="1 26 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="488338528" name="glass" pos="-0.7 0.1 -0.00003" rot="0.0 0.0 0.0" size="13 26 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="glass1"/>
+						<voxbox id_="1236280960" name="metal" pos="0.3 1.0 -0.1" rot="0.0 0.0 0.0" size="1 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="light_metal"/>
+						<voxbox id_="1674415872" name="metal" pos="0.2 0.8 0.2" rot="0.0 0.0 0.0" size="3 5 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="dark_metal"/>
+						<voxbox id_="1289368448" name="metal" pos="0.2 0.8 -0.2" rot="0.0 0.0 0.0" size="3 5 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="dark_metal"/>
+					</compound>
+					<joint id_="1723243264" pos="0.1 2.4 0.6" rot="90.0 0.0 0.0" type="hinge" size="0.125" limits="0 150"/>
+					<joint id_="1754178048" pos="0.1 0.4 0.6" rot="90.0 0.0 0.0" type="hinge" size="0.125" limits="0 150"/>
+				</body>
+				<body id_="1231824256" pos="-0.125 0.0 -0.3" dynamic="true">
+					<compound id_="898291264" pos="0.8 0.1 0.4">
+						<voxbox id_="1060371648" name="metal frame" pos="-0.6 0.0 -0.1" rot="0.0 0.0 0.0" size="15 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="161031776" name="metal frame" pos="-0.6 2.7 -0.1" rot="0.0 0.0 0.0" size="15 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="1073217472" name="metal frame" pos="-0.6 0.1 -0.1" rot="0.0 0.0 0.0" size="1 26 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="957867072" name="metal frame" pos="0.8 0.1 -0.1" rot="0.0 0.0 0.0" size="1 26 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="black_metal"/>
+						<voxbox id_="574589184" name="glass" pos="-0.5 0.1 -0.00003" rot="0.0 0.0 0.0" size="13 26 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="glass1"/>
+						<voxbox id_="765703808" name="metal" pos="-0.3 1.0 -0.1" rot="0.0 0.0 0.0" size="1 1 3" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="light_metal"/>
+						<voxbox id_="697345600" name="metal" pos="-0.4 0.8 0.2" rot="0.0 0.0 0.0" size="3 5 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="dark_metal"/>
+						<voxbox id_="1131220352" name="metal" pos="-0.4 0.8 -0.2" rot="0.0 0.0 0.0" size="3 5 1" brush="MOD/spawn/freerealestate/brush/plastered_cinderblock.vox" object="dark_metal"/>
+					</compound>
+					<joint id_="1428051072" pos="1.7 2.4 0.6" rot="-90.0 180.0 0.0" type="hinge" size="0.125" limits="0 150"/>
+					<joint id_="699442880" pos="1.7 0.4 0.6" rot="-90.0 180.0 0.0" type="hinge" size="0.125" limits="0 150"/>
+				</body>
+			</group>
+			<vox id_="1488085760" name="door" pos="-0.2 0.0 -3.4" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/wood_small_white.vox" object="doorframe">
+				<vox id_="678076864" pos="0.0 0.1 0.1" prop="true" file="MOD/spawn/freerealestate/vox/wood_small_white.vox" object="doorblade">
+					<joint id_="977004800" pos="0.5 0.3 0.0" rot="-90.0 0.0 0.0" type="hinge" rotstrength="0.005" rotspring="0" limits="0 130"/>
+					<joint id_="2085024000" pos="0.5 1.6 0.0" rot="-90.0 0.0 0.0" type="hinge" rotstrength="0.005" rotspring="0" limits="0 130"/>
+				</vox>
+			</vox>
+		</group>
+	</group>
+	<group id_="543392128" name="Fundament" pos="0.07 -0.3 -0.76">
+		<compound id_="132259720" name="marble floor" pos="0.0 0.3 -0.2">
+			<voxbox id_="884069056" name="concrete_light" pos="-8.6 0.0 -4.0" rot="0.0 0.0 0.0" size="170 2 81" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="concrete_light"/>
+			<voxbox id_="624137408" name="marble1" pos="-8.0 0.1 -3.4" rot="0.0 0.0 0.0" size="158 1 69" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="marble1"/>
+		</compound>
+	</group>
+	<group id_="873320512" name="Interior" pos="-8.53 -0.3 -4.86">
+		<group id_="2050615552" name="Roof lamps" pos="8.6 3.8 4.1">
+			<instance id_="2102064384" pos="-5.45 0.7 0.1" rot="-180.0 -180.0 0.0" file="MOD/spawn/freerealestate/prefab/designer_lamp.xml"/>
+			<instance id_="791723200" pos="5.55 0.7 0.10001" rot="180.0 180.0 0.0" file="MOD/spawn/freerealestate/prefab/designer_lamp.xml"/>
+		</group>
+		<group id_="1147801984" name="Living room" pos="3.0 0.4 3.1">
+			<vox id_="1456298752" pos="-1.51 0.1 1.87" rot="0.0 35.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="lamp_3">
+				<light id_="1868348800" tags="night" pos="0.45 2.55 -0.05" unshadowed="0.75"/>
+			</vox>
+			<vox id_="1288712960" pos="0.0 0.1 -0.1" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="table_1"/>
+			<vox id_="1936051584" pos="-0.35029 0.1 -0.55303" rot="0.0 -180.0 0.0" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="couch_1"/>
+			<vox id_="945480064" pos="2.4 0.1 -0.49998" rot="0.0 90.0 0.0" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="tv_wall"/>
+		</group>
+		<group id_="2077814656" name="Kitchen" pos="12.9 0.4 2.7">
+			<vox id_="1707448064" pos="-0.1 2.5 -1.6" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/kitchen_appartment.vox" object="fan"/>
+			<vox id_="894752064" pos="-1.4 0.1 -1.6" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/kitchen_appartment.vox" object="counter_sink"/>
+			<vox id_="422208672" pos="1.3 0.1 -1.6" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/kitchen_appartment.vox" object="counter"/>
+			<vox id_="675651840" pos="-2.9 0.1 -1.59999" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/kitchen_appartment.vox" object="fridge"/>
+			<vox id_="1955713536" pos="-0.1 0.1 -1.60001" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/kitchen_appartment.vox" object="stove"/>
+			<vox id_="1720359424" pos="2.8 0.1 -1.8" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="large_display_unit"/>
+			<vox id_="17040400" pos="-3.1 0.1 0.8" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="large_sideboard"/>
+			<vox id_="1403866752" pos="-0.1 0.1 1.0" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="1223304064" pos="0.8 0.1 1.0" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="498693856" pos="0.4 0.1 1.5" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="large_table"/>
+			<vox id_="388324512" pos="2.4 0.1 1.5" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="large_table"/>
+			<vox id_="1123879936" pos="0.9 0.1 1.9" rot="0.0 180.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="940826688" pos="-0.0 0.1 1.9" rot="0.0 180.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="1814540416" pos="2.9 0.1 1.9" rot="0.0 180.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="1582856576" pos="2.0 0.1 1.9" rot="0.0 180.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="1127615744" pos="1.9 0.1 1.0" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+			<vox id_="1849014528" pos="2.8 0.1 1.0" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/diningroom_bright.vox" object="chair_2"/>
+		</group>
+		<group id_="1978587008" name="Bathroom" pos="7.4 0.4 2.3">
+			<vox id_="1099892224" pos="1.3 0.1 -0.69999" rot="0.0 -90.0 0.0" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="sink_large"/>
+			<vox id_="1819193728" pos="-0.71194 0.1 1.02635" rot="0.0 -180.0 0.0" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="shower_cabin"/>
+			<vox id_="286147648" pos="0.04 0.35 1.28" rot="0.0 -180.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="shower_curtain">
+				<joint id_="861785472" pos="0.0 3.23 -0.3" size="0.125" rotstrength="0" rotspring="0"/>
+				<joint id_="1544122368" pos="0.0 3.23 0.1" size="0.125" rotstrength="0" rotspring="0"/>
+			</vox>
+			<vox id_="850250432" pos="-1.06 0.35 0.28" rot="0.0 -90.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="shower_curtain">
+				<joint id_="2122512896" pos="0.0 3.23 -0.3" size="0.125" rotstrength="0" rotspring="0"/>
+				<joint id_="649042624" pos="0.0 3.23 0.1" size="0.125" rotstrength="0" rotspring="0"/>
+			</vox>
+			<vox id_="1515678080" pos="-1.1 0.1 -1.00001" rot="0.0 90.0 0.0" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="toilet"/>
+			<vox id_="222049520" pos="-0.4 0.5 -1.5" rot="0.0 0.0 0.0" file="MOD/spawn/freerealestate/vox/restroom_light.vox" object="toiletpaper"/>
+			<vox id_="1344028800" pos="0.15 5.0 -0.8" rot="180.0 180.0 0.0" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="lamp_1">
+				<light id_="1809035136" tags="night" pos="0.05 0.35 0.05" scale="2" unshadowed="0.75"/>
+			</vox>
+		</group>
+	</group>
+	<group id_="2090726016" name="Roof" pos="0.0 5.1 0.0">
+		<compound id_="246037152" pos="-8.5 0.4 -4.9">
+			<voxbox id_="509966752" name="planks" pos="-0.3 0.0 -0.3" rot="0.0 0.0 0.0" size="176 2 105" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_floor_rough" offset="0 1"/>
+			<voxbox id_="1685426688" name="beam" pos="16.1 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="498366144" name="beam" pos="13.9 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="1310603392" name="beam" pos="11.7 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="1830335616" name="beam" pos="9.5 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="1904199168" name="beam" pos="7.3 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="712681984" name="beam" pos="5.1 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="778156416" name="beam" pos="2.9 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+			<voxbox id_="1372145408" name="beam" pos="0.6 0.0 0.6" rot="-180.0 -90.0 0.0" size="94 4 4" brush="MOD/spawn/freerealestate/brush/fundaments.vox" object="wooden_beam_4x4"/>
+		</compound>
+	</group>
+</body>

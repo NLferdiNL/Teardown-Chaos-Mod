@@ -1,0 +1,12 @@
+<prefab version="0.5.3">
+	<group id_="1035925248" open_="true" name="instance=MOD/spawn/freerealestate/prefab/designer_lamp.xml" pos="7.55 4.5 2.80001" rot="-180.0 -180.0 0.0">
+		<vox id_="1344028800" open_="true" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0" prop="true" file="MOD/spawn/freerealestate/vox/livingroom_modern.vox" object="lamp_1">
+			<light id_="1809035136" tags="night" pos="0.05 0.35 0.05" scale="2" unshadowed="0.75"/>
+			<rope id_="623285376" open_="true" pos="0.05 0.0 -0.05" slack="-0.2">
+				<location id_="1173755904" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="1721145984" pos="0.0 -0.9 -0.0" rot="0.0 0.0 0.0"/>
+			</rope>
+		</vox>
+	</group>
+</prefab>
+

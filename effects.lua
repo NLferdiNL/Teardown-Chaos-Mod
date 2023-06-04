@@ -5782,8 +5782,6 @@ chaosEffects = {
 						SpawnParticle(VecAdd(entityPos, Vec(0, 1, 0)), Vec(0, -5, 0), 1)
 					end
 					
-					DebugWatch("dist", VecDist(entityPos, GetPlayerTransform().pos))
-					
 					if VecDist(entityPos, GetPlayerTransform().pos) <= 2 and vars.effectVariables.recentThrowTimer <= 0 then
 						local currentVehicleHandle = GetPlayerVehicle()
 						local velocity = rndVec(30)
@@ -5871,6 +5869,75 @@ chaosEffects = {
 				SetEnvironmentProperty("fogParams", vars.effectVariables.fogParams[1], vars.effectVariables.fogParams[2], vars.effectVariables.fogParams[3], vars.effectVariables.fogParams[4])
 			end,
 		},
+		
+		freeRealEstate = {
+            name = "Free Real Estate",
+            effectDuration = 0,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {{isLoop = false, soundPath = "MOD/sfx/freerealestate.ogg"}},
+            effectSprites = {},
+            effectVariables = { house = nil},
+            onEffectStart = function(vars)
+				local playerTransform = GetPlayerTransform()
+				local rayOrigin = GetPlayerTransform().pos
+				
+				PlaySound(vars.effectSFX[1], playerTransform.pos, 1)
+				
+				local dist = 20
+				
+				rayOrigin[2] = rayOrigin[2] + 50
+
+				rayOrigin[1] = rayOrigin[1] + math.random(-dist, dist)
+				rayOrigin[3] = rayOrigin[3] + math.random(-dist, dist)
+				
+				--[[local rayDirection = Vec(0, -1, 0)
+				
+				local hit, hitPoint = raycast(rayOrigin, rayDirection, 200)
+				
+				if (hit and math.random(0, 4) >= 3) and false then
+					rayOrigin = hitPoint
+				end]]--
+				
+				local houseXml = "<voxbox prop='true' size='46 41 41' brush='MOD/spawn/freerealestate/house.vox'/>"
+				
+				if math.random(1, 2) == 2 or true then
+					houseXml = "MOD/spawn/freerealestate/house2.xml"
+				end
+				
+				local house = Spawn(houseXml, Transform(rayOrigin, playerTransform.rot), false, true)[1]
+				
+				SetBodyVelocity(house, Vec(0, -50, 0))
+            end,
+            onEffectTick = function(vars) end,
+            onEffectEnd = function(vars) end,
+        },
+		
+		herosJourney = {
+            name = "Hero's Journey",
+            effectDuration = 15,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {{isLoop = false, soundPath = "MOD/sfx/freerealestate.ogg"}},
+            effectSprites = {},
+            effectVariables = { points = {} },
+            onEffectStart = function(vars) 
+				vars.effectVariables.points[1] = GetPlayerTransform().pos
+			end,
+            onEffectTick = function(vars) 
+				if GetTime() % 0.2 < 0.1 then
+					vars.effectVariables.points[#vars.effectVariables.points + 1] = GetPlayerTransform().pos
+				end
+				
+				for i = 1, #vars.effectVariables.points - 1 do
+					local pointA = vars.effectVariables.points[i]
+					local pointB = vars.effectVariables.points[i + 1]
+					
+					DebugLine(pointA, pointB, 1, 0, 0, 1)
+				end
+			end,
+            onEffectEnd = function(vars) end,
+        },
 	},	-- EFFECTS TABLE
 }
 
