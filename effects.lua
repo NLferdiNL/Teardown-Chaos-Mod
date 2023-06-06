@@ -5703,7 +5703,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/notalone/ambient0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/chase0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/egg.ogg"}},
 			effectSprites = {"MOD/sprites/notalone/theEntity.png"},
-			effectVariables = { entityPos = Vec(), entityVisible = false, recentStateChangeTimer = 0, recentSoundTimer = 0, recentThrowTimer = 0},
+			effectVariables = { entityPos = Vec(), entityVisible = false, chase = true, recentStateChangeTimer = 0, recentSoundTimer = 0, recentThrowTimer = 0, randomEyes = {}, recentEyesTimer = 0},
 			onEffectStart = function(vars) 
 				local playerTransform = GetPlayerCameraTransform()
 				
@@ -5711,6 +5711,19 @@ chaosEffects = {
 				vars.effectVariables.entityPos = VecAdd(playerTransform.pos, rndDir)
 			end,
 			onEffectTick = function(vars) 
+				--function ParticleSetup()
+					ParticleReset()
+					ParticleTile(5)
+					ParticleCollide(0, 1)
+					ParticleType("smoke")
+					ParticleRadius(0.25, 0.5, "easein")
+					ParticleAlpha(0.5, 0, "easein")
+					ParticleDrag(0, 1)
+					ParticleEmissive(1, 0, "easeout")
+					ParticleRadius(0.1, 3, "easeout")
+					ParticleGravity(-5)
+				--end
+			
 				local playerCameraTransform = GetPlayerCameraTransform()
 			
 				local stalkSpeed = 5.0
@@ -5718,6 +5731,34 @@ chaosEffects = {
 				local walkSpeed = stalkSpeed
 				local entityPos = vars.effectVariables.entityPos
 				local entityVisible = vars.effectVariables.entityVisible
+				
+				if math.floor(GetTime()) % 10 == 0 and vars.effectVariables.recentEyesTimer <= 0 then
+					vars.effectVariables.recentEyesTimer = 3
+					if #vars.effectVariables.randomEyes > 0 then
+						vars.effectVariables.randomEyes = {}
+					else
+						for i = 1, math.random(10, 20) do
+							local rndDir = Vec(math.random(-25, 25), math.random(-25, 25), math.random(-25, 25))
+							vars.effectVariables.randomEyes[i] = rndDir--VecAdd(playerCameraTransform.pos, rndDir)
+						end
+					end
+				end
+				
+				if #vars.effectVariables.randomEyes > 0 then
+					for i = #vars.effectVariables.randomEyes, 1, -1 do
+						local currEyes = VecAdd(vars.effectVariables.randomEyes[i], playerCameraTransform.pos)
+						DrawSprite(vars.effectSprites[1], Transform(currEyes, QuatLookAt(currEyes, playerCameraTransform.pos)), 2, 2, 1, 0, 0, 1, false, false)
+						
+						--[[if VecDist(currEyes, playerCameraTransform.pos) < 5 then
+							ParticleColor(1, 0, 0)
+						
+							for j = 1, 5 do
+								SpawnParticle(VecAdd(currEyes, Vec(0, 1, 0)), Vec(0, -5, 0), 1)
+							end
+							table.remove(vars.effectVariables.randomEyes, i)
+						end]]--
+					end
+				end
 				
 				if math.floor(GetTime()) % 6 == 0 and vars.effectVariables.recentStateChangeTimer <= 0 then
 					if entityVisible then
@@ -5732,19 +5773,22 @@ chaosEffects = {
 					vars.effectVariables.recentStateChangeTimer = 3
 				
 					vars.effectVariables.entityVisible = not vars.effectVariables.entityVisible
+					
+					if math.random(1,4) == 4 then
+						vars.effectVariables.chase = false
+					else
+						vars.effectVariables.chase = true
+					end
+					
 					entityVisible = vars.effectVariables.entityVisible
 				end
 				
-				if vars.effectVariables.recentStateChangeTimer > 0 then
-					vars.effectVariables.recentStateChangeTimer = vars.effectVariables.recentStateChangeTimer - GetChaosTimeStep() * 2
-				end
+				local timers = { "recentStateChangeTimer", "recentSoundTimer", "recentThrowTimer", "recentEyesTimer" }
 				
-				if vars.effectVariables.recentSoundTimer > 0 then
-					vars.effectVariables.recentSoundTimer = vars.effectVariables.recentSoundTimer - GetChaosTimeStep() * 2
-				end
-				
-				if vars.effectVariables.recentThrowTimer > 0 then
-					vars.effectVariables.recentThrowTimer = vars.effectVariables.recentThrowTimer - GetChaosTimeStep() * 2
+				for i = 1, #timers do
+					if vars.effectVariables[timers[i]] > 0 then
+						vars.effectVariables[timers[i]] = vars.effectVariables[timers[i]] - GetChaosTimeStep() * 2
+					end
 				end
 				
 				if entityVisible then
@@ -5754,30 +5798,34 @@ chaosEffects = {
 				local entityDir = VecNormalize(VecSub(playerCameraTransform.pos, entityPos))
 				local entityMovedDist = VecScale(entityDir, walkSpeed * GetChaosTimeStep())
 				
-				vars.effectVariables.entityPos = VecAdd(vars.effectVariables.entityPos, entityMovedDist)
-				entityPos = vars.effectVariables.entityPos
+				if vars.effectVariables.chase then
+					vars.effectVariables.entityPos = VecAdd(vars.effectVariables.entityPos, entityMovedDist)
+					entityPos = vars.effectVariables.entityPos
+				end
 				
 				local soundPlayed = -1
 				
 				if entityVisible then -- Show itself, play aggro sounds.
-					soundPlayed = vars.effectSFX[1]
+					soundPlayed = vars.effectSFX[2]
 					
 					--for i = 1, 5 do
 						--DrawSprite(vars.effectSprites[1], Transform(entityPos, QuatLookAt(VecSub(entityPos, entityDir), playerCameraTransform.pos)), 2, 2, 1, 1, 0, 0.5, false, true)
 						DrawSprite(vars.effectSprites[1], Transform(entityPos, QuatLookAt(entityPos, playerCameraTransform.pos)), 2, 2, 1, 0, 0, 1, true, false)
 					--end
 					
-					ParticleReset()
 					ParticleColor(0, 0, 0)
-					ParticleTile(5)
-					ParticleCollide(0, 1)
-					ParticleType("smoke")
-					ParticleRadius(0.25, 0.5, "easein")
-					ParticleAlpha(0.5, 0, "easein")
-					ParticleDrag(0, 1)
-					ParticleEmissive(1, 0, "easeout")
-					ParticleRadius(0.1, 3, "easeout")
-					ParticleGravity(-5)
+					QueryRequire("dynamic")
+					local closeByObjects = QueryAabbBodies(VecAdd(entityPos, Vec(-4, -4, -4)), VecAdd(entityPos, Vec(4, 4, 4)))
+					
+					for i = 1, #closeByObjects do
+						local currObj = closeByObjects[i]
+						local currObjTransform = GetBodyTransform(currObj)
+						local dirToObj = VecNormalize(VecSub(currObjTransform.pos, entityPos))
+						
+						SetBodyVelocity(currObj, VecScale(dirToObj, 1))
+					end
+					
+					--ParticleSetup()
 					for i = 1, 10 do
 						SpawnParticle(VecAdd(entityPos, Vec(0, 1, 0)), Vec(0, -5, 0), 1)
 					end
@@ -5795,12 +5843,13 @@ chaosEffects = {
 							local currentVehicleBody = GetVehicleBody(currentVehicleHandle)
 
 							SetBodyVelocity(currentVehicleBody, velocity)
+							SetBodyAngularVelocity(currentVehicleBody, velocity)
 						else
 							SetPlayerVelocity(velocity)
 						end
 					end
 				elseif not entityVisible then -- Play ambient sounds
-					soundPlayed = vars.effectSFX[2]
+					soundPlayed = vars.effectSFX[1]
 				end
 				
 				if soundPlayed > -1 and math.floor(GetTime()) % 7 == 0 and vars.effectVariables.recentSoundTimer <= 0 then
@@ -5901,7 +5950,7 @@ chaosEffects = {
 				
 				local houseXml = "<voxbox prop='true' size='46 41 41' brush='MOD/spawn/freerealestate/house.vox'/>"
 				
-				if math.random(1, 2) == 2 or true then
+				if math.random(1, 2) == 2 then
 					houseXml = "MOD/spawn/freerealestate/house2.xml"
 				end
 				
