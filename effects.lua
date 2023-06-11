@@ -4996,7 +4996,7 @@ chaosEffects = {
 				local greenValue = math.random(0, 100) / 100
 				local blueValue = math.random(0, 100) / 100
 				
-				local lightXML = "<voxbox size='2 2 2' prop='true' material='glass' tags='nocull'><light pos='0 0 0' type='sphere' color='" .. redValue ..  " " .. greenValue .. " " .. blueValue .. "' scale='1.00' unshadowed='0.05'/></voxbox>"
+				local lightXML = "<voxbox size='2 2 2' prop='true' material='glass' pbr='0 0 0 1' color='" .. redValue ..  " " .. greenValue .. " " .. blueValue .. "' tags='nocull'><light pos='0 0 0' type='sphere' color='" .. redValue ..  " " .. greenValue .. " " .. blueValue .. "' scale='1.00' unshadowed='0.05'/></voxbox>"
 				
 				local playerTransform = GetPlayerTransform()
 				
@@ -5703,12 +5703,14 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/notalone/ambient0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/chase0.ogg"}, {isLoop = false, soundPath = "MOD/sfx/notalone/egg.ogg"}},
 			effectSprites = {"MOD/sprites/notalone/theEntity.png"},
-			effectVariables = { entityPos = Vec(), entityVisible = false, chase = true, recentStateChangeTimer = 0, recentSoundTimer = 0, recentThrowTimer = 0, randomEyes = {}, recentEyesTimer = 0},
+			effectVariables = { entityPos = Vec(), entityVisible = false, chase = true, recentStateChangeTimer = 0, recentSoundTimer = 0, recentThrowTimer = 0, randomEyes = {}, recentEyesTimer = 0, extendCheck = false, nameBackup = ""},
 			onEffectStart = function(vars) 
 				local playerTransform = GetPlayerCameraTransform()
 				
 				local rndDir = Vec(math.random(-100, 100), 0, math.random(-100, 100))
 				vars.effectVariables.entityPos = VecAdd(playerTransform.pos, rndDir)
+				
+				vars.effectVariables.nameBackup = vars.name
 			end,
 			onEffectTick = function(vars) 
 				--function ParticleSetup()
@@ -5862,8 +5864,20 @@ chaosEffects = {
 					vars.effectVariables.recentSoundTimer = 3
 					PlaySound(soundPlayed, halfwayPoint, 5)
 				end
+				
+				if not vars.effectVariables.extendCheck and vars.effectLifetime > vars.effectDuration * 0.75 then 
+					vars.effectVariables.extendCheck = true
+					
+					if math.random(1,10) == 10 then
+						vars.hideTimer = true
+						vars.name = ""
+						vars.effectLifetime = vars.effectDuration / 2
+					end
+				end
 			end,
-			onEffectEnd = function(vars) end,
+			onEffectEnd = function(vars) 
+				vars.name = vars.effectVariables.nameBackup
+			end,
 		},
 		
 		extremeNightTime = {
@@ -5967,7 +5981,7 @@ chaosEffects = {
             effectDuration = 15,
             effectLifetime = 0,
             hideTimer = false,
-            effectSFX = {{isLoop = false, soundPath = "MOD/sfx/freerealestate.ogg"}},
+            effectSFX = {},
             effectSprites = {},
             effectVariables = { points = {} },
             onEffectStart = function(vars) 
@@ -5987,6 +6001,181 @@ chaosEffects = {
 			end,
             onEffectEnd = function(vars) end,
         },
+		
+		doomFov = {
+            name = "Doom FOV",
+            effectDuration = 40,
+            effectLifetime = 0,
+            hideTimer = false,
+            effectSFX = {},
+            effectSprites = {},
+            effectVariables = { points = {} },
+            onEffectStart = function(vars) end,
+            onEffectTick = function(vars) 
+				--local playerCameraTransform = GetPlayerCameraTransform()
+				--local toolBody = GetToolBody()
+				
+				if toolBody == 0 then
+					return
+				end
+				
+				local toolTransform = Transform()--GetBodyTransform(toolBody)
+				
+				local leftVec = Vec(-0.325, 0.125, 0)
+				
+				--DebugWatch("tool", GetString("game.player.tool"))
+				
+				if GetString("game.player.tool") == "rocket" then
+					leftVec[1] = -0.725
+				elseif GetString("game.player.tool") == "gun" then
+					leftVec[1] = -0.375
+				elseif GetString("game.player.tool") == "rifle" then
+					leftVec[1] = -0.225
+					leftVec[2] = -0.025
+				elseif GetString("game.player.tool") == "leafblower" then
+					leftVec[1] = -0.425
+				elseif GetString("game.player.tool") == "explosive" then
+					leftVec = Vec(0, 0.325, 0)
+				elseif GetString("game.player.tool") == "bomb" then
+					leftVec[2] = 0.05
+				end
+				
+				toolTransform.pos = VecAdd(toolTransform.pos, leftVec)
+				
+				SetToolTransform(toolTransform, 0.0)
+			end,
+			onEffectEnd = function(vars) end,
+        },
+		
+		nightVision = {
+			name = "Night Vision",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {"MOD/sprites/square.png"},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerPos = GetPlayerTransform().pos
+				--[[local range = 50
+
+				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
+				local maxPos = VecAdd(playerPos, Vec(range, range, range))
+				local shapeList = QueryAabbBodies(minPos, maxPos)
+				
+				for i = 1, #shapeList do
+					local shapeBody = shapeList[i]
+					
+					--DrawBodyOutline(shapeBody, 0, 1, 0, 1)
+					--DrawBodyHighlight(shapeBody, 1)
+				end]]--
+				
+				local playerCamera = GetPlayerCameraTransform()
+				
+				local localForwardPos = Vec(0, 0, -2)
+				local globalForwardPos = TransformToParentPoint(playerCamera, localForwardPos)
+				
+				local spriteRot = QuatLookAt(globalForwardPos, playerCamera.pos)
+				
+				DrawSprite(vars.effectSprites[1], Transform(globalForwardPos, spriteRot), 10, 10, 0, 1, 0, 0.05, false, false)
+				
+				PointLight(playerPos, 0, 1, 0, 10.0)
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		pixelRain = {
+			name = "Pixel Rain",
+			effectDuration = 25,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { timestep = 0, activeRainBodies = {}, destructive = false},
+			onEffectStart = function(vars) 
+				if math.random(0, 100) > 75 or true then	
+					vars.effectVariables.destructive = true
+					
+					vars.name = "Destructive " .. vars.name
+				end
+			end,
+			onEffectTick = function(vars) 
+				if vars.effectVariables.timestep < .1 then
+					vars.effectVariables.timestep = vars.effectVariables.timestep + GetChaosTimeStep()
+					return
+				end
+				
+				local dist = 50
+				
+				local rndA = 30
+				local rndB = 50
+				
+				local redValue = 0.25 --math.random(0, 100) / 100
+				local greenValue = 0.25 --math.random(0, 100) / 100
+				local blueValue = 0.50 --math.random(0, 100) / 100
+				
+				vars.effectVariables.timestep = 0
+				
+				local pbr = "0 0 0 0"
+				
+				if vars.effectVariables.destructive then
+					redValue = 1
+					blueValue = 0.0
+					greenValue = 0.0
+					
+					rndA = 10
+					rndB = 20
+					pbr = "0 0 0 1"
+				end
+				
+				for i = 1, math.random(rndA, rndB) do
+					local rndPos = Vec()
+					
+					rndPos[2] = rndPos[2] + 50
+
+					rndPos[1] = rndPos[1] + math.random(-dist * 100, dist * 100) / 100
+					rndPos[3] = rndPos[3] + math.random(-dist * 100, dist * 100) / 100
+					
+					local rainXML = "<voxbox size='1 1 1' prop='true' tags='nocull unbreakable' pbr='" .. pbr .. "' collide='true' color='" .. redValue ..  " " .. greenValue .. " " .. blueValue .. "'></voxbox>"
+					
+					local playerTransform = GetPlayerTransform()
+					
+					local rainTransform = Transform(VecAdd(playerTransform.pos, rndPos))
+					
+					local rainBody = Spawn(rainXML, rainTransform, true, false)[1]
+					
+					SetBodyVelocity(rainBody, Vec(0, -50, 0))
+					
+					vars.effectVariables.activeRainBodies[#vars.effectVariables.activeRainBodies + 1] = rainBody
+				end
+				
+				for i = #vars.effectVariables.activeRainBodies, 1, -1 do
+					local rainPixel = vars.effectVariables.activeRainBodies[i]
+					local rainPixelPos = GetBodyTransform(rainPixel).pos
+					
+					if not IsBodyActive(rainPixel) then
+						Delete(rainPixel)
+						table.remove(vars.effectVariables.activeRainBodies, i)
+					elseif vars.effectVariables.destructive then
+						QueryRejectBody(rainPixel)
+						local closestHit, closestPoint = QueryClosestPoint(rainPixelPos, 0.5)
+						
+						if closestHit then
+							MakeHole(closestPoint, 0.3, 0.3, 0.3, true)
+						end
+					end
+				end
+			end,
+			onEffectEnd = function(vars) 
+				for i = #vars.effectVariables.activeRainBodies, 1, -1 do
+					local rainPixel = vars.effectVariables.activeRainBodies[i]
+					
+					Delete(rainPixel)
+					table.remove(vars.effectVariables.activeRainBodies, i)
+				end
+			end,
+		},
 	},	-- EFFECTS TABLE
 }
 

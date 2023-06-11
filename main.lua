@@ -27,6 +27,8 @@ function init()
 	debugInit()
 	
 	UpdateQuickloadPatch()
+	
+	--DebugPrint(#chaosEffects.effectKeys)
 end
 
 function chaosUnavailable()
@@ -117,7 +119,7 @@ function tick(dt)
 		chaosEffects.activeEffects = {}
 
 		local warningEffect = getCopyOfEffect("nothing")
-		warningEffect.name = "An error occurred while loading\nthe effects from a quick load.\nPlease restart the level to\nkeep using Chaos mod."
+		warningEffect.name = "An error occurred while loading\nthe effects from a quick load.\nPlease restart the level to\nkeep using the Chaos mod."
 		warningEffect.onEffectStart = function() end
 		warningEffect.onEffectTick = function() end
 		warningEffect.onEffectEnd = function() end
