@@ -8,10 +8,14 @@ Or if you want to be working on the latest version, make a clone of this reposit
 Make sure to clone it into your local mods folder so you can test it without any hassle.
 
 That folder can be found here: %USERPROFILE%\Documents\Teardown\mods\
-This is where the game copies mods too aswell.
+This is where the game copies mods to aswell.
 
 The documentation about this mod can be found here:
 https://github.com/NLferdiNL/Teardown-Chaos-Mod/wiki
+
+# Twitch Integration
+
+You can find the repository for that [here](https://github.com/NLferdiNL/Teardown-Chaos-Mod).
 
 # About
 This mod started as an experiment for myself but quickly turned into something functional.

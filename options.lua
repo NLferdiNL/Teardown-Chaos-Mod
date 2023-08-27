@@ -5,17 +5,19 @@
 local sortedEffectList = {}
 local menuScrollPosition = 0
 local listScreenMaxScroll = 0
+local scrollOptionsSize = 300
 
 function init()
 	saveFileInit()
 
 	sortedEffectList = SortEffectsTable()
     
-    listScreenMaxScroll = #sortedEffectList / 4 * 20 + 10
+    listScreenMaxScroll = #sortedEffectList / 4 * 20 + scrollOptionsSize
 end
 
 function draw()
 	local textBox01, newBox01 = textboxClass_getTextBox(1)
+	local textBox02, newBox02 = textboxClass_getTextBox(2)
 
 	--[[local mX, mY = UiGetMousePos()
 	UiButtonImageBox("ui/common/box-solid-6.png", 6, 6)
@@ -48,7 +50,9 @@ function draw()
 
 		if UiTextButton("Reset to default", 200, 50) then
 			textBox01.value = 10 .. ""
-			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled", turtlemode = "disabled"}
+			chaosEffects.disabledEffects = {fakeDeleteVehicle = "disabled", turtlemode = "disabled", unbreakableEverything = "disabled", allVehiclesInvulnerable = "disabled"}
+			twitchIntegration = false
+			textBox02.value = 1 .. ""
 		end
 
 		UiTranslate(0, 60)
@@ -57,6 +61,8 @@ function draw()
 			local saveData = SerializeTable(chaosEffects.disabledEffects)
 			SetString(moddataPrefix .. "DisabledEffects", saveData)
 			SetInt(moddataPrefix .. "ChaosTimer", tonumber(textBox01.value))
+			SetBool(moddataPrefix .. "TwitchIntegration", twitchIntegration)
+			SetFloat(moddataPrefix .. "TwitchBalancing", tonumber(textBox02.value))
 			Menu()
 		end
 
@@ -82,8 +88,8 @@ function draw()
 		UiFont("regular.ttf", 26)
 
 		UiTranslate(0, 50)
-		--TODO: Remove this in a future update
-		UiText("You can scroll this menu now!")
+		
+		UiText("Use your mousewheel to scroll.")
 
 		UiTranslate(0, 50)
 
@@ -101,7 +107,44 @@ function draw()
 		UiTranslate(0, 35)
 
 		UiText("How long between each effect?")
+		
+		UiTranslate(0, 50)
+		
+		local twitchButtonText = "Disabled"
+		
+		if twitchIntegration then
+			twitchButtonText = "Enabled"
+		end
+		
+		UiButtonImageBox("ui/common/box-outline-6.png", 6, 6, 1, 1, 1, 1)
+		
+		if UiTextButton("Twitch Integration: " .. twitchButtonText, 400, 40) then
+			twitchIntegration = not twitchIntegration
+		end
+		
+		UiTranslate(0, 50)
+
+		UiText("Keep in mind you also need to run the external program for this to work.")
+		
+		UiTranslate(0, 75)
+		
+		if newBox02 then
+			textBox02.name = "Effect multiplier"
+			textBox02.value = twitchBalancing .. ""
+			textBox02.numbersOnly = true
+			textBox02.limitsActive = true
+			textBox02.numberMin = 0.5
+			textBox02.numberMax = 1000
+		end
+
+		textboxClass_render(textBox02)
+		
+		UiTranslate(0, 70)
+
+		UiText("Use this to multiply the length on effects by that amount. This pairs well with doubling the chaos time for Twitch streaming.")
 	UiPop()
+	
+	UiTranslate(0, 270)
 
 	UiPush()
 		UiWordWrap(400)
@@ -142,6 +185,7 @@ function draw()
 				else
 					UiButtonImageBox("ui/common/box-outline-6.png", 6, 6, 0, 1, 0, 1)
 				end
+				
 				UiPush()
 					local textWidth, textHeight = UiGetTextSize(chaosEffects.effects[value].name)
 					local fontSize = 26

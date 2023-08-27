@@ -13,6 +13,8 @@ timerPaused = false
 chaosPaused = false
 hasTheGameReloaded = false
 chaosTimerColor = { r = 0.25, g = 0.25, b = 1.0 }
+twitchIntegration = false
+twitchProportionalVoting = false
 
 -- Inside the init() these changes don't get backed up.
 -- Here they do. Allowing quickloading to be available.
@@ -23,12 +25,25 @@ loadChaosEffectData()
 
 UpdateQuickloadPatch()
 
+twitchVotesUpdateInterval = 1.0
+currentTwitchVotesUpdateInterval = twitchVotesUpdateInterval
+twitchCountedVotes = {}
+twitchEffects = {}
+twitchVoteStep = 1
+
 function init()
 	debugInit()
 	
 	UpdateQuickloadPatch()
 	
 	--DebugPrint(#chaosEffects.effectKeys)
+	
+	if twitchIntegration then
+		SetInt(moddataPrefix .. "TwitchVoteStep", 1)
+	
+		twitchCountedVotes = {0, 0, 0, 0, 0}
+		renewTwitchVaribles()
+	end
 end
 
 function chaosUnavailable()
@@ -39,7 +54,8 @@ function getCopyOfEffect(key)
 	return deepcopy(chaosEffects.effects[key])
 end
 
-function getRandomEffect()
+function getRandomEffect(instance)
+	instance = instance or true
 	local key = testThisEffect -- Debug effect, if this is empty replaced by RNG.
 
 	if #chaosEffects.effectKeys <= 0 then
@@ -57,6 +73,10 @@ function getRandomEffect()
 
 	lastEffectKey = key
 
+	if not instance then
+		return key
+	end
+
 	local effectInstance = getCopyOfEffect(key)
 
 	return effectInstance
@@ -70,6 +90,48 @@ end
 
 function triggerChaos()
 	triggerEffect(getRandomEffect())
+end
+
+function triggerTwitchChaos()
+	local selectedEffect = ""
+	
+	if twitchProportionalVoting and totalVotes > 0 then
+		local totalVotes = twitchCountedVotes[5]
+		
+		local drawnNumber = math.random(1, totalVotes)
+		
+		local firstWeight = twitchCountedVotes[1] / totalVotes
+		local secondWeight = twitchCountedVotes[2] / totalVotes + firstWeight
+		local thirdWeight = twitchCountedVotes[3] / totalVotes + secondWeight
+		--local fourthWeight = twitchCountedVotes[4] / totalVotes + thirdWeight
+		
+		if drawnNumber < firstWeight then
+			selectedEffect = twitchEffects[1]
+		elseif drawnNumber > firstWeight and drawnNumber < secondWeight then
+			selectedEffect = twitchEffects[2]
+		elseif drawnNumber > secondWeight and drawnNumber < thirdWeight then
+			selectedEffect = twitchEffects[3]
+		elseif drawnNumber > thirdWeight then
+			selectedEffect = twitchEffects[4]
+		end
+	else
+		local highest = 0
+		local highestIndex = 1
+		for i = 1, 4 do
+			if twitchCountedVotes[i] > highest then
+				highest = twitchCountedVotes[i]
+				highestIndex = i
+			end
+		end
+		
+		selectedEffect = twitchEffects[highestIndex]
+	end
+	
+	local copyOfEffect = deepcopy(selectedEffect)
+	
+	copyOfEffect.effectDuration = copyOfEffect.effectDuration * twitchBalancing
+	
+	triggerEffect(copyOfEffect)
 end
 
 function removeChaosLogOverflow()
@@ -128,6 +190,10 @@ function tick(dt)
 		currentTime = chaosTimer
 		return
 	end
+	
+	if twitchIntegration then
+		twitchTick()
+	end
 
 	debugTick()
 
@@ -140,7 +206,21 @@ function tick(dt)
 
 		if currentTime > chaosTimer then
 			currentTime = 0
-			triggerChaos()
+			if twitchIntegration then
+				triggerTwitchChaos()
+				
+				renewTwitchVaribles()
+				
+				if twitchVoteStep == 1 then
+					SetInt(moddataPrefix .. "TwitchVoteStep", 2)
+					twitchVoteStep = 2
+				else
+					SetInt(moddataPrefix .. "TwitchVoteStep", 1)
+					twitchVoteStep = 1
+				end
+			else
+				triggerChaos()
+			end
 			removeChaosLogOverflow()
 		end
 	end
@@ -176,6 +256,55 @@ function drawTimer()
 		UiTranslate(UiCenter() * currentTimePercenage, 0)
 		UiRect(UiWidth() * currentTimePercenage, UiHeight() * 0.05)
 	UiPop()
+end
+
+function drawTwitchEffectVotes()
+	UiPush()
+	UiColor(1, 1, 1)
+	UiTranslate(UiWidth() * 0.05, UiHeight() * 0.1)
+	UiAlign("left middle")
+	UiTextShadow(0, 0, 0, 0.5, 2.0)
+	UiFont("regular.ttf", 26)
+	
+	local totalVotes = twitchCountedVotes[5]
+	local barSizeX = 400
+	local barSizeY = 30
+	
+	for key, value in ipairs(twitchEffects) do
+		local votePercentage = 0
+		
+		if totalVotes == nil then
+			updateTwitchVotes()
+		end
+		
+		if totalVotes > 0 then
+			votePercentage = (100 / totalVotes * twitchCountedVotes[key] / 100)
+		end
+
+		UiColor(0.2, 0.2, 0.2, 0.2)
+		
+		UiRect(barSizeX, barSizeY)
+
+		UiColor(0.7, 0.7, 0.7, 0.5)
+
+		UiRect(barSizeX * votePercentage, barSizeY)
+		
+		UiColor(1, 1, 1, 1)
+		
+		if twitchVoteStep == 2 then
+			key = key + 4
+		end
+		
+		if (key < 4 and twitchVoteStep == 1) or (key < 8 and twitchVoteStep == 2) then
+			UiText(key .. ": " ..value.name)
+		else
+			UiText(key .. ": Random Effect")
+		end
+		
+		UiTranslate(0, barSizeY + 10)
+	end
+
+UiPop()
 end
 
 function drawEffectLog()
@@ -235,10 +364,50 @@ function draw()
 		end
 
 		processDrawCallQueue()
-
+		
+		if twitchIntegration then
+			drawTwitchEffectVotes()
+		end
+		
 		drawTimer()
 		drawEffectLog()
 
 		debugDraw()
 	UiPop()
+end
+
+function renewTwitchVaribles()
+	twitchEffects[1] = getRandomEffect(false)
+	twitchEffects[2] = getRandomEffect(false)
+	twitchEffects[3] = getRandomEffect(false)
+	twitchEffects[4] = getRandomEffect(false)
+end
+
+function twitchTick()
+	if currentTwitchVotesUpdateInterval > 0 and not (currentTime >= chaosTimer * 0.9 and currentTime < chaosTimer * 0.91) then
+		currentTwitchVotesUpdateInterval = currentTwitchVotesUpdateInterval - GetChaosTimeStep()
+		return
+	end
+	
+	currentTwitchVotesUpdateInterval = twitchVotesUpdateInterval
+
+	updateTwitchVotes()
+end
+
+function updateTwitchVotes()
+	local xml = "MOD/twitchchat.xml"
+	
+	local twitchChatObject = Spawn("MOD/twitchchat.xml", Transform())[1]
+	
+	local votes = GetDescription(twitchChatObject)
+	
+	votes = votes:gsub("%[", "")
+	votes = votes:gsub("%]", "")
+	votes = votes:gsub("\,", "")
+	
+	twitchCountedVotes = {}
+	
+	Delete(twitchChatObject)
+	
+	for number in votes:gmatch("%w+") do table.insert(twitchCountedVotes, tonumber(number)) end
 end

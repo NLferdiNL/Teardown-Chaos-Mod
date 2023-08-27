@@ -2,8 +2,10 @@ moddataPrefix = "savegame.mod.chaosMod"
 
 function saveFileInit()
 	saveVersion = GetInt(moddataPrefix .. "Version")
-	chaosTimer = GetInt(moddataPrefix .. "ChaosTimer")
+	chaosTimer = GetFloat(moddataPrefix .. "ChaosTimer")
 	chaosEffects.disabledEffects = DeserializeTable(GetString(moddataPrefix.. "DisabledEffects"))
+	twitchIntegration = GetBool(moddataPrefix .. "TwitchIntegration")
+	twitchBalancing = GetFloat(moddataPrefix .. "TwitchBalancing")
 	
 	chaosTimerBackup = chaosTimer
 
@@ -13,7 +15,7 @@ function saveFileInit()
 
 		chaosTimer = 10
 		chaosTimerBackup = chaosTimer
-		SetInt(moddataPrefix .. "ChaosTimer", chaosTimer)
+		GetFloat(moddataPrefix .. "ChaosTimer", chaosTimer)
 	end
 
 	if saveVersion < 2 then
@@ -89,6 +91,22 @@ function saveFileInit()
 		DebugPrint("This is due to their effects carrying over cross quick saves and becoming permanent. You can reenable them in the options menu.")
 
 		SetString(moddataPrefix.. "DisabledEffects", SerializeTable(chaosEffects.disabledEffects))
+	end
+	
+	if saveVersion < 7 then
+		saveVersion = 7
+		SetInt(moddataPrefix .. "Version", 7)
+
+		twitchIntegration = false
+		SetBool(moddataPrefix .. "TwitchIntegration", twitchIntegration)
+	end
+	
+	if saveVersion < 8 then
+		saveVersion = 8
+		SetInt(moddataPrefix .. "Version", 8)
+
+		twitchBalancing = 1
+		SetFloat(moddataPrefix .. "TwitchBalancing", twitchBalancing)
 	end
 end
 
