@@ -399,6 +399,11 @@ function updateTwitchVotes()
 	
 	local twitchChatObject = Spawn("MOD/twitchchat.xml", Transform())[1]
 	
+	if twitchChatObject == nil then
+		twitchCountedVotes = {0, 0, 0, 0, 0}
+		return
+	end
+	
 	local votes = GetDescription(twitchChatObject)
 	
 	votes = votes:gsub("%[", "")

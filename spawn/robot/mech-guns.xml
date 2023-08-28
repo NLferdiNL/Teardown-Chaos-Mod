@@ -1,0 +1,55 @@
+<prefab version="0.7.2">
+	<group id_="419521536" open_="true" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0">
+		<body id_="575834432" open_="true" name="body" tags="body" pos="0.05 1.0 0.1" rot="0.0 0.0 0.0" dynamic="true">
+			<vox id_="306333952" tags="unbreakable" pos="0.05 -0.2 0.1" rot="0.0 -180.0 0.0" texture="12 1" density="40" file="MOD/spawn/robot/mech-guns.vox" object="body"/>
+		</body>
+		<body id_="1373915008" open_="true" name="head" tags="head" pos="0.1 1.3 0.2" rot="0.0 0.0 0.0" dynamic="true">
+			<joint id_="966780544" name="head_joint" tags="head" pos="-0.05 0.0 -0.05" rot="-90.0 90.0 0.0" type="hinge" limits="-60 60"/>
+			<vox id_="1338130176" open_="true" tags="unbreakable" pos="0.0 0.0 0.0" rot="0.0 -180.0 0.0" texture="12 1" density="0.25" file="MOD/spawn/robot/mech-guns.vox" object="head">
+				<light id_="567052096" name="eye_area" tags="eye" pos="0.05 0.45 0.7" rot="0.0 0.0 0.0" type="area" color=".65 0.75 1" scale="3" angle="60" size=".5 .1" fogscale="1"/>
+			</vox>
+		</body>
+		<body id_="956556288" open_="true" name="guns" tags="aim" pos="0.1 1.3 -0.5" rot="0.0 0.0 0.0" dynamic="true">
+			<vox id_="726117632" open_="true" tags="unbreakable" pos="0.0 0.0 0.0" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-guns.vox" object="guns">
+				<joint id_="1290679168" name="guns_joint" pos="0.05 0.2 -0.2" rot="0.0 90.0 -90" rotstrength="0.0001" rotspring="0"/>
+				<location id_="1578793088" name="l_guns_emitter" tags="weapon=gun strength=0.3" pos="0.25 0.05 0.2" rot="0.0 180 0.0"/>
+				<location id_="1777379200" name="r_guns_emitter" tags="weapon=gun strength=0.3" pos="-0.15 0.05 0.2" rot="0.0 180 0.0"/>
+			</vox>
+		</body>
+		<group id_="1666092288" name="r_leg" pos="0.5 -0.1 0.1">
+			<body id_="1337933568" open_="true" name="r_leg" tags="leg" pos="-0.2 0.4 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="859688192" open_="true" tags="unbreakable" pos="0.3 0.2 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".25" file="MOD/spawn/robot/mech-guns.vox" object="r_leg_upper">
+					<joint id_="922409984" name="r_leg_joint" pos="0.3 0.45 -0.05" rot="0.0 90.0 -90" type="hinge" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="1728617472" open_="true" name="r_foot" tags="foot" pos="-0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="322915584" open_="true" tags="unbreakable" pos="0.2 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-guns.vox" object="r_leg_lower">
+					<joint id_="1324170112" name="r_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90" type="hinge" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="983165568" open_="true" name="l_leg" pos="-0.4 -0.1 0.1">
+			<body id_="1013444992" open_="true" name="l_leg" tags="leg" pos="0.1 0.5 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1169036928" open_="true" tags="unbreakable" pos="-0.1 0.1 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".25" file="MOD/spawn/robot/mech-guns.vox" object="l_leg_upper">
+					<joint id_="641571072" name="l_leg_joint" pos="-0.2 0.45 -0.05" rot="0.0 90.0 -90" type="hinge" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="1444436096" open_="true" name="l_foot" tags="foot" pos="0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1037760384" open_="true" tags="unbreakable" pos="-0.1 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-guns.vox" object="l_leg_lower">
+					<joint id_="483291968" name="l_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90.0" type="hinge" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="145629888" name="cables" pos="0.0 0.9 0.7">
+			<rope id_="143270432" open_="true" name="r_cable" pos="0.45 1.1 0.15" rot="0.0 0.0 0.0" color="0.7 0.05 0.05" slack="0.35" strength="0.1">
+				<location id_="1701877120" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="75698704" pos="0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+			<rope id_="1684640128" open_="true" name="l_cable" pos="-0.35 1.1 0.15" rot="0.0 0.0 0.0" color="0.7 0.05 0.05" slack="0.35" strength="0.1">
+				<location id_="839239680" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="1396526336" pos="-0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+		</group>
+	</group>
+</prefab>
+

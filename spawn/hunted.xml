@@ -1,0 +1,21 @@
+<prefab version="1.4.0">
+	<group name="Chopter" pos="8.4 -0.3 -9.7">
+		<script name="Helicopter" pos="-0.0 0.3 0.7" rot="0.0 0.0 0.0" file="chasechopper.lua">
+			<body name="Chopper" tags="chopper" pos="0.00004 -0.4 -1.59999" rot="0.0 -180.0 0.0">
+				<vox tags="unbreakable" pos="0.0 0.1 0.0" rot="0.0 90.0 0.0" collide="false" file="MOD/spawn/hunted.vox" object="body"/>
+			</body>
+			<body name="MainRotor" tags="mainrotor" pos="0.00004 2.4 -0.00001" rot="0.0 -180.0 0.0">
+				<vox tags="unbreakable" pos="0.0 0.0 0.0" rot="0.0 180.0 0.0" collide="false" file="MOD/spawn/hunted.vox" object="mainrotor"/>
+			</body>
+			<body name="TailRotor" tags="tailrotor" pos="-0.14996 2.15 -6.79999" rot="0.0 0.0 0.0">
+				<vox tags="unbreakable" pos="0.05 -1.25 0.05" rot="0.0 90.0 0.0" collide="false" file="MOD/spawn/hunted.vox" object="tailrotor"/>
+			</body>
+			<body name="Light" tags="light" pos="-0.1 0.0 2.9" rot="0.0 -180.0 0.0">
+				<voxbox name="Voxbox" tags="unbreakable" pos="0.0 0.0 0.0" rot="0.0 -90.0 0.0" collide="false" size="2 2 2" pbr="0 0 0 32">
+					<light name="Light" tags="light" pos="0.0 0.0 0.0" rot="0.0 -90.0 0.0" type="cone" scale="4000" angle="30" reach="100" unshadowed="0.5" fogscale="0.2"/>
+				</voxbox>
+			</body>
+		</script>
+	</group>
+</prefab>
+

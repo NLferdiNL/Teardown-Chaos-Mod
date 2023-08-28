@@ -1397,7 +1397,7 @@ chaosEffects = {
 			effectDuration = 15,
 			effectLifetime = 0,
 			hideTimer = false,
-			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/knock.ogg"}},
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/knock01.ogg"}},
 			effectSprites = {},
 			effectVariables = {},
 			onEffectStart = function(vars)
@@ -2334,11 +2334,21 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {"MOD/sprites/square.png"},
-			effectVariables = { waterHeight = -1 },
+			effectVariables = { waterHeight = -1, waterBodies = {}},
 			onEffectStart = function(vars)
-				vars.effectVariables.waterHeight = math.random(12, 15)
+				vars.effectVariables.waterHeight = math.random(2, 5)
+				
+				if math.random(1,3) >= 2 or true then
+					for i = 1, vars.effectVariables.waterHeight do
+						vars.effectVariables.waterBodies[i] = Spawn("<water pos='0 0 0'/>", Transform(Vec(0, i * 5, 0)))[1]
+					end
+				end
 			end,
 			onEffectTick = function(vars)
+				if #vars.effectVariables.waterBodies > 0 then
+					return
+				end
+				
 				local playerPos = GetPlayerTransform().pos
 				local playerCamera = GetPlayerCameraTransform()
 				local floatHeightDiff = 0.25
@@ -2408,7 +2418,13 @@ chaosEffects = {
 
 				-- End Player Behaviour
 			end,
-			onEffectEnd = function(vars) end,
+			onEffectEnd = function(vars) 
+				if #vars.effectVariables.waterBodies > 0 then
+					for i = 1, vars.effectVariables.waterHeight do
+						Delete(vars.effectVariables.waterBodies[i])
+					end
+				end
+			end,
 		},
 
 		dontStopDriving = {
@@ -4389,7 +4405,7 @@ chaosEffects = {
 				local range = 50
 
 				local tempVec = GetPlayerVelocity()
-				tempVec[2] = -2
+				tempVec[2] = tempVec[2] - 2
 				SetPlayerVelocity(tempVec)
 
 				local minPos = VecAdd(playerPos, Vec(-range, -range, -range))
@@ -4400,16 +4416,15 @@ chaosEffects = {
 					local shapeBody = shapeList[i]
 
 					if IsBodyDynamic(shapeBody) then
-
 						if vars.effectVariables.affectedBodies[shapeBody] == nil then
 							vars.effectVariables.affectedBodies[shapeBody] = "hit"
 						end
+						
+						local bodyMass = GetBodyMass(shapeBody)
+						local bodyVelocity = Vec(0, -bodyMass / 2, 0)
+						local bodyTransform = GetBodyTransform(shapeBody)
 
-						local bodyVelocity = GetBodyVelocity(shapeBody)
-
-						bodyVelocity[2] = -2
-
-						SetBodyVelocity(shapeBody, bodyVelocity)
+						ApplyBodyImpulse(shapeBody, bodyTransform.pos, bodyVelocity)
 					end
 				end
 			end,
@@ -4476,7 +4491,7 @@ chaosEffects = {
 				--local resolutions = {30, 40, 50}
 				--vars.effectVariables.resolution = resolutions[math.random(1, #resolutions)]
 			end,
-			onEffectTick = function(vars) 
+			onEffectTick = function(vars) --TODO Depth using normal?
 				local resolution = vars.effectVariables.resolution
 				local rayOrigTransform = GetCameraTransform()
 				
@@ -4502,6 +4517,12 @@ chaosEffects = {
 							local mat, r, g, b, a = GetShapeMaterialAtPosition(shape, hitPoint)
 							
 							local inWater = IsPointInWater(hitPoint)
+							
+							if r == 0 and g == 0 and b == 0 then
+								r = 0.75
+								g = 0.75
+								b = 0.75
+							end
 							
 							color[1] = r
 							color[2] = g
@@ -5041,7 +5062,7 @@ chaosEffects = {
 				local textLines = {"Wanna buy Hammer Enlargement Pixels?", "Gordon Woo hates them with\nthis one simple trick!", 
 								   "Dear ${user}, you've won!\nClick here to collect your prize.", "You are the one millionth demolitionist!",
 								   "You're using a pop up blocker!", "              BlueTide\nThe drink for winners!", "Sick of the pop-ups? Get Quilez VPN now,\nand you'll receive 20% off your first year!",
-								   "Keep an eye on that timer!\nIt's still counting!", "What a good day for chaos!", "Löckelle Teardown Services\nFor all your legally questionable requests!"}
+								   "Keep an eye on that timer!\nIt's still counting!", "What a good day for chaos!", "Löckelle Teardown Services\nFor all your legally questionable requests!", "Hot Voxels In Your Area!"}
 			
 				if math.random(1, 100) > 99 then
 					local randomX = math.random(popupWidth / 2, UiWidth() - popupWidth / 2)
@@ -6175,6 +6196,145 @@ chaosEffects = {
 					table.remove(vars.effectVariables.activeRainBodies, i)
 				end
 			end,
+		},
+		
+		--[[staticScreen = { -- This effect is very laggy atm. May disable later.
+			name = "Static Screen",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {"MOD/sprites/square.png"},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local pixelSize = 20
+				local width = UiWidth() / pixelSize
+				local height = UiHeight() / pixelSize
+				
+				local alpha = (vars.effectLifetime % (vars.effectDuration / 2)) / (vars.effectDuration / 2)
+				
+				if vars.effectLifetime > vars.effectDuration / 2 then
+					alpha = 1 - alpha
+				end
+				
+				table.insert(drawCallQueue, function() 
+					UiPush()
+						UiAlign("top left")
+						for x = 0, UiWidth() / pixelSize do
+							for y = 0, UiHeight() / pixelSize do
+								--if x > width * 0.25 and x < width * 0.75 and y > height * 0.25 and y < height * 0.75 then
+								--if math.abs(x - width / 2) < width * 0.5 and math.abs(y - height / 2) < height * 0.5 then
+								if VecDist(Vec(x, y), Vec(width * 0.5, height * 0.5)) < (alpha * width + alpha * height) / 2 then
+									UiPush()
+										local rndValue = math.random(0, 100) / 100
+										UiColor(rndValue, rndValue, rndValue, alpha * 0.25)
+										UiTranslate(x * pixelSize, y * pixelSize)
+										UiRect(pixelSize, pixelSize)
+									UiPop()
+								end
+							end
+						end
+					UiPop()
+				end)
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
+		
+		roboRazzi = {
+			name = "Roborazzi",
+			effectDuration = 10,
+			effectLifetime = 0,
+			hideTimer = true,
+			effectSFX = {{isLoop = false, soundPath = "MOD/sfx/foto.ogg"}},
+			effectSprites = {},
+			effectVariables = {flashOpacity = 1,},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/roborazzi.xml", GetPlayerTransform())
+				PlaySound(vars.effectSFX[1])
+			end,
+			onEffectTick = function(vars)
+				if vars.effectVariables.flashOpacity > 0 then
+					if vars.effectLifetime > 0 then
+						table.insert(drawCallQueue, function()
+							UiBlur(vars.effectVariables.flashOpacity)
+							UiPush()
+								UiColor(1, 1, 1, vars.effectVariables.flashOpacity)
+								UiRect(UiWidth(), UiHeight())
+							UiPop()
+						end)
+					end
+					if vars.effectLifetime > 4.2 then
+						vars.effectVariables.flashOpacity = vars.effectVariables.flashOpacity - 0.01
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		spawnHunted = {
+			name = "Spawn Hunted Chopper",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/hunted.xml", GetPlayerTransform())
+				SetInt("level.cleared",2)
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		spawnBlimp = {
+			name = "Spawn Blimp",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars)
+				Spawn("MOD/spawn/blimp.xml", GetPlayerTransform())
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		blimpStrats = {
+			name = "Blimp Strats",
+			effectDuration = 0,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {blimpBody = -1},
+			onEffectStart = function(vars)
+				SetPlayerVehicle(0)
+			
+				local playerTransform = GetPlayerTransform()
+				local blimpPos = VecAdd(playerTransform.pos, Vec(0, 25, 0))
+				local blimpVel = TransformToParentVec(playerTransform, Vec(0, 0, -1))
+				
+				local blimpTransform = Transform(blimpPos, playerTransform.rot)
+			
+				local blimpBody = Spawn("MOD/spawn/blimp.xml", blimpTransform)[1]
+				
+				vars.effectVariables.blimpBody = blimpBody
+				
+				SetBodyVelocity(blimpBody, VecScale(blimpVel, 10))
+				
+				local newPlayerPos = TransformToParentPoint(blimpTransform, Vec(0.82081, 0.21918, -1.96457))
+				local newPlayerTransform = Transform(newPlayerPos, playerTransform.rot)
+				local newPlayerVelocity = TransformToParentVec(blimpTransform, Vec(-1, 0, 0))
+				
+				SetPlayerTransform(newPlayerTransform, true)
+				SetPlayerVelocity(VecScale(newPlayerVelocity, 15))
+			end,
+			onEffectTick = function(vars) end,
+			onEffectEnd = function(vars) end,
 		},
 	},	-- EFFECTS TABLE
 }

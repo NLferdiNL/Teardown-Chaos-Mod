@@ -1,0 +1,62 @@
+<prefab version="0.7.2">
+	<group id_="182528896" open_="true" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0">
+		<body id_="1321614080" open_="true" name="pelvis" tags="body" pos="0.05 1.0 0.1" rot="0.0 0.0 0.0" dynamic="true">
+			<vox id_="542671232" tags="unbreakable" pos="0.05 -0.2 0.1" rot="0.0 -180.0 0.0" texture="12 1" density="40" file="MOD/spawn/robot/mech-rockets.vox" object="body"/>
+		</body>
+		<body id_="855690240" open_="true" name="head" tags="head" pos="0.0 1.1 0.1" rot="0.0 0.0 0.0" dynamic="true">
+			<joint id_="6357380" name="head_joint" tags="head" pos="0.05 0.2 0.05" rot="-90.0 90.0 0.0" type="hinge" limits="-60 60"/>
+			<vox id_="272515328" open_="true" tags="unbreakable" pos="0.1 0.1 0.0" rot="0.0 -180.0 0.0" texture="12 1" density="0.25" file="MOD/spawn/robot/mech-rockets.vox" object="head">
+				<light id_="1759355776" name="eye_spotlight" tags="eye" pos="0.05 0.45 0.6" rot="0.0 0.0 0.0" type="cone" color="1.0 0.4 0.2" scale="5" angle="60" unshadowed="0.15" fogscale="3"/>
+			</vox>
+		</body>
+		<group id_="753316736" open_="true" name="rocket_launchers" pos="0.0 1.8 0.0">
+			<body id_="534413152" open_="true" name="l_launcher" tags="aim" pos="-0.8 -0.3 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1746444416" open_="true" tags="unbreakable" pos="0.2 0.3 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".1" file="MOD/spawn/robot/mech-rockets.vox" object="l_launcher">
+					<joint id_="661757376" name="l_rl_joint" pos="0.05 0.3 -0.05" rot="0.0 90.0 -90" rotstrength="0.0005" rotspring="0"/>
+					<location id_="1861204864" name="l_rl_emitter" tags="weapon=rocket charge=1.75 cooldown=0.5 count=2 strength=0.2" pos="0.05 0.15 0.4" rot="0.0 180.0 0.0"/>
+				</vox>
+			</body>
+			<body id_="1805561472" open_="true" name="r_launcher" tags="aim" pos="0.6 -0.3 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="267272128" open_="true" tags="unbreakable" pos="0.2 0.3 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".1" file="MOD/spawn/robot/mech-rockets.vox" object="r_launcher">
+					<joint id_="1032582720" name="r_rl_joint" pos="0.05 0.3 -0.05" rot="0.0 90.0 -90" rotstrength="0.0005" rotspring="0"/>
+					<location id_="740864128" name="r_rl_emitter" tags="weapon=rocket charge=1.5 cooldown=0.5 count=2 strength=0.2" pos="0.05 0.15 0.4" rot="0.0 180 0.0"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="891802752" open_="true" name="r_leg" pos="0.5 -0.1 0.1">
+			<body id_="684761920" open_="true" name="r_leg" tags="leg" pos="-0.2 0.4 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1222124416" open_="true" tags="unbreakable" pos="0.3 0.2 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".25" file="MOD/spawn/robot/mech-rockets.vox" object="r_leg_upper">
+					<joint id_="81728384" name="l_leg_joint" pos="0.3 0.45 -0.05" rot="0.0 90.0 -90" type="hinge" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="51973220" open_="true" name="r_foot" tags="foot" pos="-0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1870904832" open_="true" tags="unbreakable" pos="0.2 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-rockets.vox" object="r_leg_lower">
+					<joint id_="1848293504" name="l_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90" type="hinge" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="2062543744" open_="true" name="l_leg" pos="-0.4 -0.1 0.1">
+			<body id_="279855808" open_="true" name="l_leg" tags="leg" pos="0.1 0.5 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="985787136" open_="true" tags="unbreakable" pos="-0.1 0.1 0.0" rot="0.0 -180.0 0.0" texture="12 1" density=".25" file="MOD/spawn/robot/mech-rockets.vox" object="l_leg_upper">
+					<joint id_="1388399360" name="r_leg_joint" pos="-0.2 0.45 -0.05" rot="0.0 90.0 -90" type="hinge" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="1465802112" open_="true" name="l_foot" tags="foot" pos="0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1248995840" open_="true" tags="unbreakable" pos="-0.1 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-rockets.vox" object="l_leg_lower">
+					<joint id_="57085340" name="r_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90.0" type="hinge" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="1821291008" open_="true" name="cables" pos="0.0 0.9 0.7">
+			<rope id_="1634567552" open_="true" name="r_cable" pos="0.45 1.1 0.15" rot="0.0 0.0 0.0" color="0.7 0.3 0.05" slack="0.35" strength="0.1">
+				<location id_="1082851840" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="1896006656" pos="0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+			<rope id_="204353728" open_="true" name="l_cable" pos="-0.35 1.1 0.15" rot="0.0 0.0 0.0" color="0.7 0.3 0.05" slack="0.35" strength="0.1">
+				<location id_="931847744" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="80548656" pos="-0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+		</group>
+	</group>
+</prefab>
+

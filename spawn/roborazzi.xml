@@ -1,0 +1,20 @@
+<prefab version="1.4.0">
+	<group name="roborazzi" pos="-0.4 0.1 -0.8">
+		<script pos="4.0 0.0 -0.3" rot="0.0 40.0 0.0" file="robot.lua" param0="type=investigate chase">
+			<instance file="MOD/spawn/robot/mech-basic.xml"/>
+			<location tags="patrol" pos="-6.0 0.1 0.0" rot="0.0 0.0 0.0"/>
+			<location tags="patrol" pos="5.6 0.1 0.0" rot="0.0 0.0 0.0"/>
+		</script>
+		<script pos="0.6 0.0 0.7" file="robot.lua" param0="type=investigate chase">
+			<instance file="MOD/spawn/robot/mech-basic.xml"/>
+			<location tags="patrol" pos="-6.0 0.1 0.0" rot="0.0 0.0 0.0"/>
+			<location tags="patrol" pos="5.6 0.1 0.0" rot="0.0 0.0 0.0"/>
+		</script>
+		<script pos="-3.2 0.0 -0.6" rot="0.0 -30.0 0.0" file="robot.lua" param0="type=investigate chase">
+			<instance file="MOD/spawn/robot/mech-basic.xml"/>
+			<location tags="patrol" pos="-6.0 0.1 0.0" rot="0.0 0.0 0.0"/>
+			<location tags="patrol" pos="5.6 0.1 0.0" rot="0.0 0.0 0.0"/>
+		</script>
+	</group>
+</prefab>
+

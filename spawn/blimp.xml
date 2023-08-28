@@ -1,0 +1,6 @@
+<prefab version="1.4.0">
+	<group name="Blimp" pos="-14.2 0.0 5.4">
+		<vox pos="0.2 0.0 -10.3" rot="0.0 90.0 0.0" file="MOD/spawn/vehicle_blimp.vox"/>
+	</group>
+</prefab>
+

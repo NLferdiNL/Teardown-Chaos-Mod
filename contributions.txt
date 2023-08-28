@@ -72,3 +72,6 @@ The Mafia:
 	Spawn Extreme Griefer Robot (id: spawnSpider)
 	Spawn Dock Handler (id: spawnDockHandler)
 	Spawn Terrorbyte (id: spawnTerrorbyte)
+	Roborazzi (id: roboRazzi)
+	Spawn Hunted Chopper (id: spawnHunted)
+	Spawn Blimp (id: spawnBlimp) (Blimp also used in blimpStrats)

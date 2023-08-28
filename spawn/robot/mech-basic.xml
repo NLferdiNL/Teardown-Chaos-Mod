@@ -1,0 +1,48 @@
+<prefab version="0.9.0">
+	<group id_="390290688" open_="true" pos="0.0 0.0 -0.1" rot="0.0 0.0 0.0">
+		<body id_="1321614080" name="body" tags="body" pos="0.05 1.0 0.1" rot="0.0 0.0 0.0" dynamic="true">
+			<vox id_="542671232" tags="unbreakable" pos="0.05 -0.2 0.1" rot="0.0 -180.0 0.0" texture="12 1" density="40" file="MOD/spawn/robot/mech-basic.vox" object="body"/>
+		</body>
+		<body id_="855690240" open_="true" name="head" tags="head" pos="0.0 1.1 0.1" rot="0.0 0.0 0.0" dynamic="true">
+			<joint id_="6357380" name="head_joint" tags="head" pos="0.05 0.2 0.05" rot="-90.0 90.0 0.0" type="hinge" size="0.15" limits="-60 60"/>
+			<vox id_="272515328" tags="unbreakable" pos="0.1 0.1 0.0" rot="0.0 -180.0 0.0" texture="12 1" density="0.25" file="MOD/spawn/robot/mech-basic.vox" object="head">
+				<light id_="1759355776" name="head_light" tags="eye" pos="0.05 0.55 0.6" rot="0.0 0.0 0.0" type="area" color="1.0 0.4 0.2" scale="3" size="0.5 0.1" fogscale="1"/>
+			</vox>
+		</body>
+		<group id_="505641088" open_="true" name="l_leg" pos="-0.4 -0.1 0.1">
+			<body id_="279855808" open_="true" name="l_leg" tags="leg" pos="0.1 0.5 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="985787136" open_="true" tags="unbreakable" pos="-0.1 0.1 0.0" rot="0.0 -180.0 0.0" texture="12 1" density="0.25" file="MOD/spawn/robot/mech-basic.vox" object="l_leg_upper">
+					<joint id_="1388399360" name="l_leg_joint" pos="-0.2 0.45 -0.05" rot="0.0 90.0 -90" type="ball" size="0.15" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="1465802112" open_="true" name="l_foot" tags="foot" pos="0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1248995840" open_="true" tags="unbreakable" pos="-0.1 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-basic.vox" object="l_leg_lower">
+					<joint id_="57085340" name="l_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90.0" type="hinge" size="0.15" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="1911146368" open_="true" name="r_leg" pos="0.5 -0.1 0.1">
+			<body id_="684761920" open_="true" name="r_leg" tags="leg" pos="-0.2 0.4 0.1" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1222124416" open_="true" tags="unbreakable" pos="0.3 0.2 0.0" rot="0.0 -180.0 0.0" texture="12 1" density="0.25" file="MOD/spawn/robot/mech-basic.vox" object="r_leg_upper">
+					<joint id_="81728384" name="r_leg_joint" pos="0.3 0.45 -0.05" rot="0.0 90.0 -90" type="hinge" size="0.15" limits="-60 60"/>
+				</vox>
+			</body>
+			<body id_="51973220" open_="true" name="r_foot" tags="foot" pos="-0.1 0.1 0.0" rot="0.0 0.0 0.0" dynamic="true">
+				<vox id_="1870904832" open_="true" tags="unbreakable" pos="0.2 0.0 -0.1" rot="0.0 -180.0 0.0" texture="12 1" file="MOD/spawn/robot/mech-basic.vox" object="r_leg_lower">
+					<joint id_="1848293504" name="r_foot_joint" pos="0.05 0.55 0.05" rot="0.0 90.0 -90" type="hinge" size="0.15" rotstrength="0" rotspring="0" limits="-25 75"/>
+				</vox>
+			</body>
+		</group>
+		<group id_="1462459520" name="cables" pos="0.0 0.9 0.7">
+			<rope id_="204353728" name="l_cable" pos="-0.35 1.1 0.15" rot="0.0 0.0 0.0" color="0.0035 0.0075 0.0085" slack="0.35" strength="0.1">
+				<location id_="931847744" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="80548656" pos="-0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+			<rope id_="1634567552" name="r_cable" pos="0.45 1.1 0.15" rot="0.0 0.0 0.0" color="0.0035 0.0075 0.0085" slack="0.35" strength="0.1">
+				<location id_="1082851840" pos="0.0 0.0 0.0" rot="0.0 0.0 0.0"/>
+				<location id_="1896006656" pos="0.2 -0.95 -0.25" rot="0.0 0.0 0.0"/>
+			</rope>
+		</group>
+	</group>
+</prefab>
+
