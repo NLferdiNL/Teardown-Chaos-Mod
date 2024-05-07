@@ -5152,7 +5152,7 @@ chaosEffects = {
 					--DrawBodyHighlight(shapeBody, 1)
 				end
 				
-				local playerCamera = GetPlayerCameraTransform()
+				local playerCamera = GetCameraTransform()
 				
 				local localForwardPos = Vec(0, 0, -2)
 				local globalForwardPos = TransformToParentPoint(playerCamera, localForwardPos)
@@ -5706,8 +5706,6 @@ chaosEffects = {
 				
 				local targetFOV = 90 + speedFOV * 90
 				
-				DebugWatch("dist", (targetFOV - currFOV))
-				
 				local nextFOV = currFOV + (targetFOV - currFOV) * (GetChaosTimeStep() * 5)
 				
 				vars.effectVariables.currFOV = nextFOV
@@ -6092,7 +6090,7 @@ chaosEffects = {
 					--DrawBodyHighlight(shapeBody, 1)
 				end]]--
 				
-				local playerCamera = GetPlayerCameraTransform()
+				local playerCamera = GetCameraTransform()
 				
 				local localForwardPos = Vec(0, 0, -2)
 				local globalForwardPos = TransformToParentPoint(playerCamera, localForwardPos)
@@ -6179,12 +6177,14 @@ chaosEffects = {
 						Delete(rainPixel)
 						table.remove(vars.effectVariables.activeRainBodies, i)
 					elseif vars.effectVariables.destructive then
-						QueryRejectBody(rainPixel)
+						--[[QueryRejectBody(rainPixel)
 						local closestHit, closestPoint = QueryClosestPoint(rainPixelPos, 0.5)
 						
 						if closestHit then
 							MakeHole(closestPoint, 0.3, 0.3, 0.3, true)
-						end
+						]]--end
+						
+						MakeHole(rainPixelPos, 0.3, 0.3, 0.3, true)
 					end
 				end
 			end,
@@ -6310,7 +6310,7 @@ chaosEffects = {
 			hideTimer = false,
 			effectSFX = {},
 			effectSprites = {},
-			effectVariables = {blimpBody = -1},
+			effectVariables = {},
 			onEffectStart = function(vars)
 				SetPlayerVehicle(0)
 			
@@ -6321,8 +6321,6 @@ chaosEffects = {
 				local blimpTransform = Transform(blimpPos, playerTransform.rot)
 			
 				local blimpBody = Spawn("MOD/spawn/blimp.xml", blimpTransform)[1]
-				
-				vars.effectVariables.blimpBody = blimpBody
 				
 				SetBodyVelocity(blimpBody, VecScale(blimpVel, 10))
 				
@@ -6336,6 +6334,218 @@ chaosEffects = {
 			onEffectTick = function(vars) end,
 			onEffectEnd = function(vars) end,
 		},
+		
+		jumpyProps = {
+			name = "Jumpy Props",
+			effectDuration = 10,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = { affectedBodies = {} },
+			onEffectStart = function(vars) 
+				local bodies = QueryAabbBodies(Vec(-1000, -1000, -1000), Vec(1000, 1000, 1000))
+				
+				for i = 1, #bodies do
+					if bodies[i] ~= 1 and GetBodySize(bodies[i]) < 20 then
+						local currBody = bodies[i]
+						local currTransform = GetBodyTransform(currBody)
+						
+						vars.effectVariables.affectedBodies[#vars.effectVariables.affectedBodies + 1] = {body = currBody, origTransform = TransformCopy(currTransform), timeOffset = math.random(0, 500) / 100}
+						
+						local shapeBodies = GetBodyShapes(currBody)
+						
+						for j = 1, #shapeBodies do
+							SetShapeCollisionFilter(shapeBodies[j], 2, 0)
+						end
+						
+						SetBodyDynamic(currBody, false)
+					end
+				end
+			end,
+			onEffectTick = function(vars)
+				if vars.effectLifetime > vars.effectDuration * 0.97 then
+					for i = 1, #vars.effectVariables.affectedBodies do
+						local currBody = vars.effectVariables.affectedBodies[i].body
+						local origTransform = vars.effectVariables.affectedBodies[i].origTransform
+						
+						SetBodyTransform(currBody, origTransform)
+					end
+					
+					return
+				end
+				
+				for i = 1, #vars.effectVariables.affectedBodies do
+					local currAffectedBody = vars.effectVariables.affectedBodies[i]
+					local currBody = currAffectedBody.body
+					local currTransform = TransformCopy(currAffectedBody.origTransform)
+					local timeOffset = currAffectedBody.timeOffset
+					
+					currTransform.pos = VecAdd(currTransform.pos, Vec(0, math.abs(math.sin(GetTime() * 10 + timeOffset)), 0))
+					
+					SetBodyTransform(currBody, currTransform)
+				end
+			end,
+			onEffectEnd = function(vars) 
+				for i = 1, #vars.effectVariables.affectedBodies do
+					local currBody = vars.effectVariables.affectedBodies[i].body
+					local shapeBodies = GetBodyShapes(currBody)
+					
+					for j = 1, #shapeBodies do
+						SetShapeCollisionFilter(shapeBodies[j], 1, 255)
+					end
+					
+					SetBodyDynamic(currBody, true)
+				end
+			end,
+		},
+		
+		--[[markExplosives = {
+			name = "Mark Explosives",
+			effectDuration = 15,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {},
+			effectVariables = {},
+			onEffectStart = function(vars) end,
+			onEffectTick = function(vars) 
+				local playerTransform = GetPlayerTransform()
+			
+				local range = 100
+				
+				local minPos = VecAdd(Vec(-range, -range, -range), playerTransform.pos)
+				local maxPos = VecAdd(Vec(range, range, range), playerTransform.pos)
+				
+				local bodies = QueryAabbShapes(minPos, maxPos)
+				
+				for i = 1, #bodies do
+					if HasTag(bodies[i], "explosive") then
+						DrawBodyOutline(bodies[i], 1, 0, 0, 1)
+					end
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
+		
+		blackHole = {
+			name = "Black Hole",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = {},
+			effectSprites = {"MOD/sprites/circle.png"},
+			effectVariables = { holePos = Vec() },
+			onEffectStart = function(vars) 
+				local holePos = rndVec(50)
+				local playerTransform = GetPlayerTransform()
+				
+				holePos[2] = math.abs(holePos[2])
+				
+				holePos = VecAdd(playerTransform.pos, holePos)
+				
+				vars.effectVariables.holePos = holePos
+			end,
+			onEffectTick = function(vars) 
+				local playerTransform = GetPlayerTransform()
+				local holePos = vars.effectVariables.holePos
+			
+				DrawSprite(vars.effectSprites[1], Transform(holePos, QuatLookAt(holePos, playerTransform.pos)), 20, 20, 0, 0, 0, 1, true, false)
+				
+				local range = 100
+				
+				local minPos = VecAdd(Vec(-range, -range, -range), playerTransform.pos)
+				local maxPos = VecAdd(Vec(range, range, range), playerTransform.pos)
+				
+				QueryRequire("dynamic")
+				local bodies = QueryAabbBodies(minPos, maxPos)
+				
+				DebugWatch("count", #bodies)
+				
+				for i = 1, #bodies do
+					local currBody = bodies[i]
+					
+					local bodyTransform = GetBodyTransform(currBody)
+					
+					if VecDist(bodyTransform.pos, holePos) < 5 then
+						Delete(currBody)
+					end
+					
+					local dir = dirVec(bodyTransform.pos, holePos)
+					
+					SetBodyVelocity(currBody, VecScale(dir, 50))
+				end
+			end,
+			onEffectEnd = function(vars) end,
+		},
+		
+		--[[fakeAlarm = {
+			name = "Fake Alarm",
+			effectDuration = 20,
+			effectLifetime = 0,
+			hideTimer = false,
+			effectSFX = { {isLoop = false, soundPath = "alarm1.ogg"}, {isLoop = true, soundPath = "alarm2-loop.ogg"}, {isLoop = true, soundPath = "alarm3-loop.ogg"}},
+			effectSprites = {},
+			effectVariables = { alarmTime = 60, frame = 0, alarmLights = {} },
+			onEffectStart = function(vars) 
+				local alarmTime = GetFloat("level.alarmtimer")
+				
+				if alarmTime > 0 then
+					vars.effectVariables.alarmTime = alarmTime
+				end
+				
+				vars.effectVariables.frame = math.random(0, 60)
+				
+				local alarmLights = FindLights("alarm", true)
+				
+				for i = 1, #alarmLights then
+					vars.effectVariables.alarmLights = {light = alarmLights[i], pType = GetInt
+				end
+			end,
+			onEffectTick = function(vars) 
+				vars.effectVariables.alarmTime = vars.effectVariables.alarmTime - GetChaosTimeStep()
+			
+				local alarmTime = vars.effectVariables.alarmTime
+			
+				function drawTimer(timeLeft)
+					if timeLeft >= 0 then
+						UiPush()
+						UiFont("bold.ttf", 32)
+						UiPush()
+						UiTranslate(UiCenter()-50, 65)
+						UiAlign("left")
+						UiTextOutline(0, 0, 0, 1)
+						UiColor(1, 1, 1)
+						UiScale(2.0)
+						if timeLeft <= 60 then
+							UiText(math.ceil(timeLeft*10)/10)
+						else
+							local t = math.ceil(timeLeft)
+							local m = math.floor(t/60)
+							local s = math.ceil(t-m*60)
+							if s < 10 then
+								UiText(m .. ":0" .. s)
+							else
+								UiText(m .. ":" .. s)
+							end
+						end
+						UiPop()
+						UiPop()
+					end
+				end
+				
+				if GetString("game.levelid") == "carib_alarm" then
+					PlayMusic("heist-carib.ogg")
+				else
+					PlayMusic("heist.ogg")
+				end
+				PlayLoop(alarmBackgroundLoop)
+				
+				table.insert(drawCallQueue, function() drawTimer(alarmTime) end)
+			end,
+			onEffectEnd = function(vars) end,
+		},]]--
+		
 	},	-- EFFECTS TABLE
 }
 

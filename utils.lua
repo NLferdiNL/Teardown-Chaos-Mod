@@ -15,7 +15,7 @@ function saveFileInit()
 
 		chaosTimer = 10
 		chaosTimerBackup = chaosTimer
-		GetFloat(moddataPrefix .. "ChaosTimer", chaosTimer)
+		SetFloat(moddataPrefix .. "ChaosTimer", chaosTimer)
 	end
 
 	if saveVersion < 2 then
@@ -107,6 +107,19 @@ function saveFileInit()
 
 		twitchBalancing = 1
 		SetFloat(moddataPrefix .. "TwitchBalancing", twitchBalancing)
+	end
+	
+	-- This is to fix a typo in version 1.
+	-- (which is also fixed now, SETFLOAT NOT GETFLOAT)
+	if saveVersion < 9 then
+		saveVersion = 9
+		SetInt(moddataPrefix .. "Version", 9)
+		
+		if not HasKey(moddataPrefix .. "ChaosTimer") then
+			chaosTimer = 10
+			chaosTimerBackup = chaosTimer
+			SetFloat(moddataPrefix .. "ChaosTimer", chaosTimer)
+		end
 	end
 end
 
@@ -416,4 +429,10 @@ function IndexSpawnables()
 	--lastIndexedSpawnList = gSpawnList
 	
 	return gSpawnList
+end
+
+function GetBodySize(body)
+	local minPos, maxPos = GetBodyBounds(body)
+	
+	return VecMag(VecSub(maxPos, minPos))
 end

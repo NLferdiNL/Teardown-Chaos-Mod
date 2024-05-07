@@ -20,6 +20,10 @@ twitchProportionalVoting = false
 -- Here they do. Allowing quickloading to be available.
 saveFileInit()
 
+if testThisEffect ~= "" then
+	twitchIntegration = false
+end
+
 removeDisabledEffectKeys()
 loadChaosEffectData()
 
@@ -117,14 +121,22 @@ function triggerTwitchChaos()
 	else
 		local highest = 0
 		local highestIndex = 1
+		local draw = {}
 		for i = 1, 4 do
 			if twitchCountedVotes[i] > highest then
 				highest = twitchCountedVotes[i]
 				highestIndex = i
+				draw = {highestIndex}
+			elseif twitchCountedVotes[i] == highest then
+				draw[#draw + 1] = i
 			end
 		end
 		
-		selectedEffect = twitchEffects[highestIndex]
+		if #draw >= 2 then
+			selectedEffect = twitchEffects[draw[math.random(1, #draw)]]
+		else
+			selectedEffect = twitchEffects[highestIndex]
+		end
 	end
 	
 	local copyOfEffect = deepcopy(selectedEffect)
